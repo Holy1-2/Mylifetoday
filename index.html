@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="rw">
+
+<head>
+  <!-- =========================
+         Basic Meta
+    ========================== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Kubana n’Imana Buri Munsi </title>
+
+  <!-- Primary SEO -->
+  <meta name="description"
+    content="Kubana n’Imana Buri Munsi ni urubuga rutanga Ijambo ry’Imana, inyigisho ngufi, n’inama z’ubuzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y’umutima, n’iterambere mu by’umwuka." />
+  <meta name="keywords"
+    content="Kubana n’Imana, Bibiliya, Ijambo ry’Imana, inyigisho, isengesho, kwizera, amahoro y’umutima, umubano, amafaranga, ubuzima bwa buri munsi, gikirisitu" />
+  <meta name="author" content="Topray" />
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+  <!-- Canonical (hindura uko bikwiye ku domain yawe nyayo) -->
+  <link rel="canonical" href="https://kubananimanaburimunsi.netlify.app/" />
+
+  <!-- =========================
+         Favicons / PWA
+         (ushyire izi files muri /public)
+    ========================== -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light" />
+
+  <!-- =========================
+         Open Graph (Facebook/WhatsApp/LinkedIn)
+    ========================== -->
+  <meta property="og:site_name" content="Kubana n’Imana Buri Munsi" />
+  <meta property="og:title" content="Kubana n’Imana Buri Munsi" />
+  <meta property="og:description"
+    content="Ijambo ry’Imana n’inama z’ubuzima bwa buri munsi—kugira ngo tugume hamwe n’Imana buri munsi." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://theprovidence.com/" />
+  <meta property="og:image" content="og.png" />
+  <meta property="og:image:secure_url" content="https://theprovidence.com/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Kubana n’Imana Buri Munsi - Ijambo ry’Imana ku buzima bwa buri munsi" />
+  <meta property="og:locale" content="rw_RW" />
+
+  <!-- =========================
+         Twitter Cards
+    ========================== -->
+  <meta name="twitter:card" content="og.png" />
+  <meta name="twitter:title" content="Kubana n’Imana Buri Munsi" />
+  <meta name="twitter:description"
+    content="Ijambo ry’Imana n’inama z’ubuzima bwa buri munsi—kugira ngo tugume hamwe n’Imana buri munsi." />
+  <meta name="twitter:image" content="og.png" />
+  <!-- Optional: your Twitter/X username -->
+  <!-- <meta name="twitter:site" content="@yourhandle" /> -->
+
+  <!-- =========================
+         App / Mobile Meta (Optional but useful)
+    ========================== -->
+  <meta name="application-name" content="Kubana n’Imana Buri Munsi" />
+  <meta name="apple-mobile-web-app-title" content="Kubana n’Imana" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- =========================
+         Hreflang (niba ufite ururimi rurenze rumwe)
+         Hindura URLs uko bikwiye
+    ========================== -->
+  <link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.com/" />
+  <link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.com/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.com/" />
+
+  <!-- =========================
+         Preconnect for performance
+    ========================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Tailwind + Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .serif {
+      font-family: "Lora", serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+
+  <!-- =========================
+         Import Map (as you had)
+    ========================== -->
+  <script type="importmap">
+      {
+        "imports": {
+          "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+          "react/": "https://esm.sh/react@^19.2.4/",
+          "react": "https://esm.sh/react@^19.2.4",
+          "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+          "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+        }
+      }
+    </script>
+
+  <link rel="stylesheet" href="/index.css" />
+
+  <!-- =========================
+         Structured Data (JSON-LD) for Website + Organization
+         Hindura urls/name/logo uko bikwiye
+    ========================== -->
+  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Kubana n’Imana Buri Munsi",
+        "url": "https://kubananimanaburimunsi.com/",
+        "description": "Urubuga rutanga Ijambo ry’Imana n’inama z’ubuzima bwa buri munsi.",
+        "inLanguage": "rw",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Kubana n’Imana Buri Munsi",
+          "url": "https://kubananimanaburimunsi.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "logo.png"
+          }
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://kubananimanaburimunsi.netlify.app/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+  <!-- Optional: add Organization schema separately (helpful) -->
+  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Kubana n’Imana Buri Munsi",
+        "url": "https://kubananimanaburimunsi.com/",
+        "logo": "logo.png",
+        "sameAs": [
+          "https://facebook.com/yourpage",
+          "https://instagram.com/yourpage",
+          "https://youtube.com/@yourchannel"
+        ]
+      }
+    </script>
+</head>
+
+<body class="bg-white text-[#1a1a1a] antialiased">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
