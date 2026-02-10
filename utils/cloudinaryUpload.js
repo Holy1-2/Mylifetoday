@@ -1,4 +1,4 @@
-export const uploadToCloudinary = async (file, folder = "providence") => {
+export const uploadToCloudinary = async (file, folder = "Mylifetoday") => {
   if (!file) throw new Error("No file provided");
 
   const cloudName = "dpmklbfbt";

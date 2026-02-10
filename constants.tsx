@@ -14,10 +14,10 @@ export const INITIAL_DONATION_STATS: DonationStats = {
 
 export const TRANSLATIONS: Translations = {
   siteName: {
-    en: 'The Providence',
+    en: 'My life Today',
     rw: 'Kubana n\'Imana',
     sw: 'Maisha ya Leo',
-    fr: 'La Providence',
+    fr: 'vivre avec Dieu chaque jour',
   },
   tagline: {
     en: 'Editorial Faith, Life & Health',
@@ -59,10 +59,10 @@ export const TRANSLATIONS: Translations = {
 };
 
 export const DONATION = {
-  momoNumber: '+250788123456',
-  momoName: 'TOPRAY Network',
+  momoNumber: '+250795756252',
+  momoName: 'HIRWA AMANI TOPRAY ',
   bankName: 'Bank of Kigali',
-  bankAccount: '0001122334455',
+  bankAccount: '4006112964359',
   purpose: 'Digital Ministry & Health Awareness'
 };
 
@@ -70,12 +70,12 @@ export const SOCIAL_LINKS = {
   whatsapp: 'https://chat.whatsapp.com/yourgroup',
   facebook: 'https://facebook.com/yourpage',
   instagram: 'https://instagram.com/yourprofile',
-  email: 'contact@theprovidence.org'
+  email: 'contact@theMylifetoday.org'
 };
 
 export const LEGAL = {
   privacy: {
-    en: `At The Providence, we deeply respect your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we collect, use, and safeguard the data you provide while using our platform.
+    en: `At The Mylifetoday, we deeply respect your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we collect, use, and safeguard the data you provide while using our platform.
 
 1. Information We Collect:
    - Email addresses for newsletter subscriptions
@@ -112,8 +112,8 @@ export const LEGAL = {
    - Continued use constitutes acceptance of changes
 
 Contact us for any privacy concerns. Your trust is sacred to us.`,
-    
-    rw: `Ku Providence, dukunda kubahiriza ubwisanzure bwawe kandi dushishikaye kurinda amakuru yawe. Iyi Politiki y'Ubwisanzure isobanura uko dukusanya, dukoresha, kandi dukinga amakuru waduhaye utekereza.
+
+    rw: `Ku Mylifetoday, dukunda kubahiriza ubwisanzure bwawe kandi dushishikaye kurinda amakuru yawe. Iyi Politiki y'Ubwisanzure isobanura uko dukusanya, dukoresha, kandi dukinga amakuru waduhaye utekereza.
 
 1. Amakuru Dukusanya:
    - Imeli zo kwandikisha mu itangazo
@@ -150,8 +150,8 @@ Contact us for any privacy concerns. Your trust is sacred to us.`,
    - Ukomeje gukoresha bishyigikira guhinduka
 
 Twandikire iyo ufite ibibazo by'ubwisanzure. Ukwizera kwawe ni icyubahiro.`,
-    
-    sw: `Katika Providence, tunathamini faragha yako na tumekusudia kulinda taarifa zako binafsi. Sera hii ya Faragha inaelezea jinsi tunavyokusanya, kutumia, na kulinda data unayotoa unapotumia jukwaa letu.
+
+    sw: `Katika Mylifetoday, tunathamini faragha yako na tumekusudia kulinda taarifa zako binafsi. Sera hii ya Faragha inaelezea jinsi tunavyokusanya, kutumia, na kulinda data unayotoa unapotumia jukwaa letu.
 
 1. Taarifa Tunazokusanya:
    - Anwani za barua pepe kwa usajili wa jarida
@@ -188,8 +188,8 @@ Twandikire iyo ufite ibibazo by'ubwisanzure. Ukwizera kwawe ni icyubahiro.`,
    - Kuendelea kutumia kunakubali mabadiliko
 
 Wasiliana nasi kwa maswali yoyote ya faragha. Uaminifu wako ni takatifu kwetu.`,
-    
-    fr: `Chez The Providence, nous respectons profondément votre vie privée et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité décrit comment nous collectons, utilisons et protégeons les données que vous fournissez lors de l'utilisation de notre plateforme.
+
+    fr: `Chez The Mylifetoday, nous respectons profondément votre vie privée et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité décrit comment nous collectons, utilisons et protégeons les données que vous fournissez lors de l'utilisation de notre plateforme.
 
 1. Informations que nous collectons:
    - Adresses e-mail pour les abonnements à la newsletter
@@ -227,20 +227,20 @@ Wasiliana nasi kwa maswali yoyote ya faragha. Uaminifu wako ni takatifu kwetu.`,
 
 Contactez-nous pour toute préoccupation concernant la confidentialité. Votre confiance nous est sacrée.`
   },
-  
+
   terms: {
-    en: `Terms of Service for The Providence Digital Network
+    en: `Terms of Service for The Mylifetoday Digital Network
 
 Last Updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Welcome to The Providence! By accessing and using our platform, you agree to be bound by these Terms of Service.
+Welcome to The Mylifetoday! By accessing and using our platform, you agree to be bound by these Terms of Service.
 
 1. Acceptance of Terms
    - By using our website, mobile applications, or services, you accept these Terms.
    - If you disagree with any part, please discontinue use immediately.
 
 2. Description of Service
-   - The Providence provides editorial content combining Biblical wisdom, health insights, and practical life guidance.
+   - The Mylifetoday provides editorial content combining Biblical wisdom, health insights, and practical life guidance.
    - We reserve the right to modify or discontinue services at any time.
 
 3. User Responsibilities
@@ -251,7 +251,7 @@ Welcome to The Providence! By accessing and using our platform, you agree to be 
    - Do not attempt to compromise platform security
 
 4. Content Ownership
-   - All editorial content is owned by The Providence Digital Network
+   - All editorial content is owned by The Mylifetoday Digital Network
    - Users retain rights to their comments and contributions
    - By posting content, you grant us a non-exclusive license to display it
 
@@ -292,24 +292,24 @@ Welcome to The Providence! By accessing and using our platform, you agree to be 
     - Disputes will be resolved through peaceful dialogue first
 
 12. Contact Information
-    - For questions: contact@theprovidence.org
+    - For questions: contact@theMylifetoday.org
     - WhatsApp: ${SOCIAL_LINKS.whatsapp}
     - Response time: 2-3 business days
 
 Thank you for being part of our community. Together, we build a space of wisdom, health, and faith.`,
-    
-    rw: `Amategeko yo Gukoresha Urubuga rwa Providence
+
+    rw: `Amategeko yo Gukoresha Urubuga rwa Mylifetoday
 
 Iheruka Gusubirwamo: ${new Date().toLocaleDateString('rw-RW', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Murakaza neza kuri Providence! Mukoresha urubuga rwacu, mwemera kubahiriza aya mategeko.
+Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya mategeko.
 
 1. Kwemera Amategeko
    - Ukoresha urubuga, porogaramu, cyangwa serivisi zacu, wemeye aya mategeko.
    - Utemera icyo ari cyo cyose, reka gukoresha ako kanya.
 
 2. Ibyo Serivisi Zacu Zitanga
-   - Providence itanga ibyigisho by'ubuhanuzi, ubuzima, n'inama z'ubuzima.
+   - Mylifetoday itanga ibyigisho by'ubuhanuzi, ubuzima, n'inama z'ubuzima.
    - Dufite uburenganzira bwo guhindura cyangwa guhagarika serivisi igihe icyo ari cyo.
 
 3. Inshingano z'Umukoresha
@@ -320,7 +320,7 @@ Murakaza neza kuri Providence! Mukoresha urubuga rwacu, mwemera kubahiriza aya m
    - Ntugerageze kurimbura umutekano w'urubuga
 
 4. Uburenganzira bw'Ibirimo
-   - Byose biri kuri Providence ni ibyacu
+   - Byose biri kuri Mylifetoday ni ibyacu
    - Abakoresha bafite uburenganzira ku bitekerezo byabo
    - Ukandika ibintu, uduha uruhushya rwo kubigaragaza
 
@@ -331,7 +331,7 @@ Murakaza neza kuri Providence! Mukoresha urubuga rwacu, mwemera kubahiriza aya m
    - Ntitwabazwa n'ibyemezo by'ubuzima byakozwe hakurikijwe ibyacu
 
 6. Iby'Ubwizigirwa
-   - Ibiri kuri Providence birangwa n'ubwizigirwa bwa Bibiliya
+   - Ibiri kuri Mylifetoday birangwa n'ubwizigirwa bwa Bibiliya
    - Tubahiriza ibyemezo byose ariko turacyakomeje ku byacu
    - Ibiri hano bishobora kutahura n'ibindi byemezo
 
@@ -361,24 +361,24 @@ Murakaza neza kuri Providence! Mukoresha urubuga rwacu, mwemera kubahiriza aya m
     - Amakimbirane agarurwa mu mvugo mbere
 
 12. Amakuru yo Kutwandikira
-    - Ibibazo: contact@theprovidence.org
+    - Ibibazo: contact@theMylifetoday.org
     - WhatsApp: ${SOCIAL_LINKS.whatsapp}
     - Isaha yo gusubiza: iminsi 2-3 y'akazi
 
 Murakoze kuba mu muryango wacu. Hamwe, dushyiraho ahantu h'ubwenge, ubuzima n'ukwizera.`,
-    
-    sw: `Sheria za Huduma za Mtandao wa Digital wa Providence
+
+    sw: `Sheria za Huduma za Mtandao wa Digital wa Mylifetoday
 
 Ilisasishwa Mwisho: ${new Date().toLocaleDateString('sw-KE', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Karibu kwenye Providence! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria hizi za Huduma.
+Karibu kwenye Mylifetoday! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria hizi za Huduma.
 
 1. Kukubali Sheria
    - Kwa kutumia tovuti, programu, au huduma zetu, unakubali Sheria hizi.
    - Ukikataa sehemu yoyote, tafadhali acha kutumia mara moja.
 
 2. Maelezo ya Huduma
-   - Providence inatoa maudhui ya kiuhakika yanayounganisha hekima ya Biblia, maelezo ya afya, na mwongozo wa vitendo wa maisha.
+   - Mylifetoday inatoa maudhui ya kiuhakika yanayounganisha hekima ya Biblia, maelezo ya afya, na mwongozo wa vitendo wa maisha.
    - Tunahifadhi haki ya kurekebisha au kusitisha huduma wakati wowote.
 
 3. Majukumu ya Mtumiaji
@@ -389,7 +389,7 @@ Karibu kwenye Providence! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria h
    - Usijaribu kudhoofisha usalama wa jukwaa
 
 4. Umiliki wa Maudhui
-   - Maudhui yote ya kiuhakika ni mali ya Mtandao wa Digital wa Providence
+   - Maudhui yote ya kiuhakika ni mali ya Mtandao wa Digital wa Mylifetoday
    - Watumiaji wanahifadhi haki za maoni na michango yao
    - Kwa kuchapisha maudhui, unatupa leseni isiyo ya kipekee ya kuionyesha
 
@@ -430,24 +430,24 @@ Karibu kwenye Providence! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria h
     - Migogoro itatatuliwa kwa mazungumzo ya amani kwanza
 
 12. Maelezo ya Mawasiliano
-    - Kwa maswali: contact@theprovidence.org
+    - Kwa maswali: contact@theMylifetoday.org
     - WhatsApp: ${SOCIAL_LINKS.whatsapp}
     - Muda wa kujibu: siku 2-3 za kazi
 
 Asante kwa kuwa sehemu ya jumuiya yetu. Pamoja, tunaunda nafasi ya hekima, afya na imani.`,
-    
-    fr: `Conditions d'Utilisation du Réseau Numérique The Providence
+
+    fr: `Conditions d'Utilisation du Réseau Numérique The Mylifetoday
 
 Dernière mise à jour: ${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Bienvenue sur The Providence ! En accédant et en utilisant notre plateforme, vous acceptez d'être lié par ces Conditions d'Utilisation.
+Bienvenue sur The Mylifetoday ! En accédant et en utilisant notre plateforme, vous acceptez d'être lié par ces Conditions d'Utilisation.
 
 1. Acceptation des Conditions
    - En utilisant notre site web, applications mobiles ou services, vous acceptez ces Conditions.
    - Si vous n'êtes pas d'accord avec une partie, veuillez cesser immédiatement toute utilisation.
 
 2. Description du Service
-   - The Providence fournit du contenu éditorial combinant sagesse biblique, conseils de santé et guide de vie pratique.
+   - The Mylifetoday fournit du contenu éditorial combinant sagesse biblique, conseils de santé et guide de vie pratique.
    - Nous nous réservons le droit de modifier ou d'interrompre les services à tout moment.
 
 3. Responsabilités de l'Utilisateur
@@ -458,7 +458,7 @@ Bienvenue sur The Providence ! En accédant et en utilisant notre plateforme, vo
    - Ne pas tenter de compromettre la sécurité de la plateforme
 
 4. Propriété du Contenu
-   - Tout le contenu éditorial appartient à The Providence Digital Network
+   - Tout le contenu éditorial appartient à The Mylifetoday Digital Network
    - Les utilisateurs conservent les droits sur leurs commentaires et contributions
    - En publiant du contenu, vous nous accordez une licence non exclusive pour l'afficher
 
@@ -499,7 +499,7 @@ Bienvenue sur The Providence ! En accédant et en utilisant notre plateforme, vo
     - Les différends seront résolus d'abord par le dialogue pacifique
 
 12. Informations de Contact
-    - Pour les questions : contact@theprovidence.org
+    - Pour les questions : contact@theMylifetoday.org
     - WhatsApp : ${SOCIAL_LINKS.whatsapp}
     - Délai de réponse : 2-3 jours ouvrables
 
@@ -582,7 +582,7 @@ const baseArticles: Article[] = [
       fr: 'Philippiens 4:6-7 - Ne vous inquiétez de rien...'
     },
     teaching: {
-      en: 'God invites us to trade our anxiety for His supernatural peace through prayer and total reliance on His providence.',
+      en: 'God invites us to trade our anxiety for His supernatural peace through prayer and total reliance on His Mylifetoday.',
       rw: 'Imana iduhamagarira guhara imihangayiko yacu tukayakira amahoro yayo binyuze mu masengesho.',
       sw: 'Mungu anatualika kubadilisha wasiwasi wetu kwa amani yake ya ajabu kupitia maombi.',
       fr: 'Dieu nous invite à échanger notre anxiété contre sa paix surnaturelle par la prière.'

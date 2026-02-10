@@ -18,7 +18,7 @@ import "react-quill-new/dist/quill.snow.css";
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [email, setEmail] = useState('admin@providence.com');
+  const [email, setEmail] = useState('admin@Mylifetoday.com');
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [articles, setArticles] = useState([]);
@@ -126,11 +126,11 @@ const AdminDashboard = () => {
       toast.success('Welcome to Admin Dashboard!');
     } catch (firebaseError) {
       // Fallback for development
-      if (email === 'admin@providence.com' && password === 'admin123') {
+      if (email === 'admin@Mylifetoday.com' && password === 'admin123') {
         setIsAuthenticated(true);
         toast.success('Welcome to Admin Dashboard! (Development Mode)');
       } else {
-        setError('Invalid credentials. Use admin@providence.com / admin123');
+        setError('Invalid credentials. Use admin@Mylifetoday.com / admin123');
         toast.error('Login failed');
       }
     } finally {
@@ -326,7 +326,7 @@ const AdminDashboard = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl mb-4">
               <Shield className="text-white" size={32} />
             </div>
-            <h1 className="text-3xl font-black text-white mb-2">PROVIDENCE</h1>
+            <h1 className="text-3xl font-black text-white mb-2">Mylifetoday</h1>
             <p className="text-gray-400">Admin Dashboard</p>
           </div>
 
@@ -341,7 +341,7 @@ const AdminDashboard = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                    placeholder="admin@providence.com"
+                    placeholder="admin@Mylifetoday.com"
                     required
                   />
                 </div>
@@ -387,7 +387,7 @@ const AdminDashboard = () => {
               </button>
 
               <p className="text-center text-gray-500 text-sm">
-                Demo: admin@providence.com / admin123
+                Demo: admin@Mylifetoday.com / admin123
               </p>
             </div>
           </form>
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">The Providence</h1>
+              <h1 className="text-xl font-bold text-gray-900">The Mylifetoday</h1>
               <p className="text-sm text-gray-500">Admin Dashboard</p>
             </div>
           </div>
