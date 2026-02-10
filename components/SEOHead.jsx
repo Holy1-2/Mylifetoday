@@ -6,7 +6,7 @@ const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) =>
   const siteName = "Kubana n’Imana Buri Munsi";
   const siteUrl = "https://kubananimanaburimunsi.vercel.app";
 
-  const defaultTitle = "Kubana n’Imana Buri Munsi – Ubwenge bwa Bibiliya & Ubuzima bwa buri munsi";
+  const defaultTitle = "Kubana n’Imana Buri Munsi – & Ubuzima bwa buri munsi";
   const defaultDesc =
     "Inyigisho n’ubuyobozi bushingiye ku Ijambo ry’Imana ku buzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y’umutima, n’iterambere mu by’umwuka.";
   const defaultKeywords =

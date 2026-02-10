@@ -1,19 +1,18 @@
 import React, { useState, useEffect, createContext, useContext, useMemo, useCallback } from 'react';
 import {
-  Menu, X, Search, Heart, Briefcase,
-  Smartphone, Users, Globe, BookOpen, Sun,
-  Send, Share2, ChevronRight, ArrowLeft, Clock,
-  ChevronLeft, LayoutGrid, Newspaper, User, Hash, ExternalLink,
-  MessageCircle, Shield, FileText, Info, Activity, Leaf, Pill, Apple,
+  Menu, X, Search, Heart, Briefcase, Download, Upload,
+  Smartphone, Users, Globe, BookOpen, Sun, Filter, Calendar,
+  Send, Share2, ChevronRight, ArrowLeft, Clock, Bookmark, BookmarkCheck,
+  ChevronLeft, LayoutGrid, Newspaper, User, Hash, ExternalLink, Eye,
+  MessageCircle, Shield, FileText, Info, Activity, Leaf, Pill, Apple, Settings,
   TrendingUp, Home, DollarSign, Heart as HeartIcon, Brain, Cpu, Users as UsersIcon, Sparkles,
-  LogIn, LogOut, Plus, Edit, Trash2, BarChart, Settings, Eye, Download, Upload,
-  Filter, Calendar, Tag, Bookmark, BookmarkCheck, Copy, Check, Loader2, Send as SendIcon
+  LogIn, LogOut, Plus, Edit, Trash2, BarChart, Wallet, HandHeart,
+  Tag, Copy, Check, Loader2, Send as SendIcon, Mail
 } from 'lucide-react';
-import { Article, Category, Language, Comment } from './types';
-import { TRANSLATIONS, LANGUAGES } from './constants';
-import { getArticles, getArticleById, searchArticles, addSubscription, getCategories, getArticlesByCategory } from './services/firebaseService';
+import { Article, Category, Language, Comment, DonationStats } from './types';
+import { TRANSLATIONS, LANGUAGES, DONATION, SOCIAL_LINKS, LEGAL, INITIAL_DONATION_STATS } from './constants';
+import { getArticles, getArticleById, searchArticles, addSubscription, getCategories, getArticlesByCategory, incrementArticleViews, addComment, getCommentsByArticle } from './services/firebaseService';
 import SEOHead from './components/SEOHead';
-import AdminDashboard from './components/AdminDashboard';
 import SafeHTMLRenderer from './components/SafeHTMLRenderer';
 import ArticleContent from './components/ArticleContent';
 import { debounce } from 'lodash';
@@ -26,7 +25,7 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-  lang: 'en',
+  lang: 'rw',
   setLang: () => { },
   t: () => '',
 });
@@ -40,94 +39,29 @@ const AuthContext = createContext<{
   login: async () => { },
   logout: () => { },
 });
+
 const getCategoryIcon = (category: Category) => {
   switch (category) {
     case 'tech':
       return <Cpu />;
     case 'mental_health':
-      return <Heart />;
+      return <HeartIcon />;
     case 'health':
-      return <DollarSign />;
+      return <Activity />;
     case 'relationships':
-      return <Globe />;
+      return <Heart />;
     case 'daily_life':
-      return <BookOpen />;
-    case 'hope':  
-      return <Leaf />;
+      return <Home />;
+    case 'hope':
+      return <Sparkles />;
+    case 'money_work':
+      return <DollarSign />;
+    case 'society':
+      return <UsersIcon />;
     default:
       return <FileText />;
   }
 };
-// --- Skeleton Loaders ---
-const ArticleCardSkeleton: React.FC<{ type?: 'big' | 'small' | 'grid' }> = ({ type = 'big' }) => {
-  if (type === 'big') {
-    return (
-      <div className="border-b border-black/10 pb-8 mb-8 animate-pulse">
-        <div className="aspect-video bg-gray-200 mb-4"></div>
-        <div className="h-4 bg-gray-200 w-32 mb-2"></div>
-        <div className="h-8 bg-gray-200 w-3/4 mb-4"></div>
-        <div className="space-y-2">
-          <div className="h-4 bg-gray-200 w-full"></div>
-          <div className="h-4 bg-gray-200 w-5/6"></div>
-          <div className="h-4 bg-gray-200 w-4/6"></div>
-        </div>
-        <div className="flex items-center gap-4 mt-6">
-          <div className="h-3 bg-gray-200 w-24"></div>
-          <div className="h-3 bg-gray-200 w-20"></div>
-          <div className="h-3 bg-gray-200 w-16"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (type === 'grid') {
-    return (
-      <div className="group cursor-pointer animate-pulse">
-        <div className="w-full aspect-square bg-gray-200 mb-4"></div>
-        <div className="h-3 bg-gray-200 w-20 mb-2"></div>
-        <div className="h-6 bg-gray-200 w-full mb-2"></div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="group cursor-pointer flex gap-6 mb-6 pb-6 border-b border-black/10 animate-pulse">
-      <div className="w-32 h-32 flex-shrink-0 bg-gray-200"></div>
-      <div className="flex flex-col flex-1">
-        <div className="h-3 bg-gray-200 w-20 mb-2"></div>
-        <div className="h-5 bg-gray-200 w-full mb-2"></div>
-        <div className="h-3 bg-gray-200 w-32 mt-auto"></div>
-      </div>
-    </div>
-  );
-};
-
-const CategorySkeleton: React.FC = () => (
-  <div className="space-y-2 animate-pulse">
-    {[...Array(8)].map((_, i) => (
-      <div key={i} className="p-3 bg-gray-100">
-        <div className="h-4 bg-gray-200"></div>
-      </div>
-    ))}
-  </div>
-);
-
-// --- Empty State Components ---
-const EmptyState: React.FC<{
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  action?: React.ReactNode;
-}> = ({ icon, title, description, action }) => (
-  <div className="text-center py-20">
-    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
-      {icon}
-    </div>
-    <h3 className="text-2xl font-bold mb-3">{title}</h3>
-    <p className="text-gray-600 max-w-md mx-auto mb-6">{description}</p>
-    {action}
-  </div>
-);
 
 // --- Enhanced UI Components ---
 const Button: React.FC<{
@@ -164,125 +98,114 @@ const Button: React.FC<{
   );
 };
 
-const EnhancedSearchBar: React.FC<{
-  onSearch: (term: string) => void;
-  onClear: () => void;
-  loading?: boolean;
-}> = ({ onSearch, onClear, loading = false }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+// --- Modern News Grid Components ---
+const ArticleGridCard: React.FC<{
+  article: Article;
+  onClick: (a: Article) => void;
+  bookmarked?: boolean;
+  onToggleBookmark?: (id: string) => void;
+  layout?: 'standard' | 'featured' | 'compact';
+}> = ({ article, onClick, bookmarked = false, onToggleBookmark, layout = 'standard' }) => {
   const { lang } = useContext(LanguageContext);
-  const [copied, setCopied] = useState(false);
 
-  const debouncedSearch = useCallback(
-    debounce((term: string) => {
-      if (term.trim()) {
-        onSearch(term);
-      }
-    }, 300),
-    [onSearch]
-  );
-
-  useEffect(() => {
-    return () => debouncedSearch.cancel();
-  }, [debouncedSearch]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    if (value.trim()) {
-      debouncedSearch(value);
-    } else {
-      onClear();
-    }
-  };
-
-  const handleClear = () => {
-    setSearchTerm('');
-    onClear();
-  };
-
-  const handleShareSearch = async () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('search', searchTerm);
-    const url = `${window.location.origin}${window.location.pathname}?${searchParams.toString()}`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Search results for "${searchTerm}"`,
-          text: `Check out these articles about "${searchTerm}"`,
-          url,
-        });
-      } catch (err) {
-        // User cancelled share
-      }
-    } else {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  return (
-    <div className="relative max-w-2xl mx-auto">
-      <div className="relative">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleChange}
-          placeholder={TRANSLATIONS.ui.searchPlaceholder[lang]}
-          className="w-full p-4 pl-12 pr-32 border-2 border-black rounded-none focus:outline-none focus:border-red-600"
-          disabled={loading}
-        />
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-        
-        {searchTerm && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-            {loading ? (
-              <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-            ) : (
-              <>
-                <button
-                  onClick={handleShareSearch}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  title="Share search results"
-                >
-                  {copied ? <Check size={16} className="text-green-600" /> : <Share2 size={16} />}
-                </button>
-                <button
-                  onClick={handleClear}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  title="Clear search"
-                >
-                  <X size={16} />
-                </button>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-      
-      {searchTerm && !loading && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 shadow-lg z-10 p-2 text-xs">
-          <div className="flex items-center justify-between text-gray-500 px-2 py-1">
-            <span>Press Enter to search</span>
-            <span>Esc to clear</span>
+  if (layout === 'compact') {
+    return (
+      <div className="group cursor-pointer" onClick={() => onClick(article)}>
+        <div className="aspect-[4/3] overflow-hidden mb-3 relative rounded-lg">
+          <img
+            src={article.image}
+            alt={article.title[lang]}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleBookmark?.(article.id);
+            }}
+            className="absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
+          >
+            {bookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+          </button>
+        </div>
+        <div className="space-y-2">
+          <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest">
+            {TRANSLATIONS.categories[article.category][lang]}
+          </span>
+          <h5 className="font-bold leading-tight line-clamp-2 group-hover:underline">{article.title[lang]}</h5>
+          <div className="flex items-center justify-between text-[10px] text-gray-500">
+            <span>{article.date}</span>
+            <span className="flex items-center gap-1">
+              <Eye size={10} /> {article.views || 0}
+            </span>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="group cursor-pointer bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300" onClick={() => onClick(article)}>
+      <div className="relative overflow-hidden aspect-[16/9]">
+        <img
+          src={article.image}
+          alt={article.title[lang]}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleBookmark?.(article.id);
+          }}
+          className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
+        >
+          {bookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+        </button>
+        <div className="absolute bottom-4 left-4 right-4">
+          <span className="inline-block px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-2">
+            {TRANSLATIONS.categories[article.category][lang]}
+          </span>
+          <h3 className="text-white font-bold text-lg leading-tight line-clamp-2 drop-shadow-lg">
+            {article.title[lang]}
+          </h3>
+        </div>
+      </div>
+      <div className="p-6">
+        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+          <SafeHTMLRenderer html={article.situation[lang]} />
+        </p>
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center gap-3">
+            <span className="font-medium">{article.editor}</span>
+            <span>•</span>
+            <span>{article.date}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Eye size={12} />
+            <span>{article.views || 0}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
+// --- Share Modal Component ---
+const ShareModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  article: Article | null;
+}> = ({ isOpen, onClose, article }) => {
   const { lang } = useContext(LanguageContext);
   const [copied, setCopied] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   const shareOptions = [
     {
       name: 'Copy Link',
-      icon: <Copy size={16} />,
+      icon: <Copy size={20} />,
       action: async () => {
         await navigator.clipboard.writeText(window.location.href);
         setCopied(true);
@@ -290,276 +213,461 @@ const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
       }
     },
     {
-      name: 'Share to Facebook',
-      icon: <Share2 size={16} />,
+      name: 'Facebook',
+      icon: <Share2 size={20} />,
       action: () => {
         const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
         window.open(url, '_blank', 'width=600,height=400');
       }
     },
     {
-      name: 'Share to Twitter',
-      icon: <Share2 size={16} />,
+      name: 'Twitter',
+      icon: <Share2 size={20} />,
       action: () => {
-        const text = encodeURIComponent(`"${article.title[lang]}" - ${TRANSLATIONS.siteName[lang]}`);
+        const text = encodeURIComponent(`"${article?.title[lang]}" - ${TRANSLATIONS.siteName[lang]}`);
         const url = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(window.location.href)}`;
         window.open(url, '_blank', 'width=600,height=400');
       }
     },
     {
-      name: 'Share via Email',
-      icon: <Send size={16} />,
+      name: 'WhatsApp',
+      icon: <MessageCircle size={20} />,
       action: () => {
-        const subject = encodeURIComponent(article.title[lang]);
+        const text = `${article?.title[lang]} - ${TRANSLATIONS.siteName[lang]}\n\n${window.location.href}`;
+        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+      }
+    },
+    {
+      name: 'Email',
+      icon: <Mail size={20} />,
+      action: () => {
+        const subject = encodeURIComponent(article?.title[lang] || '');
         const body = encodeURIComponent(`Check out this article: ${window.location.href}`);
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
     }
   ];
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: article.title[lang],
-          text: article.situation[lang],
-          url: window.location.href,
-        });
-      } catch (err) {
-        // User cancelled share
-      }
-    }
-  };
+  if (!isOpen) return null;
 
   return (
-    <div className="relative">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={navigator.share ? handleNativeShare : () => setShowMenu(!showMenu)}
-        className="group"
-      >
-        {copied ? (
-          <>
-            <Check size={16} className="text-green-600" />
-            Copied!
-          </>
-        ) : (
-          <>
-            <Share2 size={16} />
-            {TRANSLATIONS.ui.share[lang]}
-          </>
-        )}
-      </Button>
-      
-      {showMenu && !navigator.share && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md z-50 animate-in slide-in-from-top">
-          {shareOptions.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                option.action();
-                setShowMenu(false);
-              }}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm"
-            >
-              {option.icon}
-              {option.name}
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 animate-in zoom-in duration-300">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold">Share Article</h3>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+              <X size={20} />
             </button>
-          ))}
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {shareOptions.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  option.action();
+                  onClose();
+                }}
+                className="flex flex-col items-center gap-2 p-4 hover:bg-gray-50 rounded-xl transition-colors"
+              >
+                <div className="p-3 bg-gray-100 rounded-full">
+                  {option.icon}
+                </div>
+                <span className="text-sm font-medium">{option.name}</span>
+              </button>
+            ))}
+          </div>
+
+          {copied && (
+            <div className="bg-green-50 text-green-700 p-3 rounded-lg text-center text-sm">
+              Link copied to clipboard!
+            </div>
+          )}
+
+          {article?.whatsappGroup && (
+            <div className="mt-4 pt-4 border-t">
+              <a
+                href={article.whatsappGroup}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <MessageCircle size={20} />
+                Join WhatsApp Discussion
+              </a>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-// --- Category Navigation ---
-const CategoryNavigation: React.FC<{
-  categories: Category[];
-  activeCategory: Category | null;
-  onCategorySelect: (category: Category | null) => void;
-  articleCounts: Record<Category, number>;
-}> = ({ categories, activeCategory, onCategorySelect, articleCounts }) => {
+// --- Enhanced Search Bar ---
+const GlobalSearchBar: React.FC<{
+  onSearch: (term: string) => void;
+  onClear: () => void;
+  loading?: boolean;
+  value?: string;
+}> = ({ onSearch, onClear, loading = false, value = '' }) => {
   const { lang } = useContext(LanguageContext);
-  const [viewAll, setViewAll] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(value);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
-  const displayedCategories = viewAll ? categories : categories.slice(0, 6);
+  const debouncedSearch = useCallback(
+    debounce((term: string) => {
+      if (term.trim()) {
+        onSearch(term);
+      }
+    }, 500),
+    [onSearch]
+  );
+
+  useEffect(() => {
+    return () => debouncedSearch.cancel();
+  }, [debouncedSearch]);
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      onSearch(searchTerm);
+    } else {
+      onClear();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    } else if (e.key === 'Escape') {
+      handleClear();
+    }
+  };
+
+  const handleClear = () => {
+    setSearchTerm('');
+    setSelectedCategory(null);
+    onClear();
+  };
 
   return (
-    <div className="mb-12">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-black uppercase tracking-tighter">Browse Categories</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setViewAll(!viewAll)}
-          className="text-xs"
-        >
-          {viewAll ? 'Show Less' : 'View All'} <ChevronRight size={14} />
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <button
-          onClick={() => onCategorySelect(null)}
-          className={`p-4 border-2 flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === null ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
-        >
-          <LayoutGrid size={20} />
-          <span className="text-xs font-bold uppercase">All</span>
-          <span className="text-xs opacity-60">{Object.values(articleCounts).reduce((a, b) => a + b, 0)}</span>
-        </button>
-        
-        {displayedCategories.map(category => (
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="relative">
+        <div className="flex gap-2">
+          <div className="flex-1 relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchTerm(value);
+                debouncedSearch(value);
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder={TRANSLATIONS.ui.searchPlaceholder[lang]}
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-red-600 focus:shadow-lg transition-all"
+            />
+            {searchTerm && (
+              <button
+                onClick={handleClear}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
           <button
-            key={category}
-            onClick={() => onCategorySelect(category)}
-            className={`p-4 border-2 flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === category ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
+            onClick={() => setShowFilters(!showFilters)}
+            className="px-4 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-colors"
           >
-            {getCategoryIcon(category)}
-            <span className="text-xs font-bold uppercase text-center">
-              {TRANSLATIONS.categories[category][lang]}
-            </span>
-            <span className="text-xs opacity-60">{articleCounts[category] || 0}</span>
+            <Filter size={20} />
           </button>
+          <Button onClick={handleSearch} loading={loading}>
+            {loading ? 'Searching...' : 'Search'}
+          </Button>
+        </div>
+
+        {showFilters && (
+          <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-lg p-4 z-10 animate-in slide-in-from-top">
+            <div className="mb-3">
+              <label className="text-sm font-medium mb-2 block">Filter by Category</label>
+              <div className="flex flex-wrap gap-2">
+                {Object.values(Category).map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${selectedCategory === cat
+                        ? 'bg-red-600 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                  >
+                    {TRANSLATIONS.categories[cat][lang]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// --- Donation Page Component ---
+const DonationPage: React.FC<{ stats: DonationStats }> = ({ stats }) => {
+  const { lang } = useContext(LanguageContext);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const percentage = Math.min(100, Math.floor((stats.current / stats.goal) * 100));
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const paymentMethods = [
+    {
+      id: 'momo',
+      name: 'Mobile Money (MTN)',
+      account: '0788123456',
+      owner: 'TOPRAY Digital Network',
+      icon: <Smartphone className="text-yellow-500" />
+    },
+    {
+      id: 'bank',
+      name: 'Bank of Kigali (BK)',
+      account: '00011-2223344-55',
+      owner: 'TOPRAY Digital Network',
+      icon: <Wallet className="text-blue-600" />
+    }
+  ];
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-16 animate-in fade-in duration-500">
+      <div className="text-center mb-16">
+        <HandHeart size={64} className="mx-auto mb-6 text-red-600" />
+        <h1 className="text-5xl font-black uppercase tracking-tighter mb-4">{TRANSLATIONS.ui.donate[lang]}</h1>
+        <p className="text-xl text-gray-500 font-serif italic max-w-2xl mx-auto">
+          "Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver." — 2 Corinthians 9:7
+        </p>
+      </div>
+
+      {/* Progress Section */}
+      <div className="bg-[#f9f9f9] p-10 border-2 border-black mb-16">
+        <div className="flex justify-between items-end mb-4">
+          <div>
+            <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">{TRANSLATIONS.ui.donationGoal[lang]}</h3>
+            <p className="text-4xl font-black">{stats.current.toLocaleString()} / {stats.goal.toLocaleString()} FRW</p>
+          </div>
+          <span className="text-5xl font-black opacity-10">{percentage}%</span>
+        </div>
+        <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden border border-black/5">
+          <div
+            className="h-full bg-black transition-all duration-1000 ease-out"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+        <p className="mt-6 text-sm text-gray-600 font-medium">
+          Purpose: Funding our monthly server costs, health awareness campaigns, and providing Bible study materials to local communities.
+        </p>
+      </div>
+
+      {/* Payment Details */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {paymentMethods.map(method => (
+          <div key={method.id} className="border-2 border-black p-8 relative overflow-hidden group">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-gray-100 rounded-lg">{method.icon}</div>
+              <h4 className="text-xl font-bold">{method.name}</h4>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Account Number</p>
+                <p className="text-2xl font-mono font-bold tracking-tighter">{method.account}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Account Name</p>
+                <p className="text-lg font-bold">{method.owner}</p>
+              </div>
+              <button
+                onClick={() => copyToClipboard(method.account, method.id)}
+                className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all"
+              >
+                {copied === method.id ? <><Check size={16} /> {TRANSLATIONS.ui.copied[lang]}</> : <><Copy size={16} /> {TRANSLATIONS.ui.copy[lang]}</>}
+              </button>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 };
 
-// --- Enhanced Article Card ---
-const EnhancedArticleCard: React.FC<{
-  article: Article;
-  onClick: (a: Article) => void;
-  variant?: 'big' | 'small' | 'grid';
-  showCategory?: boolean;
-  showMetadata?: boolean;
-}> = ({ article, onClick, variant = 'grid', showCategory = true, showMetadata = true }) => {
+// --- Health Page Component ---
+const HealthPage: React.FC<{ articles: Article[] }> = ({ articles }) => {
   const { lang } = useContext(LanguageContext);
-  const [bookmarked, setBookmarked] = useState(false);
+  const healthArticles = articles.filter(a => a.category === 'health');
 
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setBookmarked(!bookmarked);
-    // TODO: Implement bookmark storage
-  };
-
-  if (variant === 'big') {
-    return (
-      <div className="group cursor-pointer border-b border-black/10 pb-8 mb-8" onClick={() => onClick(article)}>
-        <div className="aspect-video overflow-hidden mb-4 relative">
-          <img
-            src={article.image}
-            alt={article.title[lang]}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            loading="lazy"
-          />
-          <button
-            onClick={handleBookmark}
-            className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
-          >
-            {bookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
-          </button>
-        </div>
-        {showCategory && (
-          <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-2 block">
-            {TRANSLATIONS.categories[article.category][lang]}
-          </span>
-        )}
-        <h3 className="text-3xl md:text-5xl font-bold leading-none tracking-tight group-hover:underline mb-4">
-          {article.title[lang]}
-        </h3>
-        <p className="text-[#555] text-lg leading-relaxed line-clamp-3 mb-6">
-          <SafeHTMLRenderer html={article.situation[lang]} />
-        </p>
-        {showMetadata && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[#999]">
-              <span>By {article.editor}</span>
-              <span>•</span>
-              <span>{article.date}</span>
-              <span>•</span>
-              <span>{article.views || 0} views</span>
-            </div>
-            <ShareMenu article={article} />
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (variant === 'small') {
-    return (
-      <div className="group cursor-pointer flex gap-6 mb-6 pb-6 border-b border-black/10" onClick={() => onClick(article)}>
-        <div className="w-32 h-32 flex-shrink-0 overflow-hidden relative">
-          <img
-            src={article.image}
-            alt={article.title[lang]}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
-          />
-        </div>
-        <div className="flex flex-col flex-1">
-          {showCategory && (
-            <span className="text-[9px] font-bold text-red-600 uppercase tracking-widest mb-1">
-              {TRANSLATIONS.categories[article.category][lang]}
-            </span>
-          )}
-          <h4 className="text-lg font-bold leading-tight group-hover:underline mb-2">{article.title[lang]}</h4>
-          <p className="text-sm text-gray-600 line-clamp-2 mb-2 flex-1">
-            <SafeHTMLRenderer html={article.situation[lang]} />
-          </p>
-          <div className="flex items-center justify-between mt-auto">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-[#999]">{article.date}</span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onClick(article);
-              }}
-              className="text-[10px] font-bold uppercase tracking-widest hover:text-red-600 transition-colors"
-            >
-              Read →
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Grid variant
   return (
-    <div className="group cursor-pointer" onClick={() => onClick(article)}>
-      <div className="aspect-square overflow-hidden mb-4 relative">
-        <img
-          src={article.image}
-          alt={article.title[lang]}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <button
-          onClick={handleBookmark}
-          className="absolute top-3 right-3 p-1.5 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
-        >
-          {bookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-        </button>
-        <span className="absolute bottom-3 left-3 text-[10px] font-bold text-white uppercase tracking-widest bg-black/80 px-2 py-1">
-          {TRANSLATIONS.categories[article.category][lang]}
-        </span>
+    <div className="max-w-7xl mx-auto px-4 py-12 animate-in fade-in duration-500">
+      <div className="border-b-4 border-black pb-4 mb-12 flex justify-between items-end">
+        <h1 className="text-6xl font-black uppercase tracking-tighter">Health & Wellness</h1>
+        <p className="text-lg font-bold text-gray-400 italic">Natural, Biblical Healing for Life</p>
       </div>
-      <h5 className="font-bold leading-tight group-hover:underline mb-1">{article.title[lang]}</h5>
-      <div className="flex items-center justify-between text-[10px] text-gray-500">
-        <span>{article.date}</span>
-        <span>{article.views || 0} views</span>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="lg:col-span-8 space-y-12">
+          {healthArticles.slice(0, 3).map(a => (
+            <div key={a.id} className="border-b-2 border-black pb-12">
+              <div className="flex flex-col md:flex-row gap-8">
+                <img src={a.image} className="w-full md:w-1/2 aspect-video object-cover rounded-xl" alt="" />
+                <div>
+                  <h3 className="text-3xl font-bold mb-4">{a.title[lang]}</h3>
+                  <p className="text-lg text-gray-600 mb-6 italic">"{a.situation[lang]}"</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-[#f0f9f0] p-4 rounded-lg">
+                      <h5 className="text-xs font-bold uppercase mb-2 flex items-center gap-2"><Apple size={14} className="text-green-600" /> Hack</h5>
+                      <ul className="text-xs space-y-1">
+                        {a.healthHacks?.map((h, i) => <li key={i}>• {h}</li>)}
+                      </ul>
+                    </div>
+                    <div className="bg-[#fff9f0] p-4 rounded-lg">
+                      <h5 className="text-xs font-bold uppercase mb-2 flex items-center gap-2"><Leaf size={14} className="text-orange-600" /> Herbal</h5>
+                      <ul className="text-xs space-y-1">
+                        {a.herbalRemedies?.map((h, i) => <li key={i}>• {h}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="lg:col-span-4">
+          <div className="bg-black text-white p-8 rounded-xl">
+            <h4 className="text-2xl font-bold mb-6 flex items-center gap-2"><Activity /> Health Wisdom</h4>
+            <div className="space-y-6">
+              <div className="border-b border-white/20 pb-4">
+                <p className="text-sm font-bold uppercase text-gray-400 mb-2">Did you know?</p>
+                <p className="text-lg font-serif">A 20-minute walk after lunch can lower blood sugar spikes by 22%.</p>
+              </div>
+              <div className="border-b border-white/20 pb-4">
+                <p className="text-sm font-bold uppercase text-gray-400 mb-2">Biblical Insight</p>
+                <p className="text-lg font-serif italic">"Honey is good for the soul and health for the body." - Proverbs</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-// --- Main App ---
+// --- Admin Dashboard Component ---
+const AdminDashboard: React.FC<{
+  donationStats: DonationStats,
+  onUpdateDonation: (val: number) => void
+}> = ({ donationStats, onUpdateDonation }) => {
+  const [pass, setPass] = useState("");
+  const [isAuth, setIsAuth] = useState(false);
+  const [tempAmount, setTempAmount] = useState(donationStats.current);
+
+  if (!isAuth) {
+    return (
+      <div className="max-w-md mx-auto py-20 px-4 text-center">
+        <h2 className="text-2xl font-bold mb-6">Editorial Login</h2>
+        <input
+          type="password"
+          placeholder="Access Key"
+          className="w-full p-3 border-2 border-black mb-4 outline-none rounded-lg"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+        />
+        <Button onClick={() => pass === "topray_admin" && setIsAuth(true)} className="w-full">Unlock Dashboard</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-12 animate-in fade-in">
+      <div className="border-b-4 border-black pb-4 mb-12 flex justify-between items-center">
+        <h1 className="text-4xl font-black uppercase tracking-tighter">Publisher Console</h1>
+        <div className="flex gap-4">
+          <Button variant="outline">New Story</Button>
+          <Button variant="outline">Analytics</Button>
+          <Button onClick={() => setIsAuth(false)} variant="primary">Logout</Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-2 space-y-8">
+          {/* Donation Management */}
+          <div className="bg-white border-4 border-black p-8 rounded-xl">
+            <h3 className="text-xl font-black uppercase tracking-widest mb-6">Financial Campaign Status</h3>
+            <div className="flex flex-col md:flex-row gap-6 items-end">
+              <div className="flex-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Current Amount Collected (FRW)</label>
+                <input
+                  type="number"
+                  value={tempAmount}
+                  onChange={(e) => setTempAmount(Number(e.target.value))}
+                  className="w-full p-4 text-2xl font-bold border-2 border-black outline-none rounded-lg"
+                />
+              </div>
+              <Button onClick={() => onUpdateDonation(tempAmount)} className="h-16 px-10">Update Campaign</Button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-xl font-black uppercase tracking-widest mb-4">Content Library</h3>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="border border-gray-200 p-4 flex justify-between items-center bg-white rounded-lg">
+                <div>
+                  <h4 className="font-bold">Story ID: #234{i}</h4>
+                  <p className="text-sm text-gray-500">Last edited 2 hours ago by Topray</p>
+                </div>
+                <div className="flex gap-2">
+                  <button className="text-blue-600 text-xs font-bold hover:underline">Edit</button>
+                  <button className="text-red-600 text-xs font-bold hover:underline">Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-[#f9f9f9] p-6 space-y-6 self-start rounded-xl">
+          <h5 className="font-bold border-b border-black pb-2">Stats Overview</h5>
+          <div className="flex justify-between"><span>Unique Readers</span><span className="font-bold">4.2k</span></div>
+          <div className="flex justify-between"><span>Daily Shares</span><span className="font-bold">892</span></div>
+          <div className="flex justify-between"><span>Health Tips Views</span><span className="font-bold">1.5k</span></div>
+          <div className="flex justify-between"><span>Donation Reach</span><span className="font-bold">{Math.floor((donationStats.current / donationStats.goal) * 100)}%</span></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Main App Component ---
 export default function App() {
-  const [lang, setLang] = useState<Language>('en');
-  const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms'>('home');
+  const [lang, setLang] = useState<Language>('rw');
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [newCommentAuthor, setNewCommentAuthor] = useState('');
+  const [bookmarks, setBookmarks] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem('bookmarks');
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      return [];
+    }
+  });
+  const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms' | 'donate'>('home');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -572,6 +680,10 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [articleCounts, setArticleCounts] = useState<Record<Category, number>>({} as Record<Category, number>);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [donationStats, setDonationStats] = useState<DonationStats>(INITIAL_DONATION_STATS);
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
 
   // Load articles from Firebase
   useEffect(() => {
@@ -581,7 +693,7 @@ export default function App() {
         const data = await getArticles();
         setArticles(data);
         setFilteredArticles(data);
-        
+
         // Calculate article counts per category
         const counts = {} as Record<Category, number>;
         Object.values(Category).forEach(cat => {
@@ -613,14 +725,26 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     const searchParam = params.get('search');
     const categoryParam = params.get('category');
-    
+    const articleParam = params.get('article');
+
     if (searchParam) {
       setSearchQuery(searchParam);
       handleSearch(searchParam);
     }
-    
+
     if (categoryParam && Object.values(Category).includes(categoryParam as Category)) {
       setActiveCategory(categoryParam as Category);
+    }
+
+    if (articleParam) {
+      (async () => {
+        try {
+          const a = await getArticleById(articleParam);
+          if (a) openArticle(a);
+        } catch (err) {
+          console.error('Failed to open article from URL param', err);
+        }
+      })();
     }
   }, []);
 
@@ -633,7 +757,7 @@ export default function App() {
     setShowSearch(false);
     setActiveCategory(category || null);
     window.scrollTo(0, 0);
-    
+
     // Update URL without page reload
     const params = new URLSearchParams();
     if (category) params.set('category', category);
@@ -654,7 +778,7 @@ export default function App() {
       const results = await searchArticles(searchTerm);
       setSearchResults(results);
       setShowSearch(true);
-      
+
       // Update URL with search parameter
       const params = new URLSearchParams(window.location.search);
       params.set('search', searchTerm);
@@ -670,7 +794,7 @@ export default function App() {
     setSearchResults(null);
     setSearchQuery('');
     setSearchLoading(false);
-    
+
     // Remove search parameter from URL
     const params = new URLSearchParams(window.location.search);
     params.delete('search');
@@ -678,36 +802,94 @@ export default function App() {
   };
 
   const handleSubscribe = async (email: string, name?: string) => {
+    if (!email) {
+      alert("Please enter your email");
+      return;
+    }
+
     try {
+      setLoading(true);
       await addSubscription(email, name);
-      alert('Subscribed successfully!');
+      setSubscribed(true);
+      setEmail("");
     } catch (error) {
-      alert('Subscription failed. Please try again.');
+      alert("Subscription failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
-
-  const getCategoryIcon = (category: Category) => {
-    switch (category) {
-      case Category.DAILY_LIFE: return <Home size={16} />;
-      case Category.MONEY_WORK: return <DollarSign size={16} />;
-      case Category.RELATIONSHIPS: return <HeartIcon size={16} />;
-      case Category.MENTAL_HEALTH: return <Brain size={16} />;
-      case Category.TECH: return <Cpu size={16} />;
-      case Category.SOCIETY: return <UsersIcon size={16} />;
-      case Category.HOPE: return <Sparkles size={16} />;
-      case Category.HEALTH: return <Activity size={16} />;
-      default: return <Newspaper size={16} />;
-    }
-  };
-
-  const featuredArticle = filteredArticles[0];
-  const sidebarArticles = filteredArticles.slice(1, 5);
-  const listArticles = filteredArticles.slice(5, 15);
-  const trendingArticles = filteredArticles.slice(0, 4);
 
   const t = useCallback((key: string): string => {
     return TRANSLATIONS[key]?.[lang] || key;
   }, [lang]);
+
+  const openArticle = useCallback(async (article: Article) => {
+    try {
+      setActiveArticle(article);
+      if (article?.id) {
+        try {
+          const raw = localStorage.getItem('viewedArticles');
+          const viewed = raw ? JSON.parse(raw) : [];
+          if (!viewed.includes(article.id)) {
+            await incrementArticleViews(article.id);
+            viewed.push(article.id);
+            localStorage.setItem('viewedArticles', JSON.stringify(viewed));
+          }
+        } catch (err) {
+          console.error('Failed to increment views:', err);
+        }
+
+        try {
+          const params = new URLSearchParams(window.location.search);
+          params.set('article', article.id);
+          const url = `${window.location.pathname}?${params.toString()}`;
+          window.history.pushState({}, '', url);
+        } catch (err) {
+          // non-fatal
+        }
+
+        try {
+          const fresh = await getArticleById(article.id);
+          if (fresh) setActiveArticle(fresh as Article);
+        } catch (err) {
+          console.error('Failed to fetch article after opening:', err);
+        }
+
+        try {
+          setCommentsLoading(true);
+          const fetched = await getCommentsByArticle(article.id);
+          setComments(fetched as Comment[]);
+        } catch (err) {
+          console.error('Failed loading comments:', err);
+        } finally {
+          setCommentsLoading(false);
+        }
+      }
+      window.scrollTo(0, 0);
+    } catch (err) {
+      console.error('openArticle error:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    } catch (err) {
+      console.error('Failed to persist bookmarks', err);
+    }
+  }, [bookmarks]);
+
+  const toggleBookmark = (articleId: string) => {
+    setBookmarks(prev => {
+      if (prev.includes(articleId)) return prev.filter(id => id !== articleId);
+      return [...prev, articleId];
+    });
+  };
+
+  const handleUpdateDonation = (newAmount: number) => {
+    setDonationStats(prev => ({ ...prev, current: newAmount }));
+    alert("Donation stats updated successfully!");
+  };
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
@@ -727,7 +909,7 @@ export default function App() {
         />
 
         <div className="min-h-screen flex flex-col selection:bg-black selection:text-white">
-          {/* Enhanced Navigation Bar */}
+          {/* Navigation Bar */}
           <nav className="sticky top-0 z-50 bg-white border-b-2 border-black">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
               <div className="flex items-center gap-6">
@@ -760,6 +942,12 @@ export default function App() {
                 >
                   <Activity size={14} /> {t('health')}
                 </button>
+                <button
+                  onClick={() => navigateTo('donate')}
+                  className={`hover:text-red-600 transition-colors flex items-center gap-2 ${currentPage === 'donate' ? 'text-red-600' : ''}`}
+                >
+                  <HandHeart size={14} /> {t('donate')}
+                </button>
                 <div className="relative">
                   <button
                     onClick={() => setShowSearch(!showSearch)}
@@ -771,12 +959,6 @@ export default function App() {
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full"></span>
                   )}
                 </div>
-                <button
-                  onClick={() => navigateTo('admin')}
-                  className="text-gray-400 hover:text-black flex items-center gap-2"
-                >
-                  <LogIn size={14} /> {t('ui.admin')}
-                </button>
               </div>
 
               <div className="flex items-center gap-4">
@@ -785,7 +967,7 @@ export default function App() {
                     <button
                       key={l.code}
                       onClick={() => setLang(l.code)}
-                      className={`text-[9px] font-black px-2 py-1 border border-black/10 hover:border-black transition-all ${lang === l.code ? 'bg-black text-white' : ''}`}
+                      className={`text-[9px] font-black px-2 py-1 border border-black/10 hover:border-black transition-all rounded ${lang === l.code ? 'bg-black text-white' : ''}`}
                       aria-label={`Switch to ${l.name}`}
                     >
                       {l.code}
@@ -808,96 +990,12 @@ export default function App() {
             {/* Enhanced Search Bar */}
             {showSearch && (
               <div className="border-t border-gray-200 p-4 bg-white animate-in slide-in-from-top duration-300">
-                <div className="max-w-7xl mx-auto">
-                  <EnhancedSearchBar
-                    onSearch={handleSearch}
-                    onClear={handleClearSearch}
-                    loading={searchLoading}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Category Breadcrumb */}
-            {activeCategory && (
-              <div className="border-t border-gray-200 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 py-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <button
-                      onClick={() => setActiveCategory(null)}
-                      className="hover:text-red-600 transition-colors"
-                    >
-                      All Categories
-                    </button>
-                    <ChevronRight size={12} />
-                    <span className="font-bold flex items-center gap-2">
-                      {getCategoryIcon(activeCategory)}
-                      {TRANSLATIONS.categories[activeCategory][lang]}
-                    </span>
-                    <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">
-                      {filteredArticles.length} articles
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Mobile Overlay Menu */}
-            {isMenuOpen && (
-              <div className="absolute top-20 left-0 w-full bg-white border-b-4 border-black p-12 animate-in slide-in-from-top duration-300 shadow-2xl z-[100]">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                  <div className="flex flex-col gap-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Categories</h4>
-                    {Object.values(Category).map(cat => (
-                      <button
-                        key={cat}
-                        onClick={() => { navigateTo('home', cat); }}
-                        className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 transition-all flex items-center gap-3 justify-between group"
-                      >
-                        <div className="flex items-center gap-3">
-                          {getCategoryIcon(cat)}
-                          {TRANSLATIONS.categories[cat][lang]}
-                        </div>
-                        <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                          ({articleCounts[cat] || 0})
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex flex-col gap-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Resources</h4>
-                    <button
-                      onClick={() => navigateTo('health')}
-                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
-                    >
-                      <Activity /> Wellness Desk
-                    </button>
-                    <button
-                      onClick={() => navigateTo('admin')}
-                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
-                    >
-                      <LogIn /> Admin Login
-                    </button>
-                    <button
-                      onClick={() => navigateTo('privacy')}
-                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
-                    >
-                      <Shield /> Privacy
-                    </button>
-                  </div>
-                  <div className="flex flex-col gap-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Subscribe</h4>
-                    <div className="bg-black text-white p-6">
-                      <h5 className="text-lg font-bold mb-4">Get Daily Wisdom</h5>
-                      <input
-                        type="email"
-                        placeholder="Your Email"
-                        className="w-full bg-white/10 border border-white/20 p-3 mb-3 text-sm outline-none placeholder-gray-400"
-                      />
-                      <Button variant="secondary" className="w-full">Subscribe</Button>
-                    </div>
-                  </div>
-                </div>
+                <GlobalSearchBar
+                  onSearch={handleSearch}
+                  onClear={handleClearSearch}
+                  loading={searchLoading}
+                  value={searchQuery}
+                />
               </div>
             )}
           </nav>
@@ -919,9 +1017,17 @@ export default function App() {
                     <span className="text-xs font-bold text-red-600 uppercase tracking-widest">
                       {TRANSLATIONS.categories[activeArticle.category][lang]}
                     </span>
-                    <ShareMenu article={activeArticle} />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowShareModal(true)}
+                      className="group"
+                    >
+                      <Share2 size={16} />
+                      {TRANSLATIONS.ui.share[lang]}
+                    </Button>
                   </div>
-                  
+
                   <h1 className="text-5xl md:text-7xl font-black leading-none tracking-tighter mb-8 italic">
                     {activeArticle.title[lang]}
                   </h1>
@@ -949,107 +1055,138 @@ export default function App() {
                   </div>
                 </header>
 
-                <div className="mb-12 aspect-video overflow-hidden relative">
+                <div className="mb-12 aspect-video overflow-hidden relative rounded-2xl">
                   <img
                     src={activeArticle.image}
                     className="w-full h-full object-cover"
                     alt={activeArticle.title[lang]}
                     loading="eager"
                   />
-                  <div className="absolute bottom-4 right-4 flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleShare(activeArticle)}
-                      className="bg-white/90 backdrop-blur-sm"
-                    >
-                      <Share2 size={16} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="bg-white/90 backdrop-blur-sm"
-                    >
-                      <Bookmark size={16} />
-                    </Button>
+                </div>
+
+                <div className="space-y-12 prose prose-xl max-w-none text-black/80 font-serif leading-relaxed">
+                  <p className="text-3xl italic leading-tight text-gray-500 font-light">"  <SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
+
+                  <div className="bg-[#f9f9f9] p-8 border-l-8 border-black font-serif italic text-2xl rounded-r-lg">
+                    {activeArticle.verse[lang]}
+                  </div>
+
+                  <div className="space-y-6">
+                    <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
+                  </div>
+
+                  {activeArticle.category === 'health' && activeArticle.healthHacks && activeArticle.herbalRemedies && (
+                    <div className="bg-green-50 p-10 space-y-8 font-sans rounded-2xl">
+                      <h4 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3"><Apple className="text-green-600" /> Professional Health Counsel</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                          <h5 className="font-bold text-sm uppercase mb-4 text-green-800">Health Hacks</h5>
+                          <ul className="space-y-2 text-sm italic">
+                            {activeArticle.healthHacks.map((h, i) => <li key={i}>• {h}</li>)}
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-sm uppercase mb-4 text-green-800">Home Herbal Pharmacy</h5>
+                          <ul className="space-y-2 text-sm italic">
+                            {activeArticle.herbalRemedies.map((h, i) => <li key={i}>• {h}</li>)}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="border-t-4 border-black pt-12">
+                    <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">Daily Practical Step</h4>
+                    <p className="text-xl font-bold">  <SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
+                  </div>
+
+                  <div className="text-center py-12 border-b-2 border-black">
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">Closing Prayer</h4>
+                    <p className="text-4xl italic serif leading-tight">"  <SafeHTMLRenderer html={activeArticle.prayer[lang]} />"</p>
                   </div>
                 </div>
 
-                {/* Article content remains the same */}
-                <div className="space-y-12 prose prose-xl max-w-none text-black/80 font-serif leading-relaxed">
-                  <p className="text-3xl italic leading-tight text-gray-500 font-light">"  <SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
-                 
-                                   <div className="bg-[#f9f9f9] p-8 border-l-8 border-black font-serif italic text-2xl">
-                                     {activeArticle.verse[lang]}
-                                   </div>
-                 
-                                  <div className="space-y-6">
-                   <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
-                 </div>
-                                   {activeArticle.category === Category.HEALTH && (
-                                     <div className="bg-green-50 p-10 space-y-8 font-sans">
-                                       <h4 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3"><Apple className="text-green-600" /> Professional Health Counsel</h4>
-                                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                         <div>
-                                           <h5 className="font-bold text-sm uppercase mb-4 text-green-800">Health Hacks</h5>
-                                           <ul className="space-y-2 text-sm italic">
-                                             {activeArticle.healthHacks?.map((h, i) => <li key={i}>• {h}</li>)}
-                                           </ul>
-                                         </div>
-                                         <div>
-                                           <h5 className="font-bold text-sm uppercase mb-4 text-green-800">Home Herbal Pharmacy</h5>
-                                           <ul className="space-y-2 text-sm italic">
-                                             {activeArticle.herbalRemedies?.map((h, i) => <li key={i}>• {h}</li>)}
-                                           </ul>
-                                         </div>
-                                       </div>
-                                     </div>
-                                   )}
-                 
-                                   <div className="border-t-4 border-black pt-12">
-                                     <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">Daily Practical Step</h4>
-                                     <p className="text-xl font-bold">  <SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
-                                   </div>
-                 
-                                   <div className="text-center py-12 border-b-2 border-black">
-                                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">Closing Prayer</h4>
-                                     <p className="text-4xl italic serif leading-tight">"  <SafeHTMLRenderer html={activeArticle.prayer[lang]} />"</p>
-                                   </div>
-                                 </div>
-                 
-                                 {/* Comments Section */}
-                                 <section className="mt-20">
-                                   <h3 className="text-3xl font-black uppercase tracking-tighter mb-10 flex items-center gap-3"><MessageCircle /> Discourse</h3>
-                                   <div className="space-y-8">
-                                     {activeArticle.comments?.map(c => (
-                                       <div key={c.id} className="border-b border-gray-100 pb-6">
-                                         <div className="flex justify-between items-center mb-2">
-                                           <span className="font-bold">{c.author}</span>
-                                           <span className="text-[10px] text-gray-400 uppercase font-bold">{c.date}</span>
-                                         </div>
-                                         <p className="text-gray-600 leading-relaxed italic">"{c.text}"</p>
-                                       </div>
-                                     ))}
-                                     <div className="bg-gray-50 p-8">
-                                       <h5 className="text-xs font-bold uppercase mb-4">Add your thoughts</h5>
-                                       <textarea className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all" placeholder="Respectful discourse only..."></textarea>
-                                       <Button className="mt-4">Post Comment</Button>
-                                     </div>
-                                   </div>
-                                 </section>
-                 
-                                 {/* Editor Bio */}
-                                 <div className="mt-20 bg-[#f4f4f4] p-10 flex flex-col md:flex-row gap-8 items-center">
-                                   <div className="w-24 h-24 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
-                                     <User className="w-full h-full p-6 text-white" />
-                                   </div>
-                                   <div>
-                                     <h5 className="font-black uppercase tracking-widest text-xs mb-2">Editorial Desk: {activeArticle.editor}</h5>
-                                     <p className="text-sm italic text-gray-500">{activeArticle.editorBio || "A seasoned writer dedicated to sharing Biblical truths with modern clarity."}</p>
-                                   </div>
-                                 </div>
-                               </article>
-                      
+                {/* Action Buttons */}
+                <div className="mt-12 flex flex-wrap gap-4 justify-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowShareModal(true)}
+                  >
+                    <Share2 size={16} /> Share Article
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => activeArticle && toggleBookmark(activeArticle.id)}
+                  >
+                    {activeArticle && bookmarks.includes(activeArticle.id) ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                    {activeArticle && bookmarks.includes(activeArticle.id) ? 'Bookmarked' : 'Bookmark'}
+                  </Button>
+                  {activeArticle?.whatsappGroup && (
+                    <a href={activeArticle.whatsappGroup} target="_blank" rel="noopener noreferrer">
+                      <Button variant="primary">
+                        <MessageCircle size={16} /> Join WhatsApp Discussion
+                      </Button>
+                    </a>
+                  )}
+                </div>
+
+                {/* Comments Section */}
+                <section className="mt-20">
+                  <h3 className="text-3xl font-black uppercase tracking-tighter mb-10 flex items-center gap-3"><MessageCircle /> Discourse</h3>
+                  <div className="space-y-8">
+                    {commentsLoading ? (
+                      <div className="text-center py-8">Loading comments...</div>
+                    ) : (
+                      comments.map(c => (
+                        <div key={c.id} className="border-b border-gray-100 pb-6">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="font-bold">{c.author || 'Guest'}</span>
+                            <span className="text-[10px] text-gray-400 uppercase font-bold">{c.date ? new Date(c.createdAt?.seconds ? c.createdAt.seconds * 1000 : c.date).toLocaleString() : ''}</span>
+                          </div>
+                          <p className="text-gray-600 leading-relaxed italic">"{c.text}"</p>
+                        </div>
+                      ))
+                    )}
+
+                    <div className="bg-gray-50 p-8 rounded-xl">
+                      <h5 className="text-xs font-bold uppercase mb-4">Add your thoughts</h5>
+                      <input value={newCommentAuthor} onChange={(e) => setNewCommentAuthor(e.target.value)} placeholder="Your name (optional)" className="w-full p-3 mb-3 border border-gray-200 rounded-lg" />
+                      <textarea value={newCommentText} onChange={(e) => setNewCommentText(e.target.value)} className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all rounded-lg" placeholder="Respectful discourse only..."></textarea>
+                      <Button className="mt-4" onClick={async () => {
+                        if (!newCommentText.trim() || !activeArticle) return;
+                        try {
+                          setCommentsLoading(true);
+                          await addComment(activeArticle.id, {
+                            author: newCommentAuthor?.trim() || 'Guest',
+                            text: newCommentText.trim(),
+                            date: new Date().toISOString()
+                          });
+                          const refreshed = await getCommentsByArticle(activeArticle.id);
+                          setComments(refreshed as Comment[]);
+                          setNewCommentText('');
+                          setNewCommentAuthor('');
+                        } catch (err) {
+                          console.error('Failed to post comment', err);
+                        } finally {
+                          setCommentsLoading(false);
+                        }
+                      }}>{TRANSLATIONS.ui.postComment[lang]}</Button>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Editor Bio */}
+                <div className="mt-20 bg-[#f4f4f4] p-10 rounded-2xl flex flex-col md:flex-row gap-8 items-center">
+                  <div className="w-24 h-24 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
+                    <User className="w-full h-full p-6 text-white" />
+                  </div>
+                  <div>
+                    <h5 className="font-black uppercase tracking-widest text-xs mb-2">Editorial Desk: {activeArticle.editor}</h5>
+                    <p className="text-sm italic text-gray-500">{activeArticle.editorBio || "A seasoned writer dedicated to sharing Biblical truths with modern clarity."}</p>
+                  </div>
+                </div>
+              </article>
+
             ) : (
               <>
                 {currentPage === 'home' && (
@@ -1057,12 +1194,15 @@ export default function App() {
                     {loading ? (
                       // Skeleton Loading State
                       <div className="space-y-12">
-                        <div className="h-8 bg-gray-200 w-64 mb-8"></div>
-                        <CategorySkeleton />
-                        <ArticleCardSkeleton type="big" />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          {[...Array(4)].map((_, i) => (
-                            <ArticleCardSkeleton key={i} type="small" />
+                        <div className="h-8 bg-gray-200 w-64 mb-8 rounded"></div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="h-32 bg-gray-200 rounded-xl animate-pulse"></div>
+                          ))}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="h-64 bg-gray-200 rounded-xl animate-pulse"></div>
                           ))}
                         </div>
                       </div>
@@ -1079,7 +1219,6 @@ export default function App() {
                             </p>
                           </div>
                           <div className="flex gap-3">
-                            <ShareMenu article={searchResults[0]} />
                             <button
                               onClick={handleClearSearch}
                               className="flex items-center gap-2 text-sm font-bold hover:text-red-600 transition-colors"
@@ -1088,125 +1227,133 @@ export default function App() {
                             </button>
                           </div>
                         </div>
-                        
+
                         {searchResults.length === 0 ? (
-                          <EmptyState
-                            icon={<Search size={32} />}
-                            title="No results found"
-                            description={`We couldn't find any articles matching "${searchQuery}". Try searching with different keywords.`}
-                            action={
-                              <Button onClick={handleClearSearch} variant="outline">
-                                Clear Search
-                              </Button>
-                            }
-                          />
+                          <div className="text-center py-20">
+                            <Search size={48} className="mx-auto mb-6 text-gray-400" />
+                            <h3 className="text-2xl font-bold mb-3">No results found</h3>
+                            <p className="text-gray-600 max-w-md mx-auto mb-6">
+                              We couldn't find any articles matching "{searchQuery}". Try searching with different keywords.
+                            </p>
+                            <Button onClick={handleClearSearch} variant="outline">
+                              Clear Search
+                            </Button>
+                          </div>
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {searchResults.map(article => (
-                              <EnhancedArticleCard
+                              <ArticleGridCard
                                 key={article.id}
                                 article={article}
-                                onClick={setActiveArticle}
-                                variant="grid"
+                                onClick={openArticle}
+                                bookmarked={bookmarks.includes(article.id)}
+                                onToggleBookmark={toggleBookmark}
                               />
                             ))}
                           </div>
                         )}
                       </div>
                     ) : (
-                      // Main Home Content
+                      // Main Home Content with Modern Grid
                       <>
                         {/* Category Navigation */}
-                        <CategoryNavigation
-                          categories={Object.values(Category)}
-                          activeCategory={activeCategory}
-                          onCategorySelect={setActiveCategory}
-                          articleCounts={articleCounts}
-                        />
+                        <div className="mb-12">
+                          <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-black uppercase tracking-tighter">Browse Categories</h2>
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                            <button
+                              onClick={() => setActiveCategory(null)}
+                              className={`p-4 border-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === null ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
+                            >
+                              <LayoutGrid size={20} />
+                              <span className="text-xs font-bold uppercase">All</span>
+                              <span className="text-xs opacity-60">{Object.values(articleCounts).reduce((a, b) => a + b, 0)}</span>
+                            </button>
+
+                            {Object.values(Category).slice(0, 6).map(category => (
+                              <button
+                                key={category}
+                                onClick={() => setActiveCategory(category)}
+                                className={`p-4 border-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === category ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
+                              >
+                                {getCategoryIcon(category)}
+                                <span className="text-xs font-bold uppercase text-center">
+                                  {TRANSLATIONS.categories[category][lang]}
+                                </span>
+                                <span className="text-xs opacity-60">{articleCounts[category] || 0}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
 
                         {filteredArticles.length === 0 ? (
-                          <EmptyState
-                            icon={<Newspaper size={32} />}
-                            title="No articles found"
-                            description={activeCategory 
-                              ? `There are no articles in the ${TRANSLATIONS.categories[activeCategory][lang]} category yet.`
-                              : "No articles have been published yet."
-                            }
-                            action={
-                              activeCategory && (
-                                <Button onClick={() => setActiveCategory(null)} variant="outline">
-                                  View All Categories
-                                </Button>
-                              )
-                            }
-                          />
+                          <div className="text-center py-20">
+                            <Newspaper size={48} className="mx-auto mb-6 text-gray-400" />
+                            <h3 className="text-2xl font-bold mb-3">No articles found</h3>
+                            <p className="text-gray-600 max-w-md mx-auto mb-6">
+                              {activeCategory
+                                ? `There are no articles in the ${TRANSLATIONS.categories[activeCategory][lang]} category yet.`
+                                : "No articles have been published yet."
+                              }
+                            </p>
+                            {activeCategory && (
+                              <Button onClick={() => setActiveCategory(null)} variant="outline">
+                                View All Categories
+                              </Button>
+                            )}
+                          </div>
                         ) : (
                           <>
-                            <div className="flex flex-col lg:flex-row gap-12">
-                              {/* Featured / Big Column */}
-                              <div className="lg:w-2/3">
-                                {featuredArticle && (
-                                  <EnhancedArticleCard
-                                    article={featuredArticle}
-                                    onClick={setActiveArticle}
-                                    variant="big"
-                                  />
-                                )}
+                            {/* Featured Section */}
+                            {filteredArticles[0] && (
+                              <div className="mb-16">
+                                <ArticleGridCard
+                                  article={filteredArticles[0]}
+                                  onClick={openArticle}
+                                  layout="standard"
+                                  bookmarked={bookmarks.includes(filteredArticles[0].id)}
+                                  onToggleBookmark={toggleBookmark}
+                                />
+                              </div>
+                            )}
 
+                            {/* Grid Section */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                              {filteredArticles.slice(1, 7).map(article => (
+                                <ArticleGridCard
+                                  key={article.id}
+                                  article={article}
+                                  onClick={openArticle}
+                                  layout="compact"
+                                  bookmarked={bookmarks.includes(article.id)}
+                                  onToggleBookmark={toggleBookmark}
+                                />
+                              ))}
+                            </div>
+
+                            {/* Subscription & Donation Sidebar */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-20">
+                              <div className="lg:col-span-2">
+                                {/* More Articles Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                  {listArticles.slice(0, 4).map(a => (
-                                    <EnhancedArticleCard
-                                      key={a.id}
-                                      article={a}
-                                      onClick={setActiveArticle}
-                                      variant="small"
+                                  {filteredArticles.slice(7, 11).map(article => (
+                                    <ArticleGridCard
+                                      key={article.id}
+                                      article={article}
+                                      onClick={openArticle}
+                                      layout="compact"
+                                      bookmarked={bookmarks.includes(article.id)}
+                                      onToggleBookmark={toggleBookmark}
                                     />
                                   ))}
                                 </div>
                               </div>
 
-                              {/* Sidebar / List Column */}
-                              <div className="lg:w-1/3 border-l-0 lg:border-l border-black/10 lg:pl-12">
-                                <div className="mb-8">
-                                  <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-4">
-                                    Quick Categories
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {Object.values(Category).slice(0, 5).map(cat => (
-                                      <button
-                                        key={cat}
-                                        onClick={() => setActiveCategory(cat)}
-                                        className="w-full text-left p-3 hover:bg-gray-50 transition-colors flex items-center justify-between group"
-                                      >
-                                        <div className="flex items-center gap-3">
-                                          {getCategoryIcon(cat)}
-                                          <span className="text-sm font-bold">
-                                            {TRANSLATIONS.categories[cat][lang]}
-                                          </span>
-                                        </div>
-                                        <span className="text-xs text-gray-400 group-hover:text-black">
-                                          {articleCounts[cat] || 0}
-                                        </span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-8">
-                                  Daily Bread Feed
-                                </h4>
-                                {sidebarArticles.map(a => (
-                                  <EnhancedArticleCard
-                                    key={a.id}
-                                    article={a}
-                                    onClick={setActiveArticle}
-                                    variant="small"
-                                    showCategory={false}
-                                  />
-                                ))}
-
+                              <div className="space-y-8">
                                 {/* Subscription Box */}
-                                <div className="bg-black text-white p-8 mt-12">
+                                <div className="bg-black text-white p-8 rounded-2xl">
                                   <h4 className="text-2xl font-bold mb-4 italic">Get Biblical Clarity</h4>
                                   <p className="text-xs font-bold uppercase tracking-widest mb-6 opacity-60">
                                     Weekly newsletter on faith & health
@@ -1214,44 +1361,32 @@ export default function App() {
                                   <input
                                     type="email"
                                     placeholder="Your Email"
-                                    className="w-full bg-white/10 border border-white/20 p-3 mb-4 text-sm outline-none placeholder-gray-400"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full bg-white/10 border border-white/20 p-3 mb-4 text-sm outline-none placeholder-gray-400 rounded-lg"
                                   />
                                   <Button
                                     variant="secondary"
                                     className="w-full"
-                                    onClick={() => handleSubscribe('')}
+                                    onClick={() => handleSubscribe(email)}
                                   >
-                                    Subscribe
+                                    {subscribed ? 'Subscribed!' : TRANSLATIONS.ui.subscribe[lang]}
                                   </Button>
+                                </div>
+
+                                {/* Donation Sidebar Preview */}
+                                <div className="border-4 border-black p-6 bg-red-50 rounded-2xl">
+                                  <h4 className="text-xs font-black uppercase tracking-widest text-red-600 mb-2">Digital Ministry Support</h4>
+                                  <div className="flex justify-between items-end mb-2">
+                                    <span className="text-xl font-bold">{Math.floor((donationStats.current / donationStats.goal) * 100)}% Reached</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
+                                    <div className="h-full bg-black" style={{ width: `${(donationStats.current / donationStats.goal) * 100}%` }}></div>
+                                  </div>
+                                  <Button onClick={() => navigateTo('donate')} variant="primary" className="w-full">Contribute Now</Button>
                                 </div>
                               </div>
                             </div>
-
-                            {/* Trending Feed */}
-                            {trendingArticles.length > 0 && (
-                              <div className="mt-20 border-t-4 border-black pt-12">
-                                <div className="flex items-center justify-between mb-12">
-                                  <h3 className="text-3xl font-black uppercase tracking-tighter">
-                                    Trending Discourse
-                                  </h3>
-                                  <Button variant="ghost" size="sm">
-                                    View All <ChevronRight size={14} />
-                                  </Button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                                  {trendingArticles.map(a => (
-                                    <EnhancedArticleCard
-                                      key={a.id}
-                                      article={a}
-                                      onClick={setActiveArticle}
-                                      variant="grid"
-                                      showCategory={false}
-                                      showMetadata={false}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            )}
                           </>
                         )}
                       </>
@@ -1259,13 +1394,33 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Other pages remain the same */}
-                {currentPage === 'admin' && <AdminDashboard />}
+                {/* Other Pages */}
+                {currentPage === 'health' && <HealthPage articles={articles} />}
+                {currentPage === 'donate' && <DonationPage stats={donationStats} />}
+                {currentPage === 'admin' && <AdminDashboard donationStats={donationStats} onUpdateDonation={handleUpdateDonation} />}
                 {currentPage === 'privacy' && (
                   <div className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in">
-                    <h1 className="text-5xl font-black uppercase tracking-tighter mb-8">Privacy Policy</h1>
+                    <h1 className="text-5xl font-black uppercase tracking-tighter mb-8">{TRANSLATIONS.ui.privacyTitle[lang]}</h1>
                     <div className="prose prose-lg font-serif">
-                      <p>At My Life Today, your privacy is sacred. We only collect data necessary to enhance your editorial experience.</p>
+                      <p>{LEGAL.privacy[lang]}</p>
+                      <div className="mt-6">
+                        <h4 className="font-bold">Contact</h4>
+                        <p className="text-sm text-gray-700">If you have questions about privacy, contact us at <a href={`mailto:${SOCIAL_LINKS.email}`} className="text-red-600">{SOCIAL_LINKS.email}</a>.</p>
+                        <div className="flex gap-3 mt-3">
+                          <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="underline text-sm">WhatsApp</a>
+                          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="underline text-sm">Facebook</a>
+                          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="underline text-sm">Instagram</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {currentPage === 'terms' && (
+                  <div className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in">
+                    <h1 className="text-5xl font-black uppercase tracking-tighter mb-8">{TRANSLATIONS.ui.termsTitle[lang]}</h1>
+                    <div className="prose prose-lg font-serif">
+                      <p>{LEGAL.terms[lang]}</p>
+                      <p className="mt-6 text-sm text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
                     </div>
                   </div>
                 )}
@@ -1273,9 +1428,9 @@ export default function App() {
             )}
           </main>
 
-          {/* Footer remains the same */}
+          {/* Footer */}
           <footer className="bg-[#1a1a1a] text-white pt-32 pb-12 px-4 mt-20">
-          <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
                 <div className="md:col-span-2">
                   <h2 className="text-5xl font-black uppercase tracking-tighter mb-6">{TRANSLATIONS.siteName[lang]}</h2>
@@ -1283,9 +1438,9 @@ export default function App() {
                     "Architecting spiritual and physical clarity for the modern human experience."
                   </p>
                   <div className="flex gap-4 mt-8">
-                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><Globe size={20} /></button>
-                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><BookOpen size={20} /></button>
-                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><Shield size={20} /></button>
+                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all rounded-lg"><Globe size={20} /></button>
+                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all rounded-lg"><BookOpen size={20} /></button>
+                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all rounded-lg"><Shield size={20} /></button>
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
@@ -1298,24 +1453,31 @@ export default function App() {
                 </div>
                 <div className="flex flex-col gap-4">
                   <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">Network</h4>
-                  <button onClick={() => navigateTo('terms')} className="text-left text-sm font-bold uppercase hover:text-red-500">Terms of service</button>
-                  <button onClick={() => navigateTo('privacy')} className="text-left text-sm font-bold uppercase hover:text-red-500">Privacy policy</button>
-                  <button onClick={() => navigateTo('admin')} className="text-left text-sm font-bold uppercase hover:text-red-500">Admin login</button>
+                  <button onClick={() => navigateTo('terms')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.termsTitle[lang]}</button>
+                  <button onClick={() => navigateTo('privacy')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.privacyTitle[lang]}</button>
+                  <button onClick={() => navigateTo('admin')} className="text-left text-sm font-bold uppercase hover:text-red-500">Publisher Login</button>
                 </div>
               </div>
 
               <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
                 <div className="flex flex-col gap-2">
-                  <p>© 2024 My Life Today DIGITAL NETWORK. ALL RIGHTS RESERVED.</p>
+                  <p>© {new Date().getFullYear()} My Life Today DIGITAL NETWORK. ALL RIGHTS RESERVED.</p>
                   <p className="flex items-center gap-2">DESIGNED BY <span className="text-white">TOPRAY</span> • ARCHITECTED BY AN EXPERT</p>
                 </div>
                 <div className="flex gap-8">
-                  <a href="devtopray.netlify.app" className="flex items-center gap-2 hover:text-white transition-colors">PORTFOLIO <ExternalLink size={12} /></a>
-                  <a href="devtopray.netlify.app" className="flex items-center gap-2 hover:text-white transition-colors">CONTACT EDITORIAL</a>
+                  <a href="https://devtopray.netlify.app" className="flex items-center gap-2 hover:text-white transition-colors">PORTFOLIO <ExternalLink size={12} /></a>
+                  <a href="https://devtopray.netlify.app" className="flex items-center gap-2 hover:text-white transition-colors">CONTACT EDITORIAL</a>
                 </div>
               </div>
             </div>
           </footer>
+
+          {/* Share Modal */}
+          <ShareModal
+            isOpen={showShareModal}
+            onClose={() => setShowShareModal(false)}
+            article={activeArticle}
+          />
         </div>
       </AuthContext.Provider>
     </LanguageContext.Provider>
