@@ -47,7 +47,7 @@ export const TRANSLATIONS: Translations = {
     copy: { en: 'Copy Account', rw: 'Kora kopi', sw: 'Nakili Akaunti', fr: 'Copier le compte' },
     copied: { en: 'Copied!', rw: 'Byakopye!', sw: 'Imenakiliwa!', fr: 'Copié !' },
     subscribe: { en: 'Subscribe', rw: 'Iyandikishe', sw: 'Jiandikishe', fr: 'S\'abonner' },
-    postComment: { en: 'Post Comment', rw: 'Tanga icyo wibaza', sw: 'Tuma Maoni', fr: 'Poster le commentaire' },
+    postComment: { en: 'Post Comment', rw: 'Tanga comment', sw: 'Tuma Maoni', fr: 'Poster le commentaire' },
     joinWhatsApp: { en: 'Join WhatsApp Group', rw: 'Injira mu itsinda rya WhatsApp', sw: 'Jiunge na WhatsApp', fr: 'Rejoindre WhatsApp' },
     privacyTitle: { en: 'Privacy Policy', rw: 'Politiki y\'Ubwisanzure', sw: 'Sera ya Faragha', fr: 'Politique de confidentialité' },
     termsTitle: { en: 'Terms of Service', rw: 'Amategeko yo Gukoresha', sw: 'Sheria za Huduma', fr: 'Conditions d\'utilisation' },

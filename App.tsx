@@ -466,6 +466,7 @@ const EnhancedArticleCard: React.FC<{
     if (onToggleBookmark) onToggleBookmark(article.id);
   };
 
+    
   if (variant === 'big') {
     return (
       <div className="group cursor-pointer border-b border-black/10 pb-8 mb-8" onClick={() => onClick(article)}>
@@ -764,7 +765,19 @@ export default function App() {
       setLoading(false);
     }
   };
-
+const formatDate = (article: Article) => {
+    const raw = (article.createdAt || article.publishDate || article.date) as any;
+    if (!raw) return '';
+    try {
+      if (raw.seconds) {
+        return new Date(raw.seconds * 1000).toLocaleDateString();
+      }
+      const d = new Date(raw);
+      return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString();
+    } catch {
+      return String(raw);
+    }
+  };
   const getCategoryIcon = (category: Category) => {
     switch (category) {
       case Category.DAILY_LIFE: return <Home size={16} />;
@@ -1065,27 +1078,27 @@ export default function App() {
                     {activeArticle.title[lang]}
                   </h1>
 
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-y border-black py-6 text-xs font-bold uppercase tracking-widest text-gray-500">
-                    <div className="flex items-center gap-3">
-                      <User size={16} />
-                      <span>By {activeArticle.editor}</span>
-                      <span className="hidden md:inline">•</span>
-                      <Clock size={16} />
-                      <span>{activeArticle.date}</span>
-                      <span className="hidden md:inline">•</span>
-                      <Eye size={16} />
-                      <span>{activeArticle.views || 0} views</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <button
-                        onClick={() => setActiveCategory(activeArticle.category)}
-                        className="flex items-center gap-2 hover:text-black transition-colors"
-                      >
-                        <Tag size={16} />
-                        More from {TRANSLATIONS.categories[activeArticle.category][lang]}
-                      </button>
-                    </div>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-y border-black py-6 text-xs font-bold uppercase tracking-widest text-gray-500">
+                  <div className="flex items-center gap-3">
+                    <User size={16} />
+                    <span>By {activeArticle.editor}</span>
+                    <span className="hidden md:inline">•</span>
+                    <Clock size={16} />
+                    <span>{formatDate(activeArticle)}</span>
+                    <span className="hidden md:inline">•</span>
+                    <Eye size={16} />
+                    <span>{activeArticle.views || 0} views</span>
                   </div>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => { navigateTo('home', activeArticle.category); setActiveArticle(null); }}
+                      className="flex items-center gap-2 hover:text-black transition-colors"
+                    >
+                      <Tag size={16} />
+                      More from {TRANSLATIONS.categories[activeArticle.category][lang]}
+                    </button>
+                  </div>
+                </div>
                 </header>
 
                 <div className="mb-12 aspect-video overflow-hidden relative">
@@ -1136,44 +1149,44 @@ export default function App() {
                 )}
 
                 {/* Article content remains the same */}
-                <div className="space-y-12 prose prose-xl max-w-none text-black/80 font-serif leading-relaxed">
-                  <p className="text-3xl italic leading-tight text-gray-500 font-light">"  <SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
+               <div className="space-y-12 max-w-none text-black/80 font-sans leading-relaxed">
+                  <p className="text-2xl font-medium leading-tight text-gray-700">"<SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
 
-                  <div className="bg-[#f9f9f9] p-8 border-l-8 border-black font-serif italic text-2xl">
-                    {activeArticle.verse[lang]}
+                  <div className="border-l-4 border-black pl-6">
+                    <div className="text-xl font-semibold text-gray-800">{activeArticle.verse[lang]}</div>
                   </div>
 
                   <div className="space-y-6">
                     <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
                   </div>
+                 {/* Health content: same color scheme, different clean layout (no green bg) */}
                   {activeArticle.category === Category.HEALTH && (
-                    <div className="bg-green-50 p-10 space-y-8 font-sans">
-                      <h4 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3"><Apple className="text-green-600" /> Professional Health Counsel</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="p-6 space-y-6 border border-gray-100 rounded-md">
+                      <h4 className="text-2xl font-bold uppercase tracking-tight">Health Insights</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <h5 className="font-bold text-sm uppercase mb-4 text-green-800">Health Hacks</h5>
-                          <ul className="space-y-2 text-sm italic">
-                            {activeArticle.healthHacks?.map((h, i) => <li key={i}>• {h}</li>)}
+                          <h5 className="font-semibold mb-3">Health Hacks</h5>
+                          <ul className="list-disc list-inside space-y-2 text-sm">
+                            {activeArticle.healthHacks?.map((h, i) => <li key={i}>{h}</li>)}
                           </ul>
                         </div>
                         <div>
-                          <h5 className="font-bold text-sm uppercase mb-4 text-green-800">Home Herbal Pharmacy</h5>
-                          <ul className="space-y-2 text-sm italic">
-                            {activeArticle.herbalRemedies?.map((h, i) => <li key={i}>• {h}</li>)}
+                          <h5 className="font-semibold mb-3">Herbal Remedies</h5>
+                          <ul className="list-disc list-inside space-y-2 text-sm">
+                            {activeArticle.herbalRemedies?.map((h, i) => <li key={i}>{h}</li>)}
                           </ul>
                         </div>
                       </div>
                     </div>
                   )}
-
                   <div className="border-t-4 border-black pt-12">
                     <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">Daily Practical Step</h4>
-                    <p className="text-xl font-bold">  <SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
+                    <p className="text-xl font-medium"><SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
                   </div>
 
                   <div className="text-center py-12 border-b-2 border-black">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">Closing Prayer</h4>
-                    <p className="text-4xl italic serif leading-tight">"  <SafeHTMLRenderer html={activeArticle.prayer[lang]} />"</p>
+                    <p className="text-2xl leading-tight">"<SafeHTMLRenderer html={activeArticle.prayer[lang]} />"</p>
                   </div>
                 </div>
 
