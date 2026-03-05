@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, useMemo, useCallback,useRef } from 'react';
+import React, { useState, useEffect, createContext, useContext, useMemo, useCallback, useRef } from 'react';
 import {
   Menu, X, Search, Heart, Briefcase,
   Smartphone, Users, Globe, BookOpen, Sun,
@@ -468,7 +468,7 @@ const EnhancedArticleCard: React.FC<{
     if (onToggleBookmark) onToggleBookmark(article.id);
   };
 
-    
+
   if (variant === 'big') {
     return (
       <div className="group cursor-pointer border-b border-black/10 pb-8 mb-8" onClick={() => onClick(article)}>
@@ -486,7 +486,7 @@ const EnhancedArticleCard: React.FC<{
             {bookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
           </button>
 
-        
+
         </div>
         {showCategory && (
           <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-2 block">
@@ -514,7 +514,7 @@ const EnhancedArticleCard: React.FC<{
       </div>
     );
   }
-// ...existing code...
+  // ...existing code...
 
   if (variant === 'small') {
     return (
@@ -639,7 +639,7 @@ export default function App() {
 
     loadArticles();
   }, []);
-const loadMore = () => {
+  const loadMore = () => {
     setItemsToShow(prev => prev + 4);
     // smooth scroll to the expanded list
     setTimeout(() => {
@@ -777,6 +777,19 @@ const loadMore = () => {
       alert("Subscription failed. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+ const formatDate = (article: Article) => {
+    const raw = (article.createdAt || article.publishDate || article.date) as any;
+    if (!raw) return '';
+    try {
+      if (raw.seconds) {
+        return new Date(raw.seconds * 1000).toLocaleDateString();
+      }
+      const d = new Date(raw);
+      return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString();
+    } catch {
+      return String(raw);
     }
   };
 
@@ -1080,27 +1093,27 @@ const loadMore = () => {
                     {activeArticle.title[lang]}
                   </h1>
 
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-y border-black py-6 text-xs font-bold uppercase tracking-widest text-gray-500">
-                  <div className="flex items-center gap-3">
-                    <User size={16} />
-                    <span>By {activeArticle.editor}</span>
-                    <span className="hidden md:inline">•</span>
-                    <Clock size={16} />
-                    <span>{formatDate(activeArticle)}</span>
-                    <span className="hidden md:inline">•</span>
-                    <Eye size={16} />
-                    <span>{activeArticle.views || 0} views</span>
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-y border-black py-6 text-xs font-bold uppercase tracking-widest text-gray-500">
+                    <div className="flex items-center gap-3">
+                      <User size={16} />
+                      <span>By {activeArticle.editor}</span>
+                      <span className="hidden md:inline">•</span>
+                      <Clock size={16} />
+                      <span>{formatDate(activeArticle)}</span>
+                      <span className="hidden md:inline">•</span>
+                      <Eye size={16} />
+                      <span>{activeArticle.views || 0} views</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => { navigateTo('home', activeArticle.category); setActiveArticle(null); }}
+                        className="flex items-center gap-2 hover:text-black transition-colors"
+                      >
+                        <Tag size={16} />
+                        More from {TRANSLATIONS.categories[activeArticle.category][lang]}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={() => { navigateTo('home', activeArticle.category); setActiveArticle(null); }}
-                      className="flex items-center gap-2 hover:text-black transition-colors"
-                    >
-                      <Tag size={16} />
-                      More from {TRANSLATIONS.categories[activeArticle.category][lang]}
-                    </button>
-                  </div>
-                </div>
                 </header>
 
                 <div className="mb-12 aspect-video overflow-hidden relative">
@@ -1151,14 +1164,14 @@ const loadMore = () => {
                 )}
 
                 {/* Article content remains the same */}
-               <div className="space-y-12 max-w-none text-black/80 font-sans leading-relaxed">
+                <div className="space-y-12 max-w-none text-black/80 font-sans leading-relaxed">
                   <p className="text-2xl font-medium leading-tight text-gray-700">"<SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
 
-      
+
                   <div className="space-y-6">
                     <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
                   </div>
-                 {/* Health content: same color scheme, different clean layout (no green bg) */}
+                  {/* Health content: same color scheme, different clean layout (no green bg) */}
                   {activeArticle.category === Category.HEALTH && (
                     <div className="p-6 space-y-6 border border-gray-100 rounded-md">
                       <h4 className="text-2xl font-bold uppercase tracking-tight">Health Insights</h4>
@@ -1343,59 +1356,59 @@ const loadMore = () => {
                             <div className="flex flex-col lg:flex-row gap-12">
                               {/* Featured / Big Column */}
                               <div className="lg:w-2/3">
-                               {featuredArticle && (
-                <div className="relative">
-                  <EnhancedArticleCard
-                    article={featuredArticle}
-                    onClick={openArticle}
-                    variant="big"
-                    bookmarked={bookmarks.includes(featuredArticle.id)}
-                    onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
-                    onLoadMore={loadMore} // attach load more to featured overlay
-                  />
-                </div>
-              )}
+                                {featuredArticle && (
+                                  <div className="relative">
+                                    <EnhancedArticleCard
+                                      article={featuredArticle}
+                                      onClick={openArticle}
+                                      variant="big"
+                                      bookmarked={bookmarks.includes(featuredArticle.id)}
+                                      onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
+                                      onLoadMore={loadMore} // attach load more to featured overlay
+                                    />
+                                  </div>
+                                )}
 
-                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* show first 4 of listArticles (these are the 4 cards below the big one) */}
-                {listArticles.slice(0, 4).map(a => (
-                  <EnhancedArticleCard
-                    key={a.id}
-                    article={a}
-                    onClick={openArticle}
-                    variant="small"
-                    bookmarked={bookmarks.includes(a.id)}
-                    onToggleBookmark={() => toggleBookmark(a.id)}
-                  />
-                ))}
-              </div>
-              <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
-                {listArticles.length > itemsToShow ? (
-                  <button
-                    onClick={loadMore}
-                    className="bg-black text-white px-6 py-3 text-sm tracking-wider hover:opacity-90 transition-opacity "
-                  >
-                    Load more
-                  </button>
-                ) : listArticles.length > 0 && itemsToShow <= listArticles.length ? (
-                  <span className="text-gray-500 text-sm">All articles loaded</span>
-                ) : null}
-              </div>
-{itemsToShow > 4 && (
-                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {listArticles.slice(4, 4 + (itemsToShow - 4)).map(a => (
-                    <EnhancedArticleCard
-                      key={a.id}
-                      article={a}
-                      onClick={openArticle}
-                      variant="small"
-                      bookmarked={bookmarks.includes(a.id)}
-                      onToggleBookmark={() => toggleBookmark(a.id)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                  {/* show first 4 of listArticles (these are the 4 cards below the big one) */}
+                                  {listArticles.slice(0, 4).map(a => (
+                                    <EnhancedArticleCard
+                                      key={a.id}
+                                      article={a}
+                                      onClick={openArticle}
+                                      variant="small"
+                                      bookmarked={bookmarks.includes(a.id)}
+                                      onToggleBookmark={() => toggleBookmark(a.id)}
+                                    />
+                                  ))}
+                                </div>
+                                <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
+                                  {listArticles.length > itemsToShow ? (
+                                    <button
+                                      onClick={loadMore}
+                                      className="bg-black text-white px-6 py-3 text-sm tracking-wider hover:opacity-90 transition-opacity "
+                                    >
+                                      Load more
+                                    </button>
+                                  ) : listArticles.length > 0 && itemsToShow <= listArticles.length ? (
+                                    <span className="text-gray-500 text-sm">All articles loaded</span>
+                                  ) : null}
+                                </div>
+                                {itemsToShow > 4 && (
+                                  <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {listArticles.slice(4, 4 + (itemsToShow - 4)).map(a => (
+                                      <EnhancedArticleCard
+                                        key={a.id}
+                                        article={a}
+                                        onClick={openArticle}
+                                        variant="small"
+                                        bookmarked={bookmarks.includes(a.id)}
+                                        onToggleBookmark={() => toggleBookmark(a.id)}
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                               {/* Sidebar / List Column */}
                               <div className="lg:w-1/3 border-l-0 lg:border-l border-black/10 lg:pl-12">
                                 <div className="mb-8">
