@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, createContext, useContext, useMemo, useCallback,useRef } from 'react';
 import {
   Menu, X, Search, Heart, Briefcase,
   Smartphone, Users, Globe, BookOpen, Sun,
@@ -451,6 +451,7 @@ const CategoryNavigation: React.FC<{
 };
 
 // --- Enhanced Article Card ---
+// ...existing code...
 const EnhancedArticleCard: React.FC<{
   article: Article;
   onClick: (a: Article) => void;
@@ -459,7 +460,8 @@ const EnhancedArticleCard: React.FC<{
   showMetadata?: boolean;
   bookmarked?: boolean;
   onToggleBookmark?: (id: string) => void;
-}> = ({ article, onClick, variant = 'grid', showCategory = true, showMetadata = true, bookmarked = false, onToggleBookmark }) => {
+  onLoadMore?: () => void; // added prop for overlay load-more on big card
+}> = ({ article, onClick, variant = 'grid', showCategory = true, showMetadata = true, bookmarked = false, onToggleBookmark, onLoadMore }) => {
   const { lang } = useContext(LanguageContext);
   const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -483,6 +485,8 @@ const EnhancedArticleCard: React.FC<{
           >
             {bookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
           </button>
+
+        
         </div>
         {showCategory && (
           <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-2 block">
@@ -510,6 +514,7 @@ const EnhancedArticleCard: React.FC<{
       </div>
     );
   }
+// ...existing code...
 
   if (variant === 'small') {
     return (
@@ -586,6 +591,8 @@ export default function App() {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentAuthor, setNewCommentAuthor] = useState('');
+  const [itemsToShow, setItemsToShow] = useState<number>(4); // number of small/grid articles shown (initial 4)
+  const moreRef = useRef<HTMLDivElement | null>(null);
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
     try {
       const raw = localStorage.getItem('bookmarks');
@@ -632,7 +639,14 @@ export default function App() {
 
     loadArticles();
   }, []);
-
+const loadMore = () => {
+    setItemsToShow(prev => prev + 4);
+    // smooth scroll to the expanded list
+    setTimeout(() => {
+      const el = moreRef.current || document.getElementById('more-articles');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  };
   // Handle category filter
   useEffect(() => {
     if (activeCategory) {
@@ -765,19 +779,7 @@ export default function App() {
       setLoading(false);
     }
   };
-const formatDate = (article: Article) => {
-    const raw = (article.createdAt || article.publishDate || article.date) as any;
-    if (!raw) return '';
-    try {
-      if (raw.seconds) {
-        return new Date(raw.seconds * 1000).toLocaleDateString();
-      }
-      const d = new Date(raw);
-      return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString();
-    } catch {
-      return String(raw);
-    }
-  };
+
   const getCategoryIcon = (category: Category) => {
     switch (category) {
       case Category.DAILY_LIFE: return <Home size={16} />;
@@ -794,7 +796,7 @@ const formatDate = (article: Article) => {
 
   const featuredArticle = filteredArticles[0];
   const sidebarArticles = filteredArticles.slice(1, 5);
-  const listArticles = filteredArticles.slice(5, 15);
+  const listArticles = filteredArticles.slice(5); // all remaining articles after top 5
   const trendingArticles = filteredArticles.slice(0, 4);
 
   const t = useCallback((key: string): string => {
@@ -1152,10 +1154,7 @@ const formatDate = (article: Article) => {
                <div className="space-y-12 max-w-none text-black/80 font-sans leading-relaxed">
                   <p className="text-2xl font-medium leading-tight text-gray-700">"<SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
 
-                  <div className="border-l-4 border-black pl-6">
-                    <div className="text-xl font-semibold text-gray-800">{activeArticle.verse[lang]}</div>
-                  </div>
-
+      
                   <div className="space-y-6">
                     <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
                   </div>
@@ -1344,30 +1343,59 @@ const formatDate = (article: Article) => {
                             <div className="flex flex-col lg:flex-row gap-12">
                               {/* Featured / Big Column */}
                               <div className="lg:w-2/3">
-                                {featuredArticle && (
-                                  <EnhancedArticleCard
-                                    article={featuredArticle}
-                                    onClick={openArticle}
-                                    variant="big"
-                                    bookmarked={bookmarks.includes(featuredArticle.id)}
-                                    onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
-                                  />
-                                )}
+                               {featuredArticle && (
+                <div className="relative">
+                  <EnhancedArticleCard
+                    article={featuredArticle}
+                    onClick={openArticle}
+                    variant="big"
+                    bookmarked={bookmarks.includes(featuredArticle.id)}
+                    onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
+                    onLoadMore={loadMore} // attach load more to featured overlay
+                  />
+                </div>
+              )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                  {listArticles.slice(0, 4).map(a => (
-                                    <EnhancedArticleCard
-                                      key={a.id}
-                                      article={a}
-                                      onClick={openArticle}
-                                      variant="small"
-                                      bookmarked={bookmarks.includes(a.id)}
-                                      onToggleBookmark={() => toggleBookmark(a.id)}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* show first 4 of listArticles (these are the 4 cards below the big one) */}
+                {listArticles.slice(0, 4).map(a => (
+                  <EnhancedArticleCard
+                    key={a.id}
+                    article={a}
+                    onClick={openArticle}
+                    variant="small"
+                    bookmarked={bookmarks.includes(a.id)}
+                    onToggleBookmark={() => toggleBookmark(a.id)}
+                  />
+                ))}
+              </div>
+              <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
+                {listArticles.length > itemsToShow ? (
+                  <button
+                    onClick={loadMore}
+                    className="bg-black text-white px-6 py-3 text-sm tracking-wider hover:opacity-90 transition-opacity "
+                  >
+                    Load more
+                  </button>
+                ) : listArticles.length > 0 && itemsToShow <= listArticles.length ? (
+                  <span className="text-gray-500 text-sm">All articles loaded</span>
+                ) : null}
+              </div>
+{itemsToShow > 4 && (
+                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {listArticles.slice(4, 4 + (itemsToShow - 4)).map(a => (
+                    <EnhancedArticleCard
+                      key={a.id}
+                      article={a}
+                      onClick={openArticle}
+                      variant="small"
+                      bookmarked={bookmarks.includes(a.id)}
+                      onToggleBookmark={() => toggleBookmark(a.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
                               {/* Sidebar / List Column */}
                               <div className="lg:w-1/3 border-l-0 lg:border-l border-black/10 lg:pl-12">
                                 <div className="mb-8">
