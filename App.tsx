@@ -873,76 +873,71 @@ useEffect(() => {
     canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
   };
 
-  const applyMeta = (article: Article | null) => {
-    // Remove any existing JSON-LD schema to prevent duplicates
-    const existingSchema = document.getElementById('article-schema');
-    if (existingSchema) existingSchema.remove();
+  // Helper to safely format Firebase Timestamps or Strings to ISO strings
+  const formatISO = (dateVal: any) => {
+    try {
+      if (!dateVal) return new Date().toISOString();
+      // Handle Firebase Timestamp objects (.toDate() is a Firebase method)
+      const d = dateVal.toDate ? dateVal.toDate() : new Date(dateVal);
+      // Check if date is valid
+      return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+    } catch (e) {
+      return new Date().toISOString();
+    }
+  };
 
-    if (article) {
-      const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
-      const desc = (article.metaDescription || article.situation?.[lang] || '').replace(/<[^>]+>/g, '').slice(0, 160);
-      const image = article.featuredImage || article.image || (defaults.ogImage);
-      const articleUrl = `${window.location.origin}${window.location.pathname}?article=${article.id}`;
-      
-      document.title = title;
-      
-      // Standard Meta Tags
-      const set = (sel: string, attr: string, value: string) => {
-        let el = document.querySelector(sel) as HTMLMetaElement | HTMLLinkElement | null;
-        if (el) {
-          if (el instanceof HTMLMetaElement) el.setAttribute(attr, value);
-          else (el as HTMLLinkElement).setAttribute('href', value);
-        } else {
-          if (sel.startsWith('meta')) {
-            const m = document.createElement('meta');
-            const nameOrProp = sel.includes('name=') ? 'name' : 'property';
-            const key = sel.match(/"(.*?)"/)?.[1] || '';
-            m.setAttribute(nameOrProp, key);
-            m.setAttribute('content', value);
-            document.head.appendChild(m);
-          } else if (sel.startsWith('link')) {
-            const l = document.createElement('link');
-            l.setAttribute('rel', 'canonical');
-            l.setAttribute('href', value);
-            document.head.appendChild(l);
-          }
-        }
-      };
+ const applyMeta = (article: Article | null) => {
+  const existingSchema = document.getElementById('article-schema');
+  if (existingSchema) existingSchema.remove();
 
-      set('meta[name="description"]', 'content', desc);
-      set('meta[property="og:title"]', 'content', title);
-      set('meta[property="og:description"]', 'content', desc);
-      set('meta[property="og:image"]', 'content', image);
-      set('meta[name="twitter:card"]', 'content', 'summary_large_image');
-      set('meta[name="twitter:image"]', 'content', image);
-      set('link[rel="canonical"]', 'href', articleUrl);
+  if (article) {
+    const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
+    
+    // Sanitization for text
+    const desc = (article.metaDescription || article.situation?.[lang] || '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .slice(0, 160)
+      .trim();
 
-      // --- JSON-LD Structured Data ---
+    // PROTECTION: Only allow HTTP URLs for social images
+    const getValidImage = () => {
+      if (article.featuredImage?.startsWith('http')) return article.featuredImage;
+      if (article.image?.startsWith('http')) return article.image;
+      return defaults.ogImage; // Fallback to your main hosted logo
+    };
+
+    const image = getValidImage();
+    const articleUrl = `${window.location.origin}${window.location.pathname}?article=${article.id}`;
+    
+    document.title = title;
+    
+    const set = (sel: string, attr: string, value: string) => {
+      let el = document.querySelector(sel) as HTMLMetaElement | null;
+      if (el) el.setAttribute(attr, value);
+    };
+
+    set('meta[name="description"]', 'content', desc);
+    set('meta[property="og:title"]', 'content', title);
+    set('meta[property="og:description"]', 'content', desc);
+    set('meta[property="og:image"]', 'content', image);
+    set('meta[name="twitter:image"]', 'content', image);
+    // ... rest of your code
+
+      // --- JSON-LD FIX: Use formatISO helper to prevent RangeError ---
       const schemaData = {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
         "headline": article.title?.[lang] || "",
         "image": [image],
-        "datePublished": article.createdAt ? new Date(article.createdAt).toISOString() : new Date().toISOString(),
-        "dateModified": article.updatedAt ? new Date(article.updatedAt).toISOString() : new Date().toISOString(),
+        "datePublished": formatISO(article.createdAt),
+        "dateModified": formatISO(article.updatedAt || article.createdAt),
         "author": [{
           "@type": "Organization",
-          "name": TRANSLATIONS.siteName[lang],
+          "name": "Kubana n'Imana",
           "url": window.location.origin
         }],
-        "publisher": {
-          "@type": "Organization",
-          "name": TRANSLATIONS.siteName[lang],
-          "logo": {
-            "@type": "ImageObject",
-            "url": `${window.location.origin}/logo.png` // Ensure you have a logo at this path
-          }
-        },
-        "description": desc,
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": articleUrl
-        }
+        "description": desc
       };
 
       const script = document.createElement('script');
@@ -952,22 +947,16 @@ useEffect(() => {
       document.head.appendChild(script);
 
     } else {
-      // Restore defaults
+      // Restore Logic
       document.title = defaults.title;
       const restore = (sel: string, val: string) => {
         const el = document.querySelector(sel) as HTMLMetaElement | HTMLLinkElement | null;
-        if (el) {
-          if (el instanceof HTMLMetaElement) el.setAttribute('content', val);
-          else (el as HTMLLinkElement).setAttribute('href', val);
-        }
+        if (el && val) el.setAttribute(el instanceof HTMLMetaElement ? 'content' : 'href', val);
       };
       restore('meta[name="description"]', defaults.description);
       restore('meta[property="og:title"]', defaults.ogTitle);
       restore('meta[property="og:description"]', defaults.ogDesc);
       restore('meta[property="og:image"]', defaults.ogImage);
-      restore('meta[name="twitter:image"]', defaults.twitterImage);
-      const canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-      if (canonical) canonical.setAttribute('href', defaults.canonical);
     }
   };
 
@@ -1197,12 +1186,7 @@ useEffect(() => {
                   </div>
                   <div className="flex flex-col gap-6">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Resources</h4>
-                    <button
-                      onClick={() => navigateTo('health')}
-                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
-                    >
-                      <Activity /> Wellness Desk
-                    </button>
+                    
 
                     <button
                       onClick={() => navigateTo('privacy')}
