@@ -872,21 +872,7 @@ useEffect(() => {
     twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
     canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
   };
-
-  // Helper to safely format Firebase Timestamps or Strings to ISO strings
-  const formatISO = (dateVal: any) => {
-    try {
-      if (!dateVal) return new Date().toISOString();
-      // Handle Firebase Timestamp objects (.toDate() is a Firebase method)
-      const d = dateVal.toDate ? dateVal.toDate() : new Date(dateVal);
-      // Check if date is valid
-      return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
-    } catch (e) {
-      return new Date().toISOString();
-    }
-  };
-
- const applyMeta = (article: Article | null) => {
+const applyMeta = (article: Article | null) => {
   const existingSchema = document.getElementById('article-schema');
   if (existingSchema) existingSchema.remove();
 
@@ -923,21 +909,63 @@ useEffect(() => {
     set('meta[property="og:image"]', 'content', image);
     set('meta[name="twitter:image"]', 'content', image);
     // ... rest of your code
+      set('link[rel="canonical"]', 'href', articleUrl);
 
-      // --- JSON-LD FIX: Use formatISO helper to prevent RangeError ---
-      const schemaData = {
+      // --- JSON-LD Structured Data ---
+     // --- JSON-LD Structured Data ---
+      
+      // Safe ISO date helper — handles Firestore Timestamp, toDate(), numeric epoch, and string
+      const toISO = (raw: any): string | null => {
+        if (!raw) return null;
+        try {
+          if (typeof raw === 'number') {
+            const ms = raw < 1e12 ? raw * 1000 : raw;
+            const d = new Date(ms);
+            return isNaN(d.getTime()) ? null : d.toISOString();
+          }
+          if (raw?.seconds && typeof raw.seconds === 'number') {
+            const d = new Date(raw.seconds * 1000);
+            return isNaN(d.getTime()) ? null : d.toISOString();
+          }
+          if (typeof raw?.toDate === 'function') {
+            const d = raw.toDate();
+            return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
+          }
+          const d = new Date(raw);
+          return isNaN(d.getTime()) ? null : d.toISOString();
+        } catch {
+          return null;
+        }
+      };
+
+      const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
+      const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
+
+      const schemaData: Record<string, any> = {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
         "headline": article.title?.[lang] || "",
         "image": [image],
-        "datePublished": formatISO(article.createdAt),
-        "dateModified": formatISO(article.updatedAt || article.createdAt),
+        "datePublished": datePublishedISO,
+        "dateModified": dateModifiedISO,
         "author": [{
           "@type": "Organization",
-          "name": "Kubana n'Imana",
+          "name": TRANSLATIONS.siteName[lang],
           "url": window.location.origin
         }],
-        "description": desc
+        "publisher": {
+          "@type": "Organization",
+          "name": TRANSLATIONS.siteName[lang],
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${window.location.origin}/logo.png`
+          }
+        },
+        "description": desc,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        }
       };
 
       const script = document.createElement('script');
@@ -946,17 +974,25 @@ useEffect(() => {
       script.text = JSON.stringify(schemaData);
       document.head.appendChild(script);
 
+      
+
     } else {
-      // Restore Logic
+      // Restore defaults
       document.title = defaults.title;
       const restore = (sel: string, val: string) => {
         const el = document.querySelector(sel) as HTMLMetaElement | HTMLLinkElement | null;
-        if (el && val) el.setAttribute(el instanceof HTMLMetaElement ? 'content' : 'href', val);
+        if (el) {
+          if (el instanceof HTMLMetaElement) el.setAttribute('content', val);
+          else (el as HTMLLinkElement).setAttribute('href', val);
+        }
       };
       restore('meta[name="description"]', defaults.description);
       restore('meta[property="og:title"]', defaults.ogTitle);
       restore('meta[property="og:description"]', defaults.ogDesc);
       restore('meta[property="og:image"]', defaults.ogImage);
+      restore('meta[name="twitter:image"]', defaults.twitterImage);
+      const canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (canonical) canonical.setAttribute('href', defaults.canonical);
     }
   };
 

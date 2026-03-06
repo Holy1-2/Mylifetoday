@@ -24,20 +24,31 @@ export const commentsCollection = collection(db, 'comments');
 export const usersCollection = collection(db, 'users');
 
 // Article Operations
-export const getArticles = async (category = null, lastDoc = null, itemsPerPage = 10) => {
-  let q = query(articlesCollection, orderBy('createdAt', 'desc'), limit(itemsPerPage));
+// ...existing code...
+export const getArticles = async (category = null, lastDoc = null, itemsPerPage = null) => {
+  // build query constraints conditionally so we only use `limit` when requested
+  const constraints = [];
 
   if (category) {
-    q = query(articlesCollection, where('category', '==', category), orderBy('createdAt', 'desc'), limit(itemsPerPage));
+    constraints.push(where('category', '==', category));
   }
+
+  // Always order by createdAt for deterministic ordering
+  constraints.push(orderBy('createdAt', 'desc'));
 
   if (lastDoc) {
-    q = query(articlesCollection, orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(itemsPerPage));
+    constraints.push(startAfter(lastDoc));
   }
 
+  if (typeof itemsPerPage === 'number' && itemsPerPage > 0) {
+    constraints.push(limit(itemsPerPage));
+  }
+
+  const q = query(articlesCollection, ...constraints);
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
+
 
 export const getArticleById = async (id) => {
   const docRef = doc(db, 'articles', id);
