@@ -591,8 +591,19 @@ export default function App() {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentAuthor, setNewCommentAuthor] = useState('');
-  const [itemsToShow, setItemsToShow] = useState<number>(4); // number of small/grid articles shown (initial 4)
+const [itemsToShow, setItemsToShow] = useState<number>(() => {
+    try {
+      const raw = localStorage.getItem('itemsToShow');
+      return raw ? Math.max(4, parseInt(raw, 10)) : 4;
+    } catch {
+      return 4;
+    }
+  }); 
+  
   const moreRef = useRef<HTMLDivElement | null>(null);
+  const prevItemsRef = useRef<number>(0);
+  const [animateNew, setAnimateNew] = useState<boolean>(false);
+  const [newlyAddedCount, setNewlyAddedCount] = useState<number>(0);
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
     try {
       const raw = localStorage.getItem('bookmarks');
@@ -639,14 +650,39 @@ export default function App() {
 
     loadArticles();
   }, []);
-  const loadMore = () => {
+ const loadMore = () => {
+    // remember previous shown count so we can animate the newly appended items
+    prevItemsRef.current = itemsToShow;
     setItemsToShow(prev => prev + 4);
-    // smooth scroll to the expanded list
+    setNewlyAddedCount(4);
+    setAnimateNew(true);
+    
+    // smooth scroll to the load-more anchor
     setTimeout(() => {
       const el = moreRef.current || document.getElementById('more-articles');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 120);
   };
+
+  // persist itemsToShow so returning users keep the expanded view
+  useEffect(() => {
+    try {
+      localStorage.setItem('itemsToShow', String(itemsToShow));
+    } catch (err) {
+      /* ignore */
+    }
+  }, [itemsToShow]);
+
+  // clear animation state after animation completes
+  useEffect(() => {
+    if (!animateNew) return;
+    const id = setTimeout(() => {
+      setAnimateNew(false);
+      setNewlyAddedCount(0);
+      prevItemsRef.current = 0;
+    }, 700);
+    return () => clearTimeout(id);
+  }, [animateNew]);
   // Handle category filter
   useEffect(() => {
     if (activeCategory) {
@@ -806,16 +842,139 @@ export default function App() {
       default: return <Newspaper size={16} />;
     }
   };
-
-  const featuredArticle = filteredArticles[0];
-  const sidebarArticles = filteredArticles.slice(1, 5);
-  const listArticles = filteredArticles.slice(5); // all remaining articles after top 5
-  const trendingArticles = filteredArticles.slice(0, 4);
-
+// Deduplicate filteredArticles by id to avoid rendering duplicates across sections
+const uniqueArticles = useMemo(() => {
+  const seen = new Set<string>();
+  return filteredArticles.filter(a => {
+    if (!a?.id) return false;
+    if (seen.has(a.id)) return false;
+    seen.add(a.id);
+    return true;
+  });
+}, [filteredArticles]);
+const featuredArticle = filteredArticles[0] || null;
+const listArticles = filteredArticles.slice(1);
+const sidebarArticles = filteredArticles.slice(1, 5);
+const trendingArticles = filteredArticles.slice(0, 4);
   const t = useCallback((key: string): string => {
     return TRANSLATIONS[key]?.[lang] || key;
   }, [lang]);
+// ...existing code...
 
+useEffect(() => {
+  const getMeta = (selector: string) => document.querySelector(selector) as HTMLMetaElement | null;
+  const defaults = {
+    title: document.title,
+    description: getMeta('meta[name="description"]')?.content || '',
+    ogTitle: getMeta('meta[property="og:title"]')?.content || '',
+    ogDesc: getMeta('meta[property="og:description"]')?.content || '',
+    ogImage: getMeta('meta[property="og:image"]')?.content || '',
+    twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
+    canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
+  };
+
+  const applyMeta = (article: Article | null) => {
+    // Remove any existing JSON-LD schema to prevent duplicates
+    const existingSchema = document.getElementById('article-schema');
+    if (existingSchema) existingSchema.remove();
+
+    if (article) {
+      const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
+      const desc = (article.metaDescription || article.situation?.[lang] || '').replace(/<[^>]+>/g, '').slice(0, 160);
+      const image = article.featuredImage || article.image || (defaults.ogImage);
+      const articleUrl = `${window.location.origin}${window.location.pathname}?article=${article.id}`;
+      
+      document.title = title;
+      
+      // Standard Meta Tags
+      const set = (sel: string, attr: string, value: string) => {
+        let el = document.querySelector(sel) as HTMLMetaElement | HTMLLinkElement | null;
+        if (el) {
+          if (el instanceof HTMLMetaElement) el.setAttribute(attr, value);
+          else (el as HTMLLinkElement).setAttribute('href', value);
+        } else {
+          if (sel.startsWith('meta')) {
+            const m = document.createElement('meta');
+            const nameOrProp = sel.includes('name=') ? 'name' : 'property';
+            const key = sel.match(/"(.*?)"/)?.[1] || '';
+            m.setAttribute(nameOrProp, key);
+            m.setAttribute('content', value);
+            document.head.appendChild(m);
+          } else if (sel.startsWith('link')) {
+            const l = document.createElement('link');
+            l.setAttribute('rel', 'canonical');
+            l.setAttribute('href', value);
+            document.head.appendChild(l);
+          }
+        }
+      };
+
+      set('meta[name="description"]', 'content', desc);
+      set('meta[property="og:title"]', 'content', title);
+      set('meta[property="og:description"]', 'content', desc);
+      set('meta[property="og:image"]', 'content', image);
+      set('meta[name="twitter:card"]', 'content', 'summary_large_image');
+      set('meta[name="twitter:image"]', 'content', image);
+      set('link[rel="canonical"]', 'href', articleUrl);
+
+      // --- JSON-LD Structured Data ---
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": article.title?.[lang] || "",
+        "image": [image],
+        "datePublished": article.createdAt ? new Date(article.createdAt).toISOString() : new Date().toISOString(),
+        "dateModified": article.updatedAt ? new Date(article.updatedAt).toISOString() : new Date().toISOString(),
+        "author": [{
+          "@type": "Organization",
+          "name": TRANSLATIONS.siteName[lang],
+          "url": window.location.origin
+        }],
+        "publisher": {
+          "@type": "Organization",
+          "name": TRANSLATIONS.siteName[lang],
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${window.location.origin}/logo.png` // Ensure you have a logo at this path
+          }
+        },
+        "description": desc,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        }
+      };
+
+      const script = document.createElement('script');
+      script.id = 'article-schema';
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(schemaData);
+      document.head.appendChild(script);
+
+    } else {
+      // Restore defaults
+      document.title = defaults.title;
+      const restore = (sel: string, val: string) => {
+        const el = document.querySelector(sel) as HTMLMetaElement | HTMLLinkElement | null;
+        if (el) {
+          if (el instanceof HTMLMetaElement) el.setAttribute('content', val);
+          else (el as HTMLLinkElement).setAttribute('href', val);
+        }
+      };
+      restore('meta[name="description"]', defaults.description);
+      restore('meta[property="og:title"]', defaults.ogTitle);
+      restore('meta[property="og:description"]', defaults.ogDesc);
+      restore('meta[property="og:image"]', defaults.ogImage);
+      restore('meta[name="twitter:image"]', defaults.twitterImage);
+      const canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (canonical) canonical.setAttribute('href', defaults.canonical);
+    }
+  };
+
+  applyMeta(activeArticle);
+}, [activeArticle, lang]);
+
+// ...existing code...
   // Open article helper — increments views and loads latest article + comments
   const openArticle = useCallback(async (article: Article) => {
     try {
@@ -1353,134 +1512,173 @@ export default function App() {
                           />
                         ) : (
                           <>
-                            <div className="flex flex-col lg:flex-row gap-12">
-                              {/* Featured / Big Column */}
-                              <div className="lg:w-2/3">
-                                {featuredArticle && (
-                                  <div className="relative">
-                                    <EnhancedArticleCard
-                                      article={featuredArticle}
-                                      onClick={openArticle}
-                                      variant="big"
-                                      bookmarked={bookmarks.includes(featuredArticle.id)}
-                                      onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
-                                      onLoadMore={loadMore} // attach load more to featured overlay
-                                    />
-                                  </div>
-                                )}
+                          <div className="flex flex-col lg:flex-row gap-12">
+  {/* Featured / Big Column (scrollable container for featured + undercards) */}
+  {/* Featured / Big Column */}
+<div className="lg:w-2/3">
+  {/* NOTE: remove inner scroll — let the whole page scroll normally.
+      Featured and subsequent cards flow with page scrolling. */}
+  {/* Featured */}
+    {featuredArticle && (
+      <div className="relative mb-8">
+        <EnhancedArticleCard
+          article={featuredArticle}
+          onClick={openArticle}
+          variant="big"
+          bookmarked={bookmarks.includes(featuredArticle.id)}
+          onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
+          onLoadMore={loadMore}
+        />
+      </div>
+    )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                  {/* show first 4 of listArticles (these are the 4 cards below the big one) */}
-                                  {listArticles.slice(0, 4).map(a => (
-                                    <EnhancedArticleCard
-                                      key={a.id}
-                                      article={a}
-                                      onClick={openArticle}
-                                      variant="small"
-                                      bookmarked={bookmarks.includes(a.id)}
-                                      onToggleBookmark={() => toggleBookmark(a.id)}
-                                    />
-                                  ))}
-                                </div>
-                                <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
-                                  {listArticles.length > itemsToShow ? (
-                                    <button
-                                      onClick={loadMore}
-                                      className="bg-black text-white px-6 py-3 text-sm tracking-wider hover:opacity-90 transition-opacity "
-                                    >
-                                      Load more
-                                    </button>
-                                  ) : listArticles.length > 0 && itemsToShow <= listArticles.length ? (
-                                    <span className="text-gray-500 text-sm">All articles loaded</span>
-                                  ) : null}
-                                </div>
-                                {itemsToShow > 4 && (
-                                  <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {listArticles.slice(4, 4 + (itemsToShow - 4)).map(a => (
-                                      <EnhancedArticleCard
-                                        key={a.id}
-                                        article={a}
-                                        onClick={openArticle}
-                                        variant="small"
-                                        bookmarked={bookmarks.includes(a.id)}
-                                        onToggleBookmark={() => toggleBookmark(a.id)}
-                                      />
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                              {/* Sidebar / List Column */}
-                              <div className="lg:w-1/3 border-l-0 lg:border-l border-black/10 lg:pl-12">
-                                <div className="mb-8">
-                                  <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-4">
-                                    Quick Categories
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {Object.values(Category).slice(0, 5).map(cat => (
-                                      <button
-                                        key={cat}
-                                        onClick={() => setActiveCategory(cat)}
-                                        className="w-full text-left p-3 hover:bg-gray-50 transition-colors flex items-center justify-between group"
-                                      >
-                                        <div className="flex items-center gap-3">
-                                          {getCategoryIcon(cat)}
-                                          <span className="text-sm font-bold">
-                                            {TRANSLATIONS.categories[cat][lang]}
-                                          </span>
-                                        </div>
-                                        <span className="text-xs text-gray-400 group-hover:text-black">
-                                          {articleCounts[cat] || 0}
-                                        </span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
+  {/* Unified list: show first `itemsToShow` articles from listArticles.
+      Earlier items remain visible when loading more. */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {listArticles.slice(0, itemsToShow).map((a, index) => {
+        const prevStart = prevItemsRef.current || 0;
+        const isNew = index >= prevStart && index < (prevStart + newlyAddedCount);
+        const animClass = isNew
+          ? (animateNew ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')
+          : 'opacity-100 translate-y-0';
 
-                                <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-8">
-                                  Daily Bread Feed
-                                </h4>
-                                {sidebarArticles.map(a => (
-                                  <EnhancedArticleCard
-                                    key={a.id}
-                                    article={a}
-                                    onClick={openArticle}
-                                    variant="small"
-                                    showCategory={false}
-                                    bookmarked={bookmarks.includes(a.id)}
-                                    onToggleBookmark={() => toggleBookmark(a.id)}
-                                  />
-                                ))}
+        return (
+          <div
+            key={a.id}
+            className={`transform transition-all duration-600 ${animClass}`}
+          >
+            <EnhancedArticleCard
+              article={a}
+              onClick={openArticle}
+              variant="small"
+              bookmarked={bookmarks.includes(a.id)}
+              onToggleBookmark={() => toggleBookmark(a.id)}
+            />
+          </div>
+        );
+      })}
+    </div>
 
-                                {/* Subscription Box */}
-                                <div className="bg-black text-white p-8 mt-12">
-                                  <h4 className="text-2xl font-bold mb-4 italic">Get Biblical Clarity</h4>
-                                  <p className="text-xs font-bold uppercase tracking-widest mb-6 opacity-60">
-                                    Weekly newsletter on faith & health
-                                  </p>
-                                  <input
-                                    type="email"
-                                    placeholder="Your Email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-white/10 border border-white/20 p-3 mb-4 text-sm outline-none placeholder-gray-400"
-                                  />
-                                  <Button
-                                    variant="secondary"
-                                    className="w-full"
-                                    onClick={() => handleSubscribe(email)}
-                                  >
-                                    {TRANSLATIONS.ui.subscribe[lang]}
-                                  </Button>
-                                  <Button
-                                    variant="primary"
-                                    className="w-full mt-3"
-                                    onClick={() => navigateTo('donate')}
-                                  >
-                                    {TRANSLATIONS.ui.donate[lang]}
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
+    {/* Footer Controls */}
+    <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
+      {listArticles.length > itemsToShow ? (
+        <div className="flex gap-4">
+          <Button variant="primary" onClick={loadMore}>
+            Load more
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => {
+              const leftCol = moreRef.current?.closest('[style]') as HTMLElement | null;
+              if (leftCol) leftCol.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
+            Scroll to top
+          </Button>
+        </div>
+      ) : listArticles.length > 0 ? (
+        <div className="flex flex-col items-center gap-4 pb-10">
+          <span className="text-gray-500 text-sm">All articles loaded</span>
+          {itemsToShow > 4 && (
+            <Button 
+              variant="secondary" 
+              onClick={() => {
+                setItemsToShow(4);
+                const leftCol = moreRef.current?.closest('[style]') as HTMLElement | null;
+                if (leftCol) {
+                  setTimeout(() => leftCol.scrollTo({ top: 0, behavior: 'smooth' }), 80);
+                }
+              }}
+            >
+              Show less
+            </Button>
+          )}
+        </div>
+      ) : null}
+    </div>
+  </div>
+
+
+  {/* Sidebar / List Column (sticky aside) */}
+  <div className="lg:w-1/3 lg:pl-12 border-l-0 lg:border-l border-black/10">
+    <div className="sticky top-24 space-y-12">
+      {/* Categories */}
+      <div>
+        <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-4">
+          Quick Categories
+        </h4>
+        <div className="space-y-2">
+          {Object.values(Category).slice(0, 5).map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="w-full text-left p-3 hover:bg-gray-50 transition-colors flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                {getCategoryIcon(cat)}
+                <span className="text-sm font-bold">
+                  {TRANSLATIONS.categories[cat][lang]}
+                </span>
+              </div>
+              <span className="text-xs text-gray-400 group-hover:text-black">
+                {articleCounts[cat] || 0}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Sidebar Feed */}
+      <div>
+        <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-6">
+          Daily Bread Feed
+        </h4>
+        <div className="space-y-6">
+          {sidebarArticles.map(a => (
+            <EnhancedArticleCard
+              key={a.id}
+              article={a}
+              onClick={openArticle}
+              variant="small"
+              showCategory={false}
+              bookmarked={bookmarks.includes(a.id)}
+              onToggleBookmark={() => toggleBookmark(a.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Subscription Box */}
+      <div className="bg-black text-white p-6 rounded shadow-xl">
+        <h4 className="text-xl font-bold mb-2 italic">Get Biblical Clarity</h4>
+        <p className="text-xs font-bold uppercase tracking-widest mb-4 opacity-60">
+          Weekly newsletter on faith & health
+        </p>
+        <input
+          type="email"
+          placeholder="Your Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full bg-white/10 border border-white/20 p-3 mb-3 text-sm outline-none placeholder-gray-400 focus:border-white/50 transition-colors"
+        />
+        <Button
+          variant="secondary"
+          className="w-full"
+          onClick={() => handleSubscribe(email)}
+        >
+          {TRANSLATIONS.ui.subscribe[lang]}
+        </Button>
+        <Button
+          variant="primary"
+          className="w-full mt-3 border border-white/20"
+          onClick={() => navigateTo('donate')}
+        >
+          {TRANSLATIONS.ui.donate[lang]}
+        </Button>
+      </div>
+    </div>
+  </div>
+</div>
 
                             {/* Trending Feed */}
                             {trendingArticles.length > 0 && (

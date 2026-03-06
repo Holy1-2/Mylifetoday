@@ -102,7 +102,7 @@ const AdminDashboard = () => {
       setStats({
         totalArticles: articlesData.length,
         totalSubscribers: subsData.length,
-        todaysViews: articlesData.reduce((sum, article) => sum + (article.views || 0), 0),
+        todaysViews: articlesData.reduce((sum, article) => sum   (article.views || 0), 0),
         engagementRate: '72%'
       });
     } catch (error) {
@@ -985,7 +985,7 @@ const ArticleEditor = ({
                   onClick={addHealthHack}
                   className="mt-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
                 >
-                  + Add Health Hack
+                    Add Health Hack
                 </button>
               </div>
 
@@ -1017,7 +1017,7 @@ const ArticleEditor = ({
                   onClick={addHerbalRemedy}
                   className="mt-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
                 >
-                  + Add Herbal Remedy
+                    Add Herbal Remedy
                 </button>
               </div>
             </div>

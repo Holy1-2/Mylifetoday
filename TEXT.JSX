@@ -24,17 +24,17 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType>({
+const LanguageContext = createContext < LanguageContextType > ({
   lang: 'rw',
   setLang: () => { },
   t: () => '',
 });
 
-const AuthContext = createContext<{
+const AuthContext = createContext < {
   user: any;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise < void>;
   logout: () => void;
-}>({
+} > ({
   user: null,
   login: async () => { },
   logout: () => { },
@@ -262,7 +262,7 @@ const ShareModal: React.FC<{
               <X size={20} />
             </button>
           </div>
-          
+
           <div className="grid grid-cols-3 gap-4 mb-6">
             {shareOptions.map((option, index) => (
               <button
@@ -316,7 +316,7 @@ const GlobalSearchBar: React.FC<{
   const { lang } = useContext(LanguageContext);
   const [searchTerm, setSearchTerm] = useState(value);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState < Category | null > (null);
 
   const debouncedSearch = useCallback(
     debounce((term: string) => {
@@ -401,8 +401,8 @@ const GlobalSearchBar: React.FC<{
                     key={cat}
                     onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
                     className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${selectedCategory === cat
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-100 hover:bg-gray-200'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200'
                       }`}
                   >
                     {TRANSLATIONS.categories[cat][lang]}
@@ -420,7 +420,7 @@ const GlobalSearchBar: React.FC<{
 // --- Donation Page Component ---
 const DonationPage: React.FC<{ stats: DonationStats }> = ({ stats }) => {
   const { lang } = useContext(LanguageContext);
-  const [copied, setCopied] = useState<string | null>(null);
+  const [copied, setCopied] = useState < string | null > (null);
 
   const percentage = Math.min(100, Math.floor((stats.current / stats.goal) * 100));
 
@@ -654,12 +654,12 @@ const AdminDashboard: React.FC<{
 
 // --- Main App Component ---
 export default function App() {
-  const [lang, setLang] = useState<Language>('rw');
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [lang, setLang] = useState < Language > ('rw');
+  const [comments, setComments] = useState < Comment[] > ([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentAuthor, setNewCommentAuthor] = useState('');
-  const [bookmarks, setBookmarks] = useState<string[]>(() => {
+  const [bookmarks, setBookmarks] = useState < string[] > (() => {
     try {
       const raw = localStorage.getItem('bookmarks');
       return raw ? JSON.parse(raw) : [];
@@ -667,21 +667,21 @@ export default function App() {
       return [];
     }
   });
-  const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms' | 'donate'>('home');
-  const [activeArticle, setActiveArticle] = useState<Article | null>(null);
+  const [currentPage, setCurrentPage] = useState < 'home' | 'health' | 'admin' | 'privacy' | 'terms' | 'donate' > ('home');
+  const [activeArticle, setActiveArticle] = useState < Article | null > (null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState < Article[] > ([]);
+  const [filteredArticles, setFilteredArticles] = useState < Article[] > ([]);
   const [loading, setLoading] = useState(true);
-  const [searchResults, setSearchResults] = useState<Article[] | null>(null);
+  const [searchResults, setSearchResults] = useState < Article[] | null > (null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [articleCounts, setArticleCounts] = useState<Record<Category, number>>({} as Record<Category, number>);
+  const [activeCategory, setActiveCategory] = useState < Category | null > (null);
+  const [articleCounts, setArticleCounts] = useState < Record < Category, number>> ({} as Record<Category, number>);
   const [searchQuery, setSearchQuery] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
-  const [donationStats, setDonationStats] = useState<DonationStats>(INITIAL_DONATION_STATS);
+  const [donationStats, setDonationStats] = useState < DonationStats > (INITIAL_DONATION_STATS);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -761,7 +761,7 @@ export default function App() {
     // Update URL without page reload
     const params = new URLSearchParams();
     if (category) params.set('category', category);
-    const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    const url = `${window.location.pathname}${params.toString() ? '?'   params.toString(): ''}`;
     window.history.pushState({}, '', url);
   };
 
@@ -782,7 +782,7 @@ export default function App() {
       // Update URL with search parameter
       const params = new URLSearchParams(window.location.search);
       params.set('search', searchTerm);
-      window.history.pushState({}, '', `?${params.toString()}`);
+      window.history.pushState({}, '', `? ${ params.toString() } `);
     } catch (error) {
       console.error('Search error:', error);
     } finally {
@@ -798,7 +798,7 @@ export default function App() {
     // Remove search parameter from URL
     const params = new URLSearchParams(window.location.search);
     params.delete('search');
-    window.history.pushState({}, '', params.toString() ? `?${params.toString()}` : window.location.pathname);
+    window.history.pushState({}, '', params.toString() ? `? ${ params.toString() } ` : window.location.pathname);
   };
 
   const handleSubscribe = async (email: string, name?: string) => {
@@ -842,7 +842,7 @@ export default function App() {
         try {
           const params = new URLSearchParams(window.location.search);
           params.set('article', article.id);
-          const url = `${window.location.pathname}?${params.toString()}`;
+          const url = `${ window.location.pathname }?${ params.toString() } `;
           window.history.pushState({}, '', url);
         } catch (err) {
           // non-fatal
@@ -932,26 +932,26 @@ export default function App() {
               <div className="hidden lg:flex gap-8 text-[11px] font-bold uppercase tracking-widest items-center">
                 <button
                   onClick={() => navigateTo('home')}
-                  className={`hover:text-red-600 transition-colors flex items-center gap-2 ${currentPage === 'home' ? 'text-red-600' : ''}`}
+                  className={`hover: text - red - 600 transition - colors flex items - center gap - 2 ${ currentPage === 'home' ? 'text-red-600' : '' } `}
                 >
                   <Home size={14} /> {t('home')}
                 </button>
                 <button
                   onClick={() => navigateTo('health')}
-                  className={`hover:text-red-600 transition-colors flex items-center gap-2 ${currentPage === 'health' ? 'text-red-600' : ''}`}
+                  className={`hover: text - red - 600 transition - colors flex items - center gap - 2 ${ currentPage === 'health' ? 'text-red-600' : '' } `}
                 >
                   <Activity size={14} /> {t('health')}
                 </button>
                 <button
                   onClick={() => navigateTo('donate')}
-                  className={`hover:text-red-600 transition-colors flex items-center gap-2 ${currentPage === 'donate' ? 'text-red-600' : ''}`}
+                  className={`hover: text - red - 600 transition - colors flex items - center gap - 2 ${ currentPage === 'donate' ? 'text-red-600' : '' } `}
                 >
                   <HandHeart size={14} /> {t('donate')}
                 </button>
                 <div className="relative">
                   <button
                     onClick={() => setShowSearch(!showSearch)}
-                    className={`hover:text-red-600 transition-colors flex items-center gap-2 ${showSearch ? 'text-red-600' : ''}`}
+                    className={`hover: text - red - 600 transition - colors flex items - center gap - 2 ${ showSearch ? 'text-red-600' : '' } `}
                   >
                     <Search size={14} /> {t('search')}
                   </button>
@@ -967,8 +967,8 @@ export default function App() {
                     <button
                       key={l.code}
                       onClick={() => setLang(l.code)}
-                      className={`text-[9px] font-black px-2 py-1 border border-black/10 hover:border-black transition-all rounded ${lang === l.code ? 'bg-black text-white' : ''}`}
-                      aria-label={`Switch to ${l.name}`}
+                      className={`text - [9px] font - black px - 2 py - 1 border border - black / 10 hover: border - black transition - all rounded ${ lang === l.code ? 'bg-black text-white' : '' } `}
+                      aria-label={`Switch to ${ l.name } `}
                     >
                       {l.code}
                     </button>
@@ -1265,18 +1265,18 @@ export default function App() {
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                             <button
                               onClick={() => setActiveCategory(null)}
-                              className={`p-4 border-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === null ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
+                              className={`p - 4 border - 2 rounded - xl flex flex - col items - center justify - center gap - 2 transition - all ${ activeCategory === null ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black' } `}
                             >
                               <LayoutGrid size={20} />
                               <span className="text-xs font-bold uppercase">All</span>
-                              <span className="text-xs opacity-60">{Object.values(articleCounts).reduce((a, b) => a + b, 0)}</span>
+                              <span className="text-xs opacity-60">{Object.values(articleCounts).reduce((a, b) => a   b, 0)}</span>
                             </button>
 
                             {Object.values(Category).slice(0, 6).map(category => (
                               <button
                                 key={category}
                                 onClick={() => setActiveCategory(category)}
-                                className={`p-4 border-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === category ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
+                                className={`p - 4 border - 2 rounded - xl flex flex - col items - center justify - center gap - 2 transition - all ${ activeCategory === category ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black' } `}
                               >
                                 {getCategoryIcon(category)}
                                 <span className="text-xs font-bold uppercase text-center">
@@ -1294,7 +1294,7 @@ export default function App() {
                             <h3 className="text-2xl font-bold mb-3">No articles found</h3>
                             <p className="text-gray-600 max-w-md mx-auto mb-6">
                               {activeCategory
-                                ? `There are no articles in the ${TRANSLATIONS.categories[activeCategory][lang]} category yet.`
+                                ? `There are no articles in the ${ TRANSLATIONS.categories[activeCategory][lang] } category yet.`
                                 : "No articles have been published yet."
                               }
                             </p>
@@ -1381,7 +1381,7 @@ export default function App() {
                                     <span className="text-xl font-bold">{Math.floor((donationStats.current / donationStats.goal) * 100)}% Reached</span>
                                   </div>
                                   <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
-                                    <div className="h-full bg-black" style={{ width: `${(donationStats.current / donationStats.goal) * 100}%` }}></div>
+                                    <div className="h-full bg-black" style={{ width: `${ (donationStats.current / donationStats.goal) * 100 }% ` }}></div>
                                   </div>
                                   <Button onClick={() => navigateTo('donate')} variant="primary" className="w-full">Contribute Now</Button>
                                 </div>
@@ -1405,7 +1405,7 @@ export default function App() {
                       <p>{LEGAL.privacy[lang]}</p>
                       <div className="mt-6">
                         <h4 className="font-bold">Contact</h4>
-                        <p className="text-sm text-gray-700">If you have questions about privacy, contact us at <a href={`mailto:${SOCIAL_LINKS.email}`} className="text-red-600">{SOCIAL_LINKS.email}</a>.</p>
+                        <p className="text-sm text-gray-700">If you have questions about privacy, contact us at <a href={`mailto:${ SOCIAL_LINKS.email } `} className="text-red-600">{SOCIAL_LINKS.email}</a>.</p>
                         <div className="flex gap-3 mt-3">
                           <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="underline text-sm">WhatsApp</a>
                           <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="underline text-sm">Facebook</a>
