@@ -1,20 +1,6 @@
 import { db } from '../config/firebaseConfig';
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  orderBy,
-  limit,
-  startAfter,
-  serverTimestamp,
-  increment
-} from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { addDoc, serverTimestamp, getDoc, deleteDoc, increment,orderBy } from 'firebase/firestore';
 
 // Articles Collection
 export const articlesCollection = collection(db, 'articles');
@@ -55,6 +41,14 @@ export const getArticleById = async (id) => {
   const snapshot = await getDoc(docRef);
   return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
 };
+export const getArticleBySlug = async (slug) => {
+  if (!slug) return null;
+  const q = query(articlesCollection, where('slug', '==', slug), limit(1));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  const docSnap = snapshot.docs[0];
+  return { id: docSnap.id, ...docSnap.data() };
+};
 
 export const searchArticles = async (searchTerm) => {
   const articles = await getArticles();
@@ -62,6 +56,46 @@ export const searchArticles = async (searchTerm) => {
     const searchableText = `${article.title.en || ''} ${article.title.fr || ''} ${article.title.rw || ''} ${article.title.sw || ''} ${article.situation.en || ''} ${article.situation.fr || ''} ${article.situation.rw || ''} ${article.situation.sw || ''} ${article.teaching.en || ''} ${article.teaching.fr || ''} ${article.teaching.rw || ''} ${article.teaching.sw || ''}`.toLowerCase();
     return searchableText.includes(searchTerm.toLowerCase());
   });
+};
+const slugify = (text = '') => {
+  return text
+    .toString()
+    .normalize('NFKD') // remove diacritics
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-') // replace non-alnum with hyphen
+    .replace(/^-+|-+$/g, '') // trim hyphens
+    .substring(0, 120);
+};
+export const ensureUniqueSlugAndSave = async (articleId, titleOrCandidate) => {
+  if (!articleId) return null;
+  const base = slugify(titleOrCandidate || articleId);
+  let candidate = base || articleId;
+  let counter = 0;
+  // loop until unique or safety limit
+  while (counter < 50) {
+    const q = query(articlesCollection, where('slug', '==', candidate), limit(1));
+    const snap = await getDocs(q);
+    // if no document OR the found doc is the same articleId we can use candidate
+    if (snap.empty || (snap.docs[0].id === articleId)) {
+      // persist slug to the article
+      try {
+        const docRef = doc(db, 'articles', articleId);
+        await updateDoc(docRef, { slug: candidate });
+      } catch (err) {
+        console.error('Failed to persist slug:', err);
+      }
+      return candidate;
+    }
+    counter += 1;
+    candidate = `${base}-${counter}`;
+  }
+   try {
+    const docRef = doc(db, 'articles', articleId);
+    await updateDoc(docRef, { slug: articleId });
+  } catch (err) { /* ignore */ }
+  return articleId;
 };
 
 export const addArticle = async (articleData) => {

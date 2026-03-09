@@ -29,7 +29,7 @@ export const TRANSLATIONS: Translations = {
     [Category.DAILY_LIFE]: { en: 'Daily Life', rw: 'Ubuzima bwa buri munsi', sw: 'Maisha ya Kila Siku', fr: 'Vie Quotidienne' },
     [Category.MONEY_WORK]: { en: 'Economy', rw: 'Amafaranga', sw: 'Uchumi', fr: 'Économie' },
     [Category.RELATIONSHIPS]: { en: 'Relationships', rw: 'Imibanire', sw: 'Mahusiano', fr: 'Relations' },
-    [Category.MENTAL_HEALTH]: { en: 'Mind', rw: 'Umutwe', sw: 'Akili', fr: 'Mental' },
+    [Category.MENTAL_HEALTH]: { en: 'Mind', rw: 'Intekerezo', sw: 'Akili', fr: 'Mental' },
     [Category.TECH]: { en: 'Technology', rw: 'Ikoranabuhanga', sw: 'Teknolojia', fr: 'Technologie' },
     [Category.SOCIETY]: { en: 'Society', rw: 'Umuryango', sw: 'Jamii', fr: 'Société' },
     [Category.HOPE]: { en: 'Hope', rw: 'Ibyiringiro', sw: 'Tumaini', fr: 'Espoir' },
@@ -40,21 +40,45 @@ export const TRANSLATIONS: Translations = {
     latestArticles: { en: 'Trending Insights', rw: 'Inyigisho zigezweho', sw: 'Maarifa Mapya', fr: 'Dernières Analyses' },
     searchPlaceholder: { en: 'Find topics...', rw: 'Shaka ibintu...', sw: 'Tafuta mada...', fr: 'Chercher...' },
     share: { en: 'Share', rw: 'Sangiza', sw: 'Shiriki', fr: 'Partager' },
+    byLabel: { en: 'By', rw: 'Na', sw: 'Na', fr: 'Par' },
+   moreFrom: { en: 'More from', rw: 'Izindi nkuru z\' ', sw: 'Zaidi kutoka', fr: 'Plus de' },
+   dailyPracticalStep: { en: 'Daily Practical Step', rw: 'Intambwe ya buri munsi', sw: 'Hatua ya Kila Siku', fr: 'Étape pratique quotidienne' },
+   closingPrayer: { en: 'Closing Prayer', rw: 'Isengesho ', sw: 'Sala ya Mwisho', fr: 'Prière de clôture' },
+   addYourThoughts: { en: 'Add your thoughts', rw: 'Tanga igitekerezo', sw: 'Ongeza mawazo yako', fr: 'Ajoutez vos pensées' },
+   nameOptionalPlaceholder: { en: 'Your name (optional)', rw: 'Amazina yawe ', sw: 'Jina lako (hiari)', fr: 'Votre nom (optionnel)' },
+   respectfulDiscoursePlaceholder: { en: 'Your comment...', rw: 'Igitekerezo cyawe...', sw: 'Mazungumzo yenye heshima tu...', fr: 'Discussions respectueuses seulement...' },
+   loadingComments: { en: 'Loading comments...', rw: 'Turimo kwohereza ibitekerezo...', sw: 'Inapakia maoni...', fr: 'Chargement des commentaires...' },
+   library: { en: 'library', rw: 'isomero', sw: 'maktaba', fr: 'bibliothèque' },
+   editorialDesk: { en: 'Editorial Desk', rw: 'Ikaniga ry\'ubwanditsi', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
     comments: { en: 'Discourse', rw: 'Ibitekerezo', sw: 'Maoni', fr: 'Commentaires' },
     healthSection: { en: 'Health & Wellness', rw: 'Ubuzima n\'Imirire', sw: 'Afya na Ustawi', fr: 'Santé et Bien-être' },
     donate: { en: 'Support Our Mission', rw: 'Shyigikira umurimo', sw: 'Changia Huduma', fr: 'Soutenir notre mission' },
     donationGoal: { en: 'Digital Ministry Goal', rw: 'Intego y\'umurimo', sw: 'Lengo la Huduma', fr: 'Objectif du Ministère' },
-    copy: { en: 'Copy Account', rw: 'Kora kopi', sw: 'Nakili Akaunti', fr: 'Copier le compte' },
+    donationHeader: { en: 'Support {site}', rw: 'Shyigikira {site}', sw: 'Tusaidie {site}', fr: 'Soutenir {site}' },
+   donationDescription: {
+     en: 'Your donation helps cover hosting, domain, and this gospel to reach many.',
+   rw: 'Inkunga yawe ifasha kwishyura hosting, domain, no gutuma ubu butumwa bugera kuri benshi.',
+     sw: 'Mchango wako husaidia kufunika gharama za hosting, domain, na maendeleo ya vipengele vipya.',
+     fr: 'Votre don aide à couvrir l\'hébergement, le domaine et le développement de nouvelles fonctionnalités.'
+   },
+  mobileMoneyLabel: { en: 'Mobile Money (MoMo)', rw: 'Mobile Money (MoMo)', sw: 'Mobile Money (MoMo)', fr: 'Mobile Money (MoMo)' },
+   bankTransferLabel: { en: 'Bank Transfer', rw: 'Kohereza kuri Banki', sw: 'Uhamisho wa Benki', fr: 'Virement bancaire' },
+   donationPurposeLabel: { en: 'Purpose', rw: 'Intego', sw: 'Madhumuni', fr: 'Objet' },
+   copyMoMo: { en: 'Copy MoMo', rw: 'Koporora MoMo', sw: 'Nakili MoMo', fr: 'Copier MoMo' },
+   copyBank: { en: 'Copy Bank', rw: 'Koporora Numero ya Banki', sw: 'Nakili Benki', fr: 'Copier Banque' },
+    copy: { en: 'Copy Account', rw: 'Koporora izina rya konti', sw: 'Nakili Akaunti', fr: 'Copier le compte' },
     copied: { en: 'Copied!', rw: 'Byakopye!', sw: 'Imenakiliwa!', fr: 'Copié !' },
     subscribe: { en: 'Subscribe', rw: 'Iyandikishe', sw: 'Jiandikishe', fr: 'S\'abonner' },
-    postComment: { en: 'Post Comment', rw: 'Tanga comment', sw: 'Tuma Maoni', fr: 'Poster le commentaire' },
+    postComment: { en: 'Post Comment', rw: 'Ohereza igitekerezo', sw: 'Tuma Maoni', fr: 'Poster le commentaire' },
     joinWhatsApp: { en: 'Join WhatsApp Group', rw: 'Injira mu itsinda rya WhatsApp', sw: 'Jiunge na WhatsApp', fr: 'Rejoindre WhatsApp' },
     privacyTitle: { en: 'Privacy Policy', rw: 'Politiki y\'Ubwisanzure', sw: 'Sera ya Faragha', fr: 'Politique de confidentialité' },
     termsTitle: { en: 'Terms of Service', rw: 'Amategeko yo Gukoresha', sw: 'Sheria za Huduma', fr: 'Conditions d\'utilisation' },
     home: { en: 'Home', rw: 'Ahabanza', sw: 'Nyumbani', fr: 'Accueil' },
     health: { en: 'Health', rw: 'Ubuzima', sw: 'Afya', fr: 'Santé' },
     search: { en: 'Search', rw: 'Shaka', sw: 'Tafuta', fr: 'Rechercher' },
-    admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' }
+    admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
+     portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
+   contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' }
   }
 };
 
@@ -67,9 +91,9 @@ export const DONATION = {
 };
 
 export const SOCIAL_LINKS = {
-  whatsapp: 'https://chat.whatsapp.com/yourgroup',
-  facebook: 'https://facebook.com/yourpage',
-  instagram: 'https://instagram.com/yourprofile',
+  whatsapp: 'https://whatsapp.com/channel/0029VbCMYTyBadmitOpkBC15',
+  facebook: 'https://www.facebook.com/profile.php?id=61559771027291',
+  instagram: 'https://www.instagram.com/hirwa.topray/',
   email: 'contact@theMylifetoday.org'
 };
 
@@ -118,28 +142,28 @@ Contact us for any privacy concerns. Your trust is sacred to us.`,
 1. Amakuru Dukusanya:
    - Imeli zo kwandikisha mu itangazo
    - Ibitekerezo n'ibisubizo waduha ubwishingizi
-   - Imibare y'uko ukoresha serivisi zacu (ibitangazwa)
+   - Imibare y'uko ukoresha serivisi zacu metrics kugirango tunoze serivisi zacu
 
 2. Uko Dukoresha Amakuru Yawe:
-   - Kukohereza ibyigisho n'ibyubuzima biri kumurongo
+   - Kukohereza ibyigisho  biri kumurongo
    - Kunoza serivisi zacu
    - Gusubiza ibibazo byawe
    - Ntabwo tuzabigurisha abandi
 
 3. Kurinda Amakuru:
    - Dukoresha uburyo bwo kurinda amakuru
-   - Amakuru yawe arashinzwe neza kuri Firebase
-   - Turabiguma gusa ibyo birakwiye
+   - Amakuru yawe ararinzwe neza kuri Firebase
+   - Tuguma kubika amaguru mu gihe akenewe
 
-4. Ubutaka Bwawe:
-   - Kureba amakuru yawe adufite
+4. Uburenganzira Bwawe:
+   - Kureba amakuru yawe dufite
    - Gusaba gukosora amakuru atari yo
-   - Gusaba gusiba amakuru yawe (hakiri ibisabwa n'amategeko)
+   - Gusaba gusiba amakuru yawe 
    - Kwanga amakuru ku buryo ari bwo bwose
 
-5. Amakuki & Kukurikirana:
-   - Dukoresha amakuki make gusa kugirango dukore neza
-   - Nta kukurikirana gihana cyangwa itangazo rikoreshwa
+5. Amakuki & Gucunga amakuru:
+   - Dukoresha amakuki(ububiko bwigihe gito) kugirango dukore neza
+   - Ntago tugurisha imikoreshereze yawe ku rubuga
 
 6. Ubwisanzure bw'Abana:
    - Urubuga rwacu rwateguriwe abakoresha bafite imyaka 13 n'ibirenzeho
@@ -147,7 +171,7 @@ Contact us for any privacy concerns. Your trust is sacred to us.`,
 
 7. Guhindura Iyi Politiki:
    - Dushobora kuyihindura rimwe na rimwe
-   - Ukomeje gukoresha bishyigikira guhinduka
+   - Gukomeza gukoresha byemeza gukomeza gukoresha
 
 Twandikire iyo ufite ibibazo by'ubwisanzure. Ukwizera kwawe ni icyubahiro.`,
 
@@ -279,8 +303,8 @@ Welcome to The Mylifetoday! By accessing and using our platform, you agree to be
 
 9. Limitation of Liability
    - We are not liable for indirect, incidental, or consequential damages
-   - We make no warranties about content accuracy or completeness
-   - Use the platform at your own risk
+   - However use the platform must be at your own risk
+   
 
 10. Changes to Terms
     - We may update these Terms periodically
@@ -292,7 +316,7 @@ Welcome to The Mylifetoday! By accessing and using our platform, you agree to be
     - Disputes will be resolved through peaceful dialogue first
 
 12. Contact Information
-    - For questions: contact@theMylifetoday.org
+    - For questions: amanitoprayhirwa@gmail.com
     - WhatsApp: ${SOCIAL_LINKS.whatsapp}
     - Response time: 2-3 business days
 
@@ -331,15 +355,16 @@ Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya 
    - Ntitwabazwa n'ibyemezo by'ubuzima byakozwe hakurikijwe ibyacu
 
 6. Iby'Ubwizigirwa
-   - Ibiri kuri Mylifetoday birangwa n'ubwizigirwa bwa Bibiliya
-   - Tubahiriza ibyemezo byose ariko turacyakomeje ku byacu
-   - Ibiri hano bishobora kutahura n'ibindi byemezo
+   - Ibiri kuri Mylifetoday bishingiye ku myemerere ya Bibiliya
+   - Twubaha imyemerere itandukanye ariko tugaharanira gukomeza umwimerere wacu
+  
+   - Ibiri hano bishobora kudahura nizindi nyigisho
 
-7. Amategeko y'Umutungo
-   - Imitungo itanga ubufasha mu mirimo yacu
-   - Imitungo ntabwo isubizwa
-   - Turaba inkuru z'uko imitungo ikoreshwa
-   - Imitungo ntabwo itanga icyizere cy'ibyo uzabona
+7. Amategeko y'Nkunga
+   - Inkunga itanga ubufasha mu mirimo yacu
+   - Inkunga ntabwo isubizwa
+   - Turaba inkuru z'uko inkunga ikoreshwa
+   - Inkunga ntabwo itanga icyizere cy'ibyo uzabona
 
 8. Gukoma Konti
    - Dushobora gukoma konti zikora ibitaza amategeko
@@ -348,17 +373,17 @@ Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya 
 
 9. Imbabazi
    - Ntitwabazwa n'ibyangiritse biturimo
-   - Ntidusaba ko ibyacu ari byo byose
-   - Ukoresha urubuga wibagirwa ko wariwe
+   - Ukoresha urubuga ni ukwihanganira ibibazo byose bya technique cyangwa ibindi
 
 10. Guhindura Amategeko
     - Dushobora kuyahindura rimwe na rimwe
     - Ukomeje gukoresha nyuma y'ibihinduka bishyigikira
-    - Tuzababwira ibihindura by'ingenzi
+    - Tuzababwira ibizahinduka by'ingenzi
 
 11. Amategeko Akurikizwa
-    - Aya mategeko akurikiza amategeko ashyirwaho
-    - Amakimbirane agarurwa mu mvugo mbere
+    - Aya mategeko akurikiza amategeko asanzwe
+    - Ibibazo bizakemurwa mu biganiro by'amahoro mbere
+   
 
 12. Amakuru yo Kutwandikira
     - Ibibazo: contact@theMylifetoday.org

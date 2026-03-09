@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Article, Category, Language, Comment } from './types';
 import { TRANSLATIONS, LANGUAGES, DONATION, SOCIAL_LINKS, LEGAL } from './constants';
-import { getArticles, getArticleById, searchArticles, addSubscription, getCategories, getArticlesByCategory, incrementArticleViews, addComment, getCommentsByArticle } from './services/firebaseService';
+import { getArticles, getArticleById, getArticleBySlug, ensureUniqueSlugAndSave, searchArticles, addSubscription, getCategories, getArticlesByCategory, incrementArticleViews, addComment, getCommentsByArticle } from './services/firebaseService';
 import SEOHead from './components/SEOHead';
 
 import SafeHTMLRenderer from './components/SafeHTMLRenderer';
@@ -202,25 +202,24 @@ const EnhancedSearchBar: React.FC<{
     onClear();
   };
 
-  const handleShareSearch = async () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('search', searchTerm);
-    const url = `${window.location.origin}${window.location.pathname}?${searchParams.toString()}`;
-
-    if (navigator.share) {
-      try {
+    const handleShare = async (article: Article | null) => {
+    if (!article) return;
+    const slug = article.slug || article.id;
+    const url = `${window.location.origin}/articles/${encodeURIComponent(slug)}`;
+    try {
+      if (navigator.share) {
         await navigator.share({
-          title: `Search results for "${searchTerm}"`,
-          text: `Check out these articles about "${searchTerm}"`,
+          title: article.title?.[lang] || TRANSLATIONS.siteName[lang],
+          text: (article.situation?.[lang] || '').replace(/<[^>]+>/g, ''),
           url,
         });
-      } catch (err) {
-        // User cancelled share
+      } else {
+        await navigator.clipboard.writeText(url);
+        // eslint-disable-next-line no-alert
+        alert('Link copied to clipboard');
       }
-    } else {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Share failed', err);
     }
   };
 
@@ -698,7 +697,6 @@ const [itemsToShow, setItemsToShow] = useState<number>(() => {
     const params = new URLSearchParams(window.location.search);
     const searchParam = params.get('search');
     const categoryParam = params.get('category');
-    const articleParam = params.get('article');
 
     if (searchParam) {
       setSearchQuery(searchParam);
@@ -709,17 +707,22 @@ const [itemsToShow, setItemsToShow] = useState<number>(() => {
       setActiveCategory(categoryParam as Category);
     }
 
-    if (articleParam) {
+
+     const pathMatch = window.location.pathname.match(/^\/articles\/([^\/]+)/);
+    if (pathMatch) {
+      const slug = decodeURIComponent(pathMatch[1]);
       (async () => {
         try {
-          const a = await getArticleById(articleParam);
+          // Try find in-memory first, fallback to server fetch by slug
+          let a = articles.find(x => x.slug === slug);
+          if (!a) a = await getArticleBySlug(slug);
           if (a) openArticle(a);
         } catch (err) {
-          console.error('Failed to open article from URL param', err);
+          console.error('Failed to open article from route', err);
         }
       })();
     }
-  }, []);
+  }, [articles]); 
 
   const navigateTo = (page: any, category?: Category) => {
     setCurrentPage(page);
@@ -894,8 +897,7 @@ const applyMeta = (article: Article | null) => {
     };
 
     const image = getValidImage();
-    const articleUrl = `${window.location.origin}${window.location.pathname}?article=${article.id}`;
-    
+const articleUrl = `${window.location.origin}/articles/${article.slug}`;    
     document.title = title;
     
     const set = (sel: string, attr: string, value: string) => {
@@ -909,8 +911,7 @@ const applyMeta = (article: Article | null) => {
     set('meta[property="og:image"]', 'content', image);
     set('meta[name="twitter:image"]', 'content', image);
     // ... rest of your code
-      set('link[rel="canonical"]', 'href', articleUrl);
-
+set('link[rel="canonical"]', 'href', articleUrl);
       // --- JSON-LD Structured Data ---
      // --- JSON-LD Structured Data ---
       
@@ -962,10 +963,10 @@ const applyMeta = (article: Article | null) => {
           }
         },
         "description": desc,
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": articleUrl
-        }
+       "mainEntityOfPage": {
+  "@type": "WebPage",
+  "@id": articleUrl
+}
       };
 
       const script = document.createElement('script');
@@ -998,14 +999,54 @@ const applyMeta = (article: Article | null) => {
 
   applyMeta(activeArticle);
 }, [activeArticle, lang]);
+const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, content }) => {
+  const paragraphs = content.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  return (
+    <article className="max-w-4xl mx-auto px-4 py-16">
+      <div className="bg-white p-8 rounded-lg shadow-sm">
+        <header className="mb-8">
+          <h1 className="text-4xl font-extrabold leading-tight mb-2">{title}</h1>
+          <p className="text-sm text-gray-500">Last updated: <time>{new Date().toLocaleDateString()}</time></p>
+        </header>
 
+        <div className="prose prose-lg max-w-none text-gray-800">
+          {paragraphs.map((para, idx) => {
+            if (/^\d+\./m.test(para)) {
+              const items = para.split(/\n/).map(s => s.replace(/^\s*\d+\.\s*/, '').trim()).filter(Boolean);
+              return (
+                <ol key={idx} className="list-decimal ml-6 mb-4">
+                  {items.map((it, i) => <li key={i}>{it}</li>)}
+                </ol>
+              );
+            }
+            const lines = para.split(/\n/).map((l, i) => <span key={i}>{l}{i < para.split(/\n/).length - 1 && <br />}</span>);
+            return <p key={idx}>{lines}</p>;
+          })}
+        </div>
+      </div>
+    </article>
+  );
+};
 // ...existing code...
   // Open article helper — increments views and loads latest article + comments
-  const openArticle = useCallback(async (article: Article) => {
+ const openArticle = useCallback(async (article: Article) => {
     try {
       // Optimistically set active article so UI responds quickly
       setActiveArticle(article);
-      if (article?.id) {
+
+      // If article doesn't have a slug, generate + persist one and update local state
+      if (article?.id && !article.slug) {
+        try {
+          const newSlug = await ensureUniqueSlugAndSave(article.id, article.title?.[lang] || article.title || article.id);
+          // reflect new slug in current activeArticle and articles list
+          setActiveArticle(prev => prev ? { ...prev, slug: newSlug } : prev);
+          setArticles(prev => prev.map(a => a.id === article.id ? { ...a, slug: newSlug } : a));
+          setFilteredArticles(prev => prev.map(a => a.id === article.id ? { ...a, slug: newSlug } : a));
+        } catch (err) {
+          console.error('Failed to ensure or save slug:', err);
+        }
+      }
+       if (article?.id) {
         // Only increment views once per device (localStorage) to avoid duplicate views
         try {
           const raw = localStorage.getItem('viewedArticles');
@@ -1019,18 +1060,18 @@ const applyMeta = (article: Article | null) => {
           console.error('Failed to increment views or access storage:', err);
         }
 
+
         // Update URL so share links work and direct links open
-        try {
-          const params = new URLSearchParams(window.location.search);
-          params.set('article', article.id);
-          const url = `${window.location.pathname}?${params.toString()}`;
+       try {
+          const slug = (article.slug) || articles.find(a => a.id === article.id)?.slug || article.id;
+          const url = `/articles/${encodeURIComponent(slug)}`;
           window.history.pushState({}, '', url);
         } catch (err) {
           // non-fatal
         }
 
         // Refresh article from DB to get latest counts/fields
-        try {
+       try {
           const fresh = await getArticleById(article.id);
           if (fresh) setActiveArticle(fresh as Article);
         } catch (err) {
@@ -1038,7 +1079,7 @@ const applyMeta = (article: Article | null) => {
         }
 
         // Load comments for this article
-        try {
+       try {
           setCommentsLoading(true);
           const fetched = await getCommentsByArticle(article.id);
           setComments(fetched as Comment[]);
@@ -1052,7 +1093,8 @@ const applyMeta = (article: Article | null) => {
     } catch (err) {
       console.error('openArticle error:', err);
     }
-  }, []);
+  }, [articles, lang]);
+
 
   // Persist bookmarks to localStorage
   useEffect(() => {
@@ -1252,12 +1294,12 @@ const applyMeta = (article: Article | null) => {
           <main className="flex-1">
             {activeArticle ? (
               <article className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in duration-500">
-                <button
+               <button
                   onClick={() => setActiveArticle(null)}
                   className="flex items-center gap-2 text-xs font-black uppercase tracking-widest mb-10 hover:gap-4 transition-all group"
                 >
                   <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                  Return to {activeCategory ? TRANSLATIONS.categories[activeCategory][lang] : 'library'}
+                  {`Return to ${activeCategory ? TRANSLATIONS.categories[activeCategory][lang] : TRANSLATIONS.ui.library[lang]}`}
                 </button>
 
                 <header className="mb-12">
@@ -1275,7 +1317,7 @@ const applyMeta = (article: Article | null) => {
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-y border-black py-6 text-xs font-bold uppercase tracking-widest text-gray-500">
                     <div className="flex items-center gap-3">
                       <User size={16} />
-                      <span>By {activeArticle.editor}</span>
+                      <span> {activeArticle.editor}</span>
                       <span className="hidden md:inline">•</span>
                       <Clock size={16} />
                       <span>{formatDate(activeArticle)}</span>
@@ -1289,7 +1331,7 @@ const applyMeta = (article: Article | null) => {
                         className="flex items-center gap-2 hover:text-black transition-colors"
                       >
                         <Tag size={16} />
-                        More from {TRANSLATIONS.categories[activeArticle.category][lang]}
+                        {`${TRANSLATIONS.ui.moreFrom[lang]} ${TRANSLATIONS.categories[activeArticle.category][lang]}`}
                       </button>
                     </div>
                   </div>
@@ -1370,23 +1412,23 @@ const applyMeta = (article: Article | null) => {
                       </div>
                     </div>
                   )}
-                  <div className="border-t-4 border-black pt-12">
-                    <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">Daily Practical Step</h4>
+     <div className="border-t-4 border-black pt-12">
+                    <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">{TRANSLATIONS.ui.dailyPracticalStep[lang]}</h4>
                     <p className="text-xl font-medium"><SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
                   </div>
 
                   <div className="text-center py-12 border-b-2 border-black">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">Closing Prayer</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">{TRANSLATIONS.ui.closingPrayer[lang]}</h4>
                     <p className="text-2xl leading-tight">"<SafeHTMLRenderer html={activeArticle.prayer[lang]} />"</p>
                   </div>
                 </div>
 
                 {/* Comments Section */}
-                <section className="mt-20">
-                  <h3 className="text-3xl font-black uppercase tracking-tighter mb-10 flex items-center gap-3"><MessageCircle /> Discourse</h3>
+              <section className="mt-20">
+                  <h3 className="text-3xl font-black uppercase tracking-tighter mb-10 flex items-center gap-3"><MessageCircle /> {TRANSLATIONS.ui.comments[lang]}</h3>
                   <div className="space-y-8">
                     {commentsLoading ? (
-                      <div>Loading comments...</div>
+                      <div>{TRANSLATIONS.ui.loadingComments[lang]}</div>
                     ) : (
                       comments.map(c => (
                         <div key={c.id} className="border-b border-gray-100 pb-6">
@@ -1399,10 +1441,10 @@ const applyMeta = (article: Article | null) => {
                       ))
                     )}
 
-                    <div className="bg-gray-50 p-8">
-                      <h5 className="text-xs font-bold uppercase mb-4">Add your thoughts</h5>
-                      <input value={newCommentAuthor} onChange={(e) => setNewCommentAuthor(e.target.value)} placeholder="Your name (optional)" className="w-full p-3 mb-3 border border-gray-200" />
-                      <textarea value={newCommentText} onChange={(e) => setNewCommentText(e.target.value)} className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all" placeholder="Respectful discourse only..."></textarea>
+                   <div className="bg-gray-50 p-8">
+                      <h5 className="text-xs font-bold uppercase mb-4">{TRANSLATIONS.ui.addYourThoughts[lang]}</h5>
+                      <input value={newCommentAuthor} onChange={(e) => setNewCommentAuthor(e.target.value)} placeholder={TRANSLATIONS.ui.nameOptionalPlaceholder[lang]} className="w-full p-3 mb-3 border border-gray-200" />
+                      <textarea value={newCommentText} onChange={(e) => setNewCommentText(e.target.value)} className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all" placeholder={TRANSLATIONS.ui.respectfulDiscoursePlaceholder[lang]}></textarea>
                       <Button className="mt-4" onClick={async () => {
                         if (!newCommentText.trim() || !activeArticle) return;
                         try {
@@ -1432,8 +1474,8 @@ const applyMeta = (article: Article | null) => {
                     <User className="w-full h-full p-6 text-white" />
                   </div>
                   <div>
-                    <h5 className="font-black uppercase tracking-widest text-xs mb-2">Editorial Desk: {activeArticle.editor}</h5>
-                    <p className="text-sm italic text-gray-500">{activeArticle.editorBio || "A seasoned writer dedicated to sharing Biblical truths with modern clarity."}</p>
+                    <h5 className="font-black uppercase tracking-widest text-xs mb-2">{TRANSLATIONS.ui.editorialDesk[lang]}: {activeArticle.editor}</h5>
+                    <p className="text-sm italic text-gray-500">{activeArticle.editorBio || TRANSLATIONS.ui.editorBioFallback?.[lang] || "A seasoned writer dedicated to sharing Biblical truths with modern clarity."}</p>
                   </div>
                 </div>
               </article>
@@ -1738,51 +1780,42 @@ const applyMeta = (article: Article | null) => {
 
                 {currentPage === 'donate' && (
                   <div className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in">
-                    <h2 className="text-3xl font-black mb-6">Support {TRANSLATIONS.siteName[lang]}</h2>
-                    <p className="text-gray-600 mb-6">Your donation helps cover hosting, domain, and development of new features.</p>
+                    <h2 className="text-3xl font-black mb-6">
+                      {TRANSLATIONS.ui.donationHeader[lang].replace('{site}', TRANSLATIONS.siteName[lang])}
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                      {TRANSLATIONS.ui.donationDescription[lang]}
+                    </p>
                     <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
                       <div>
-                        <h4 className="text-sm font-bold">Mobile Money (MoMo)</h4>
+                        <h4 className="text-sm font-bold">{TRANSLATIONS.ui.mobileMoneyLabel[lang]}</h4>
                         <p className="text-lg font-semibold">{DONATION.momoNumber} — {DONATION.momoName}</p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold">Bank Transfer</h4>
+                        <h4 className="text-sm font-bold">{TRANSLATIONS.ui.bankTransferLabel[lang]}</h4>
                         <p className="text-lg font-semibold">{DONATION.bankName} — {DONATION.bankAccount}</p>
                       </div>
-                      <p className="text-sm text-gray-500">Purpose: {DONATION.purpose}</p>
+                      <p className="text-sm text-gray-500">
+                        {TRANSLATIONS.ui.donationPurposeLabel[lang]}: {DONATION.purpose}
+                      </p>
                       <div className="flex gap-3 mt-4">
-                        <Button variant="primary" onClick={() => { navigator.clipboard.writeText(DONATION.momoNumber); alert('MoMo number copied to clipboard'); }}>Copy MoMo</Button>
-                        <Button variant="secondary" onClick={() => { navigator.clipboard.writeText(DONATION.bankAccount); alert('Bank account copied to clipboard'); }}>Copy Bank</Button>
+                        <Button variant="primary" onClick={() => { navigator.clipboard.writeText(DONATION.momoNumber); alert(TRANSLATIONS.ui.copyMoMo[lang]); }}>
+                          {TRANSLATIONS.ui.copyMoMo[lang]}
+                        </Button>
+                        <Button variant="secondary" onClick={() => { navigator.clipboard.writeText(DONATION.bankAccount); alert(TRANSLATIONS.ui.copyBank[lang]); }}>
+                          {TRANSLATIONS.ui.copyBank[lang]}
+                        </Button>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {currentPage === 'privacy' && (
-                  <div className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in">
-                    <h1 className="text-5xl font-black uppercase tracking-tighter mb-8">{TRANSLATIONS.ui.privacyTitle[lang]}</h1>
-                    <div className="prose prose-lg font-serif">
-                      <p>{LEGAL.privacy[lang]}</p>
-                      <div className="mt-6">
-                        <h4 className="font-bold">Contact</h4>
-                        <p className="text-sm text-gray-700">If you have questions about privacy, contact us at <a href={`mailto:${SOCIAL_LINKS.email}`} className="text-red-600">{SOCIAL_LINKS.email}</a>.</p>
-                        <div className="flex gap-3 mt-3">
-                          <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="underline text-sm">WhatsApp</a>
-                          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="underline text-sm">Facebook</a>
-                          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="underline text-sm">Instagram</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              {currentPage === 'privacy' && (
+                  <LegalArticle title={TRANSLATIONS.ui.privacyTitle[lang]} content={LEGAL.privacy[lang]} />
                 )}
+
                 {currentPage === 'terms' && (
-                  <div className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in">
-                    <h1 className="text-5xl font-black uppercase tracking-tighter mb-8">{TRANSLATIONS.ui.termsTitle[lang]}</h1>
-                    <div className="prose prose-lg font-serif">
-                      <p>{LEGAL.terms[lang]}</p>
-                      <p className="mt-6 text-sm text-gray-600">Last updated: [Add date]</p>
-                    </div>
-                  </div>
+                  <LegalArticle title={TRANSLATIONS.ui.termsTitle[lang]} content={LEGAL.terms[lang]} />
                 )}
               </>
             )}
@@ -1793,20 +1826,24 @@ const applyMeta = (article: Article | null) => {
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
                 <div className="md:col-span-2">
-                  <h2 className="text-5xl font-black uppercase tracking-tighter mb-6">{TRANSLATIONS.siteName[lang]}</h2>
+                  <h2 className="text-5xl font-black uppercase tracking-tighter mb-6">{t('siteName')}</h2>
                   <p className="text-gray-400 text-lg leading-relaxed max-w-md font-serif italic">
-                    "Architecting spiritual and physical clarity for the modern human experience."
+                    {t('tagline')}
                   </p>
                   <div className="flex gap-4 mt-8">
-                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><Globe size={20} /></button>
-                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><BookOpen size={20} /></button>
-                    <button className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><Shield size={20} /></button>
+                    <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><Globe size={20} /></a>
+                    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><BookOpen size={20} /></a>
+                    <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="p-3 border border-white/10 hover:bg-white hover:text-black transition-all"><Shield size={20} /></a>
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">Categories</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">{t('home')}</h4>
                   {Object.values(Category).map(cat => (
-                    <button key={cat} className="text-left text-sm font-bold uppercase hover:text-red-500">
+                    <button
+                      key={cat}
+                      onClick={() => { setActiveCategory(cat); navigateTo('home', cat); }}
+                      className="text-left text-sm font-bold uppercase hover:text-red-500"
+                    >
                       {TRANSLATIONS.categories[cat][lang]}
                     </button>
                   ))}
@@ -1815,17 +1852,22 @@ const applyMeta = (article: Article | null) => {
                   <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">Network</h4>
                   <button onClick={() => navigateTo('terms')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.termsTitle[lang]}</button>
                   <button onClick={() => navigateTo('privacy')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.privacyTitle[lang]}</button>
+                  <button onClick={() => navigateTo('donate')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.donate[lang]}</button>
                 </div>
               </div>
 
               <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-                <div className="flex flex-col gap-2">
-                  <p>© 2026 My Life Today DIGITAL NETWORK. ALL RIGHTS RESERVED.</p>
+                <div className="flex flex-col gap-2 text-left">
+                  <p>© {new Date().getFullYear()} {t('siteName')} DIGITAL NETWORK. ALL RIGHTS RESERVED.</p>
                   <p className="flex items-center gap-2">DESIGNED BY <span className="text-white">TOPRAY</span> • ARCHITECTED BY AN EXPERT</p>
                 </div>
                 <div className="flex gap-8">
-                  <a href="https://devtopray.netlify.app" className="flex items-center gap-2 hover:text-white transition-colors">PORTFOLIO <ExternalLink size={12} /></a>
-                  <a href="https://devtopray.netlify.app" className="flex items-center gap-2 hover:text-white transition-colors">CONTACT EDITORIAL</a>
+                  <a href="https://devtopray.netlify.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
+                    {t('portfolio')} <ExternalLink size={12} />
+                  </a>
+                  <a href="mailto:contact@theMylifetoday.org" className="flex items-center gap-2 hover:text-white transition-colors">
+                    {t('contactEditorial')}
+                  </a>
                 </div>
               </div>
             </div>
