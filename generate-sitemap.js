@@ -1,46 +1,58 @@
 import fs from 'fs';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import dotenv from 'dotenv'; // Add this
+import dotenv from 'dotenv';
 
-// Load environment variables from .env
+// Load variables
 dotenv.config();
-// Paste your Firebase Config here (same as in your App)
+
+// Helper to get env variables safely in Node
+const getEnv = (key) => {
+  const value = process.env[key];
+  if (!value) {
+    console.warn(`⚠️ Warning: ${key} is not defined in environment variables.`);
+  }
+  return value;
+};
+
 const firebaseConfig = {
-  apiKey: VITE_FIREBASE_API_KEY,
-  authDomain: VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: VITE_FIREBASE_PROJECT_ID,
-  storageBucket: VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId:VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: VITE_FIREBASE_APP_ID
+  apiKey: getEnv('VITE_FIREBASE_API_KEY'),
+  authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
+  projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
+  storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
+  messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
+  appId: getEnv('VITE_FIREBASE_APP_ID')
 };
 
 const BASE_URL = 'https://kubananimanaburimunsi.vercel.app';
 
 async function generateSitemap() {
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // 1. Define Static Pages
-  const staticPages = ['', '/donate', '/terms', '/privacy'];
+  // Guard clause: Don't initialize Firebase if config is broken
+  if (!firebaseConfig.apiKey) {
+    console.error("❌ Critical Error: Firebase API Key is missing. Skipping sitemap generation.");
+    process.exit(1); 
+  }
 
   try {
-    // 2. Fetch Dynamic Articles from Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const staticPages = ['', '/donate', '/terms', '/privacy'];
+    
+    // Fetch articles
     const querySnapshot = await getDocs(collection(db, "articles"));
     const articles = [];
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
+      const dateSource = data.updatedAt || data.createdAt || { seconds: Date.now() / 1000 };
+      
       articles.push({
         id: doc.id,
-        // Use your Firestore timestamp field name here (e.g., createdAt or updatedAt)
-        lastMod: data.updatedAt?.seconds 
-          ? new Date(data.updatedAt.seconds * 1000).toISOString().split('T')[0]
-          : new Date().toISOString().split('T')[0]
+        lastMod: new Date(dateSource.seconds * 1000).toISOString().split('T')[0]
       });
     });
 
-    // 3. Construct XML
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${staticPages.map(path => `
@@ -57,8 +69,13 @@ async function generateSitemap() {
     </url>`).join('')}
 </urlset>`;
 
+    // Ensure public folder exists (Vite projects usually have it, but just in case)
+    if (!fs.existsSync('./public')) {
+      fs.mkdirSync('./public');
+    }
+
     fs.writeFileSync('./public/sitemap.xml', sitemap);
-    console.log('✅ Sitemap generated successfully in /public');
+    console.log('✅ Sitemap generated successfully!');
     process.exit(0);
   } catch (error) {
     console.error('❌ Error generating sitemap:', error);
