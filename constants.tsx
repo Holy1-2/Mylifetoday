@@ -49,7 +49,7 @@ export const TRANSLATIONS: Translations = {
    respectfulDiscoursePlaceholder: { en: 'Your comment...', rw: 'Igitekerezo cyawe...', sw: 'Mazungumzo yenye heshima tu...', fr: 'Discussions respectueuses seulement...' },
    loadingComments: { en: 'Loading comments...', rw: 'Turimo kwohereza ibitekerezo...', sw: 'Inapakia maoni...', fr: 'Chargement des commentaires...' },
    library: { en: 'library', rw: 'isomero', sw: 'maktaba', fr: 'bibliothèque' },
-   editorialDesk: { en: 'Editorial Desk', rw: 'Ikaniga ry\'ubwanditsi', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
+   editorialDesk: { en: 'Editorial Desk', rw: 'Umwanditsi', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
     comments: { en: 'Discourse', rw: 'Ibitekerezo', sw: 'Maoni', fr: 'Commentaires' },
     healthSection: { en: 'Health & Wellness', rw: 'Ubuzima n\'Imirire', sw: 'Afya na Ustawi', fr: 'Santé et Bien-être' },
     donate: { en: 'Support Our Mission', rw: 'Shyigikira umurimo', sw: 'Changia Huduma', fr: 'Soutenir notre mission' },

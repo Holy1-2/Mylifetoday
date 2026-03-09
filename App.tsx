@@ -875,14 +875,49 @@ useEffect(() => {
     twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
     canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
   };
+const createOrSetMeta = (selector: string, attr: 'content' | 'href', value: string) => {
+    if (!value) return;
+    const isLink = selector.startsWith('link');
+    const existing = document.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+    if (existing) {
+      if (isLink) (existing as HTMLLinkElement).setAttribute('href', value);
+      else (existing as HTMLMetaElement).setAttribute(attr, value);
+      return;
+    }
+    if (isLink) {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'canonical');
+      l.setAttribute('href', value);
+      document.head.appendChild(l);
+      return;
+    }
+ const m = document.createElement('meta');
+    const prop = selector.includes('property') ? 'property' : 'name';
+    const match = selector.match(/"(.*?)"/) || selector.match(/=(?:'|")?([^'"\]]+)(?:'|")?/);
+    const key = match ? match[1] || match[0] : selector;
+    m.setAttribute(prop, key);
+    m.setAttribute('content', value);
+    document.head.appendChild(m);
+  };
 const applyMeta = (article: Article | null) => {
-  const existingSchema = document.getElementById('article-schema');
-  if (existingSchema) existingSchema.remove();
+    // remove previous injected JSON-LD if any
+    const existingSchema = document.getElementById('article-schema');
+    if (existingSchema) existingSchema.remove();
 
-  if (article) {
+    if (!article) {
+      // restore defaults
+      document.title = defaults.title;
+      createOrSetMeta('meta[name="description"]', 'content', defaults.description);
+      createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
+      createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
+      createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
+      createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
+      createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
+      return;
+    }
+
+    // Title and description
     const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
-    
-    // Sanitization for text
     const desc = (article.metaDescription || article.situation?.[lang] || '')
       .replace(/<[^>]+>/g, '')
       .replace(/&nbsp;/g, ' ')
@@ -896,78 +931,78 @@ const applyMeta = (article: Article | null) => {
       return defaults.ogImage; // Fallback to your main hosted logo
     };
 
-    const image = getValidImage();
-const articleUrl = `${window.location.origin}/articles/${article.slug}`;    
-    document.title = title;
-    
-    const set = (sel: string, attr: string, value: string) => {
-      let el = document.querySelector(sel) as HTMLMetaElement | null;
-      if (el) el.setAttribute(attr, value);
-    };
+    const image = (article.featuredImage && article.featuredImage.startsWith('http') ? article.featuredImage
+      : (article.image && article.image.startsWith('http') ? article.image : (defaults.ogImage || `${window.location.origin}/og.png`)));
 
-    set('meta[name="description"]', 'content', desc);
-    set('meta[property="og:title"]', 'content', title);
-    set('meta[property="og:description"]', 'content', desc);
-    set('meta[property="og:image"]', 'content', image);
-    set('meta[name="twitter:image"]', 'content', image);
+    const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+
+    document.title = title;
+    createOrSetMeta('meta[name="description"]', 'content', desc);
+    createOrSetMeta('meta[property="og:title"]', 'content', title);
+    createOrSetMeta('meta[property="og:description"]', 'content', desc);
+    createOrSetMeta('meta[property="og:image"]', 'content', image);
+    createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
+    createOrSetMeta('meta[name="twitter:image"]', 'content', image);
+    createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
     // ... rest of your code
-set('link[rel="canonical"]', 'href', articleUrl);
+    createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
       // --- JSON-LD Structured Data ---
      // --- JSON-LD Structured Data ---
       
       // Safe ISO date helper — handles Firestore Timestamp, toDate(), numeric epoch, and string
-      const toISO = (raw: any): string | null => {
-        if (!raw) return null;
-        try {
-          if (typeof raw === 'number') {
-            const ms = raw < 1e12 ? raw * 1000 : raw;
-            const d = new Date(ms);
-            return isNaN(d.getTime()) ? null : d.toISOString();
-          }
-          if (raw?.seconds && typeof raw.seconds === 'number') {
-            const d = new Date(raw.seconds * 1000);
-            return isNaN(d.getTime()) ? null : d.toISOString();
-          }
-          if (typeof raw?.toDate === 'function') {
-            const d = raw.toDate();
-            return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
-          }
-          const d = new Date(raw);
-          return isNaN(d.getTime()) ? null : d.toISOString();
-        } catch {
-          return null;
-        }
-      };
+     const toISO = (raw: any): string | null => {
+    if (!raw) return null;
+    try {
+      if (typeof raw === 'number') {
+        const ms = raw < 1e12 ? raw * 1000 : raw;
+        const d = new Date(ms);
+        return isNaN(d.getTime()) ? null : d.toISOString();
+      }
+      if (raw?.seconds && typeof raw.seconds === 'number') {
+        const d = new Date(raw.seconds * 1000);
+        return isNaN(d.getTime()) ? null : d.toISOString();
+      }
+      if (typeof raw?.toDate === 'function') {
+        const d = raw.toDate();
+        return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
+      }
+      const d = new Date(raw);
+      return isNaN(d.getTime()) ? null : d.toISOString();
+    } catch {
+      return null;
+    }
+  };
 
-      const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
-      const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
+      // JSON-LD structured data
+    const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
+    const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
 
-      const schemaData: Record<string, any> = {
-        "@context": "https://schema.org",
-        "@type": "NewsArticle",
-        "headline": article.title?.[lang] || "",
-        "image": [image],
-        "datePublished": datePublishedISO,
-        "dateModified": dateModifiedISO,
-        "author": [{
-          "@type": "Organization",
-          "name": TRANSLATIONS.siteName[lang],
-          "url": window.location.origin
-        }],
+    const schemaData: Record<string, any> = {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": article.title?.[lang] || "",
+      "image": [image],
+      "datePublished": datePublishedISO,
+      "dateModified": dateModifiedISO,
+      "author": [{
+        "@type": "Organization",
+        "name": TRANSLATIONS.siteName[lang],
+        "url": window.location.origin
+      }],
         "publisher": {
-          "@type": "Organization",
-          "name": TRANSLATIONS.siteName[lang],
-          "logo": {
-            "@type": "ImageObject",
-            "url": `${window.location.origin}/logo.png`
-          }
-        },
-        "description": desc,
-       "mainEntityOfPage": {
-  "@type": "WebPage",
-  "@id": articleUrl
-}
-      };
+        "@type": "Organization",
+        "name": TRANSLATIONS.siteName[lang],
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${window.location.origin}/logo.png`
+        }
+      },
+      "description": desc,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+      }
+    };
 
       const script = document.createElement('script');
       script.id = 'article-schema';
