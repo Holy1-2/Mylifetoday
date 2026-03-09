@@ -1,7 +1,10 @@
 import fs from 'fs';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import dotenv from 'dotenv'; // Add this
 
+// Load environment variables from .env
+dotenv.config();
 // Paste your Firebase Config here (same as in your App)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

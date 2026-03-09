@@ -875,14 +875,49 @@ useEffect(() => {
     twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
     canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
   };
+const createOrSetMeta = (selector: string, attr: 'content' | 'href', value: string) => {
+    if (!value) return;
+    const isLink = selector.startsWith('link');
+    const existing = document.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+    if (existing) {
+      if (isLink) (existing as HTMLLinkElement).setAttribute('href', value);
+      else (existing as HTMLMetaElement).setAttribute(attr, value);
+      return;
+    }
+    if (isLink) {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'canonical');
+      l.setAttribute('href', value);
+      document.head.appendChild(l);
+      return;
+    }
+ const m = document.createElement('meta');
+    const prop = selector.includes('property') ? 'property' : 'name';
+    const match = selector.match(/"(.*?)"/) || selector.match(/=(?:'|")?([^'"\]]+)(?:'|")?/);
+    const key = match ? match[1] || match[0] : selector;
+    m.setAttribute(prop, key);
+    m.setAttribute('content', value);
+    document.head.appendChild(m);
+  };
 const applyMeta = (article: Article | null) => {
-  const existingSchema = document.getElementById('article-schema');
-  if (existingSchema) existingSchema.remove();
+    // remove previous injected JSON-LD if any
+    const existingSchema = document.getElementById('article-schema');
+    if (existingSchema) existingSchema.remove();
 
-  if (article) {
+    if (!article) {
+      // restore defaults
+      document.title = defaults.title;
+      createOrSetMeta('meta[name="description"]', 'content', defaults.description);
+      createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
+      createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
+      createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
+      createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
+      createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
+      return;
+    }
+
+    // Title and description
     const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
-    
-    // Sanitization for text
     const desc = (article.metaDescription || article.situation?.[lang] || '')
       .replace(/<[^>]+>/g, '')
       .replace(/&nbsp;/g, ' ')
@@ -890,111 +925,120 @@ const applyMeta = (article: Article | null) => {
       .trim();
 
     // PROTECTION: Only allow HTTP URLs for social images
-    const getValidImage = () => {
-      if (article.featuredImage?.startsWith('http')) return article.featuredImage;
-      if (article.image?.startsWith('http')) return article.image;
-      return defaults.ogImage; // Fallback to your main hosted logo
-    };
+  const buildImageUrl = (src?: string | null) => {
+  if (!src) return null;
+  
+  // 1. BLOCK BASE64 FOR META TAGS
+  // Social crawlers ignore Base64 because it's too large for their headers
+  if (src.startsWith('data:image')) {
+    console.warn("Base64 images cannot be used for OpenGraph/Twitter tags.");
+    return `${window.location.origin}/og.png`; // Fallback to your public logo
+  }
 
-    const image = getValidImage();
-const articleUrl = `${window.location.origin}/articles/${article.slug}`;    
-    document.title = title;
+  try {
+    // 2. HANDLE CLOUDINARY TRANSFORMS
+    if (src.includes('res.cloudinary.com')) {
+      const parts = src.split('/upload/');
+      if (parts.length === 2 && !parts[1].startsWith('f_auto')) {
+        // Inject SEO optimized dimensions (1200x630 is best for Facebook/Twitter)
+        return `${parts[0]}/upload/f_auto,q_auto,c_fill,w_1200,h_630/${parts[1]}`;
+      }
+      return src;
+    }
+
+    // 3. HANDLE ABSOLUTE VS RELATIVE
+    const maybeUrl = new URL(src, window.location.origin);
+    return maybeUrl.href.replace(/^http:/, 'https:'); // Force HTTPS
     
-    const set = (sel: string, attr: string, value: string) => {
-      let el = document.querySelector(sel) as HTMLMetaElement | null;
-      if (el) el.setAttribute(attr, value);
-    };
+  } catch (e) {
+    // 4. FALLBACK TO CLOUDINARY VIA ENV
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    if (cloudName && !src.startsWith('http')) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_1200/${src}`;
+    }
+    return null;
+  }
+};
 
-    set('meta[name="description"]', 'content', desc);
-    set('meta[property="og:title"]', 'content', title);
-    set('meta[property="og:description"]', 'content', desc);
-    set('meta[property="og:image"]', 'content', image);
-    set('meta[name="twitter:image"]', 'content', image);
-    // ... rest of your code
-set('link[rel="canonical"]', 'href', articleUrl);
+    const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
+ 
+     const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+ 
+     document.title = title;
+     createOrSetMeta('meta[name="description"]', 'content', desc);
+     createOrSetMeta('meta[property="og:title"]', 'content', title);
+     createOrSetMeta('meta[property="og:description"]', 'content', desc);
+     createOrSetMeta('meta[property="og:image"]', 'content', image);
+     // also set secure_url and recommended dimensions (if known)
+     createOrSetMeta('meta[property="og:image:secure_url"]', 'content', image);
+     // optional: set type and fallback
+     createOrSetMeta('meta[property="og:image:type"]', 'content', 'image/jpeg');
+     createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
+     createOrSetMeta('meta[name="twitter:image"]', 'content', image);
+     createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
       // --- JSON-LD Structured Data ---
      // --- JSON-LD Structured Data ---
       
       // Safe ISO date helper — handles Firestore Timestamp, toDate(), numeric epoch, and string
-      const toISO = (raw: any): string | null => {
-        if (!raw) return null;
-        try {
-          if (typeof raw === 'number') {
-            const ms = raw < 1e12 ? raw * 1000 : raw;
-            const d = new Date(ms);
-            return isNaN(d.getTime()) ? null : d.toISOString();
-          }
-          if (raw?.seconds && typeof raw.seconds === 'number') {
-            const d = new Date(raw.seconds * 1000);
-            return isNaN(d.getTime()) ? null : d.toISOString();
-          }
-          if (typeof raw?.toDate === 'function') {
-            const d = raw.toDate();
-            return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
-          }
-          const d = new Date(raw);
-          return isNaN(d.getTime()) ? null : d.toISOString();
-        } catch {
-          return null;
-        }
-      };
-
-      const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
-      const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
-
-      const schemaData: Record<string, any> = {
-        "@context": "https://schema.org",
-        "@type": "NewsArticle",
-        "headline": article.title?.[lang] || "",
-        "image": [image],
-        "datePublished": datePublishedISO,
-        "dateModified": dateModifiedISO,
-        "author": [{
-          "@type": "Organization",
-          "name": TRANSLATIONS.siteName[lang],
-          "url": window.location.origin
-        }],
-        "publisher": {
-          "@type": "Organization",
-          "name": TRANSLATIONS.siteName[lang],
-          "logo": {
-            "@type": "ImageObject",
-            "url": `${window.location.origin}/logo.png`
-          }
-        },
-        "description": desc,
-       "mainEntityOfPage": {
-  "@type": "WebPage",
-  "@id": articleUrl
-}
-      };
-
-      const script = document.createElement('script');
-      script.id = 'article-schema';
-      script.type = 'application/ld+json';
-      script.text = JSON.stringify(schemaData);
-      document.head.appendChild(script);
-
-      
-
-    } else {
-      // Restore defaults
-      document.title = defaults.title;
-      const restore = (sel: string, val: string) => {
-        const el = document.querySelector(sel) as HTMLMetaElement | HTMLLinkElement | null;
-        if (el) {
-          if (el instanceof HTMLMetaElement) el.setAttribute('content', val);
-          else (el as HTMLLinkElement).setAttribute('href', val);
-        }
-      };
-      restore('meta[name="description"]', defaults.description);
-      restore('meta[property="og:title"]', defaults.ogTitle);
-      restore('meta[property="og:description"]', defaults.ogDesc);
-      restore('meta[property="og:image"]', defaults.ogImage);
-      restore('meta[name="twitter:image"]', defaults.twitterImage);
-      const canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-      if (canonical) canonical.setAttribute('href', defaults.canonical);
+     const toISO = (raw: any): string | null => {
+    if (!raw) return null;
+    try {
+      if (typeof raw === 'number') {
+        const ms = raw < 1e12 ? raw * 1000 : raw;
+        const d = new Date(ms);
+        return isNaN(d.getTime()) ? null : d.toISOString();
+      }
+      if (raw?.seconds && typeof raw.seconds === 'number') {
+        const d = new Date(raw.seconds * 1000);
+        return isNaN(d.getTime()) ? null : d.toISOString();
+      }
+      if (typeof raw?.toDate === 'function') {
+        const d = raw.toDate();
+        return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
+      }
+      const d = new Date(raw);
+      return isNaN(d.getTime()) ? null : d.toISOString();
+    } catch {
+      return null;
     }
+  };
+
+      // JSON-LD structured data
+    const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
+    const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
+
+    const schemaData: Record<string, any> = {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": article.title?.[lang] || "",
+      "image": [image],
+      "datePublished": datePublishedISO,
+      "dateModified": dateModifiedISO,
+      "author": [{
+        "@type": "Organization",
+        "name": TRANSLATIONS.siteName[lang],
+        "url": window.location.origin
+      }],
+        "publisher": {
+        "@type": "Organization",
+        "name": TRANSLATIONS.siteName[lang],
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${window.location.origin}/logo.png`
+        }
+      },
+      "description": desc,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+      }
+    };
+
+     const script = document.createElement('script');
+    script.id = 'article-schema';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schemaData);
+    document.head.appendChild(script);
   };
 
   applyMeta(activeArticle);
