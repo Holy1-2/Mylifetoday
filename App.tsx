@@ -202,24 +202,27 @@ const EnhancedSearchBar: React.FC<{
     onClear();
   };
 
-    const handleShare = async (article: Article | null) => {
-    if (!article) return;
-    const slug = article.slug || article.id;
-    const url = `${window.location.origin}/articles/${encodeURIComponent(slug)}`;
+  // copy shareable search URL (used by the search bar share button)
+  const handleShareSearch = async () => {
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: article.title?.[lang] || TRANSLATIONS.siteName[lang],
-          text: (article.situation?.[lang] || '').replace(/<[^>]+>/g, ''),
-          url,
-        });
-      } else {
-        await navigator.clipboard.writeText(url);
-        // eslint-disable-next-line no-alert
-        alert('Link copied to clipboard');
-      }
+      const params = new URLSearchParams(window.location.search);
+      if (searchTerm.trim()) params.set('search', searchTerm.trim());
+      const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
     } catch (err) {
-      console.error('Share failed', err);
+      console.error('Failed to copy search link', err);
+    }
+  };
+
+  // submit immediate search on Enter
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      debouncedSearch.cancel();
+      if (searchTerm.trim()) onSearch(searchTerm.trim());
+    } else if (e.key === 'Escape') {
+      handleClear();
     }
   };
 
@@ -232,7 +235,7 @@ const EnhancedSearchBar: React.FC<{
           onChange={handleChange}
           placeholder={TRANSLATIONS.ui.searchPlaceholder[lang]}
           className="w-full p-4 pl-12 pr-32 border-2 border-black rounded-none focus:outline-none focus:border-red-600"
-          disabled={loading}
+          onKeyDown={handleKeyDown}
         />
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
 
@@ -273,7 +276,6 @@ const EnhancedSearchBar: React.FC<{
     </div>
   );
 };
-
 const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
   const { lang } = useContext(LanguageContext);
   const [copied, setCopied] = useState(false);
@@ -590,14 +592,28 @@ export default function App() {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentAuthor, setNewCommentAuthor] = useState('');
-const [itemsToShow, setItemsToShow] = useState<number>(() => {
+// safer persisted itemsToShow initializer (handles invalid stored values)
+  const [itemsToShow, setItemsToShow] = useState<number>(() => {
     try {
       const raw = localStorage.getItem('itemsToShow');
-      return raw ? Math.max(4, parseInt(raw, 10)) : 4;
+      if (!raw) return 4;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n > 0 ? Math.max(4, n) : 4;
     } catch {
       return 4;
     }
-  }); 
+  });
+
+  // persist itemsToShow so returning users keep the expanded view
+  useEffect(() => {
+    try {
+      if (Number.isFinite(itemsToShow) && itemsToShow > 0) {
+        localStorage.setItem('itemsToShow', String(itemsToShow));
+      }
+    } catch (err) {
+      /* ignore */
+    }
+  }, [itemsToShow]); 
   
   const moreRef = useRef<HTMLDivElement | null>(null);
   const prevItemsRef = useRef<number>(0);
@@ -649,20 +665,27 @@ const [itemsToShow, setItemsToShow] = useState<number>(() => {
 
     loadArticles();
   }, []);
- const loadMore = () => {
+const LOAD_STEP = 4;
+  const loadMore = () => {
     // remember previous shown count so we can animate the newly appended items
     prevItemsRef.current = itemsToShow;
-    setItemsToShow(prev => prev + 4);
-    setNewlyAddedCount(4);
+
+    // listArticles is filteredArticles.slice(1) — compute remaining from that
+    const totalList = Math.max(0, filteredArticles.length - 1);
+    const remaining = Math.max(0, totalList - itemsToShow);
+    const add = Math.min(LOAD_STEP, remaining || LOAD_STEP);
+    if (add <= 0) return;
+
+    setItemsToShow(prev => prev + add);
+    setNewlyAddedCount(add);
     setAnimateNew(true);
-    
-    // smooth scroll to the load-more anchor
+
+    // smooth scroll to the load-more anchor after DOM updates
     setTimeout(() => {
       const el = moreRef.current || document.getElementById('more-articles');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 120);
+    }, 150);
   };
-
   // persist itemsToShow so returning users keep the expanded view
   useEffect(() => {
     try {
@@ -741,26 +764,44 @@ const [itemsToShow, setItemsToShow] = useState<number>(() => {
     window.history.pushState({}, '', url);
   };
 
+  // fast local-first search (instant suggestions) + server fallback
   const handleSearch = async (searchTerm: string) => {
-    if (!searchTerm.trim()) {
+    const term = (searchTerm || '').trim();
+    setSearchQuery(term);
+    if (!term) {
       setSearchResults(null);
-      setSearchQuery('');
+      setShowSearch(false);
       return;
     }
 
+    // Local fast filter (no network)
+    const lower = term.toLowerCase();
+    const localMatches = articles.filter(a => {
+      const text = `${a.title?.[lang] || ''} ${(a.situation?.[lang] || '')}`.toLowerCase();
+      return text.includes(lower);
+    });
+
+    if (localMatches.length > 0) {
+      setSearchResults(localMatches);
+      setShowSearch(true);
+      // update URL
+      const params = new URLSearchParams(window.location.search);
+      params.set('search', term);
+      window.history.pushState({}, '', `?${params.toString()}`);
+      return;
+    }
+
+    // Fallback to server search only when local yields nothing
     try {
       setSearchLoading(true);
-      setSearchQuery(searchTerm);
-      const results = await searchArticles(searchTerm);
+      const results = await searchArticles(term);
       setSearchResults(results);
       setShowSearch(true);
-
-      // Update URL with search parameter
       const params = new URLSearchParams(window.location.search);
-      params.set('search', searchTerm);
+      params.set('search', term);
       window.history.pushState({}, '', `?${params.toString()}`);
-    } catch (error) {
-      console.error('Search error:', error);
+    } catch (err) {
+      console.error('Search error:', err);
     } finally {
       setSearchLoading(false);
     }
@@ -899,148 +940,96 @@ const createOrSetMeta = (selector: string, attr: 'content' | 'href', value: stri
     m.setAttribute('content', value);
     document.head.appendChild(m);
   };
+// ...existing code...
 const applyMeta = (article: Article | null) => {
-    // remove previous injected JSON-LD if any
-    const existingSchema = document.getElementById('article-schema');
-    if (existingSchema) existingSchema.remove();
+  // remove previous injected JSON-LD if any
+  const existingSchema = document.getElementById('article-schema');
+  if (existingSchema) existingSchema.remove();
 
-    if (!article) {
-      // restore defaults
-      document.title = defaults.title;
-      createOrSetMeta('meta[name="description"]', 'content', defaults.description);
-      createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
-      createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
-      createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
-      createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
-      createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
-      return;
-    }
+  if (!article) {
+    // restore defaults captured earlier
+    document.title = defaults.title;
+    createOrSetMeta('meta[name="description"]', 'content', defaults.description);
+    createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
+    createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
+    createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
+    createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
+    createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
 
-    // Title and description
-    const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
-    const desc = (article.metaDescription || article.situation?.[lang] || '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .slice(0, 160)
-      .trim();
+    // remove any article-specific URL tags if present
+    const oldOgUrl = document.querySelector('meta[property="og:url"]');
+    if (oldOgUrl) oldOgUrl.remove();
+    const oldTwUrl = document.querySelector('meta[name="twitter:url"]');
+    if (oldTwUrl) oldTwUrl.remove();
 
-    // PROTECTION: Only allow HTTP URLs for social images
-  const buildImageUrl = (src?: string | null) => {
-  if (!src) return null;
-  
-  // 1. BLOCK BASE64 FOR META TAGS
-  // Social crawlers ignore Base64 because it's too large for their headers
-  if (src.startsWith('data:image')) {
-    console.warn("Base64 images cannot be used for OpenGraph/Twitter tags.");
-    return `${window.location.origin}/og.png`; // Fallback to your public logo
+    return;
   }
 
-  try {
-    // 2. HANDLE CLOUDINARY TRANSFORMS
-    if (src.includes('res.cloudinary.com')) {
-      const parts = src.split('/upload/');
-      if (parts.length === 2 && !parts[1].startsWith('f_auto')) {
-        // Inject SEO optimized dimensions (1200x630 is best for Facebook/Twitter)
-        return `${parts[0]}/upload/f_auto,q_auto,c_fill,w_1200,h_630/${parts[1]}`;
+  // compute article-specific meta only when article exists
+  // Title and description
+  const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
+  const desc = (article.metaDescription || article.situation?.[lang] || '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .slice(0, 160)
+    .trim();
+
+  // Build image URL (Cloudinary handling already in buildImageUrl)
+  const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
+
+  const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+
+  document.title = title;
+  createOrSetMeta('meta[name="description"]', 'content', desc);
+  createOrSetMeta('meta[property="og:title"]', 'content', title);
+  createOrSetMeta('meta[property="og:description"]', 'content', desc);
+  createOrSetMeta('meta[property="og:image"]', 'content', image);
+  createOrSetMeta('meta[property="og:url"]', 'content', articleUrl);
+  createOrSetMeta('meta[name="twitter:url"]', 'content', articleUrl);
+  createOrSetMeta('meta[property="og:image:secure_url"]', 'content', image);
+  createOrSetMeta('meta[property="og:image:type"]', 'content', 'image/jpeg');
+  createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
+  createOrSetMeta('meta[name="twitter:image"]', 'content', image);
+  createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
+
+  // JSON-LD structured data (safe date conversion)
+  const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
+  const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
+
+  const schemaData: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.title?.[lang] || "",
+    "image": [image],
+    "datePublished": datePublishedISO,
+    "dateModified": dateModifiedISO,
+    "author": [{
+      "@type": "Organization",
+      "name": TRANSLATIONS.siteName[lang],
+      "url": window.location.origin
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": TRANSLATIONS.siteName[lang],
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${window.location.origin}/logo.png`
       }
-      return src;
+    },
+    "description": desc,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl
     }
+  };
 
-    // 3. HANDLE ABSOLUTE VS RELATIVE
-    const maybeUrl = new URL(src, window.location.origin);
-    return maybeUrl.href.replace(/^http:/, 'https:'); // Force HTTPS
-    
-  } catch (e) {
-    // 4. FALLBACK TO CLOUDINARY VIA ENV
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    if (cloudName && !src.startsWith('http')) {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_1200/${src}`;
-    }
-    return null;
-  }
+  const script = document.createElement('script');
+  script.id = 'article-schema';
+  script.type = 'application/ld+json';
+  script.text = JSON.stringify(schemaData);
+  document.head.appendChild(script);
 };
-
-    const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
- 
-     const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
- 
-     document.title = title;
-     createOrSetMeta('meta[name="description"]', 'content', desc);
-     createOrSetMeta('meta[property="og:title"]', 'content', title);
-     createOrSetMeta('meta[property="og:description"]', 'content', desc);
-     createOrSetMeta('meta[property="og:image"]', 'content', image);
-     // also set secure_url and recommended dimensions (if known)
-     createOrSetMeta('meta[property="og:image:secure_url"]', 'content', image);
-     // optional: set type and fallback
-     createOrSetMeta('meta[property="og:image:type"]', 'content', 'image/jpeg');
-     createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
-     createOrSetMeta('meta[name="twitter:image"]', 'content', image);
-     createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
-      // --- JSON-LD Structured Data ---
-     // --- JSON-LD Structured Data ---
-      
-      // Safe ISO date helper — handles Firestore Timestamp, toDate(), numeric epoch, and string
-     const toISO = (raw: any): string | null => {
-    if (!raw) return null;
-    try {
-      if (typeof raw === 'number') {
-        const ms = raw < 1e12 ? raw * 1000 : raw;
-        const d = new Date(ms);
-        return isNaN(d.getTime()) ? null : d.toISOString();
-      }
-      if (raw?.seconds && typeof raw.seconds === 'number') {
-        const d = new Date(raw.seconds * 1000);
-        return isNaN(d.getTime()) ? null : d.toISOString();
-      }
-      if (typeof raw?.toDate === 'function') {
-        const d = raw.toDate();
-        return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
-      }
-      const d = new Date(raw);
-      return isNaN(d.getTime()) ? null : d.toISOString();
-    } catch {
-      return null;
-    }
-  };
-
-      // JSON-LD structured data
-    const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
-    const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
-
-    const schemaData: Record<string, any> = {
-      "@context": "https://schema.org",
-      "@type": "NewsArticle",
-      "headline": article.title?.[lang] || "",
-      "image": [image],
-      "datePublished": datePublishedISO,
-      "dateModified": dateModifiedISO,
-      "author": [{
-        "@type": "Organization",
-        "name": TRANSLATIONS.siteName[lang],
-        "url": window.location.origin
-      }],
-        "publisher": {
-        "@type": "Organization",
-        "name": TRANSLATIONS.siteName[lang],
-        "logo": {
-          "@type": "ImageObject",
-          "url": `${window.location.origin}/logo.png`
-        }
-      },
-      "description": desc,
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": articleUrl
-      }
-    };
-
-     const script = document.createElement('script');
-    script.id = 'article-schema';
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(schemaData);
-    document.head.appendChild(script);
-  };
-
+// ...existing code...
   applyMeta(activeArticle);
 }, [activeArticle, lang]);
 const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, content }) => {
