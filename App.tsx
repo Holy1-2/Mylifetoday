@@ -281,73 +281,62 @@ const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
   const [copied, setCopied] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
+  // always use the shareable URL for the specific article
+  const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+
   const shareOptions = [
     {
-      name: 'Copy Link',
+      name: 'Copy link',
       icon: <Copy size={16} />,
       action: async () => {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(articleUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }
     },
     {
-      name: 'Share to Facebook',
+      name: 'Facebook',
       icon: <Share2 size={16} />,
       action: () => {
-        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`;
         window.open(url, '_blank', 'width=600,height=400');
       }
     },
     {
-      name: 'Share to Twitter',
+      name: 'Twitter',
       icon: <Share2 size={16} />,
       action: () => {
         const text = encodeURIComponent(`"${article.title[lang]}" - ${TRANSLATIONS.siteName[lang]}`);
-        const url = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(window.location.href)}`;
+        const url = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(articleUrl)}`;
         window.open(url, '_blank', 'width=600,height=400');
       }
     },
     {
-      name: 'Share to WhatsApp',
+      name: 'WhatsApp',
       icon: <MessageCircle size={16} />,
       action: () => {
-        const text = `${article.title[lang]} - ${TRANSLATIONS.siteName[lang]}\n\n${window.location.href}`;
+        const text = `${article.title[lang]} - ${TRANSLATIONS.siteName[lang]}\n\n${articleUrl}`;
         const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
       }
     },
     {
-      name: 'Share via Email',
+      name: 'Email',
       icon: <Send size={16} />,
       action: () => {
         const subject = encodeURIComponent(article.title[lang]);
-        const body = encodeURIComponent(`Check out this article: ${window.location.href}`);
+        const body = encodeURIComponent(`Check out this article: ${articleUrl}`);
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
     }
   ];
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: article.title[lang],
-          text: article.situation[lang],
-          url: window.location.href,
-        });
-      } catch (err) {
-        // User cancelled share
-      }
-    }
-  };
-
   return (
-    <div className="relative">
+    <>
       <Button
         variant="ghost"
         size="sm"
-        onClick={navigator.share ? handleNativeShare : () => setShowMenu(!showMenu)}
+        onClick={() => setShowMenu(true)}
         className="group"
       >
         {copied ? (
@@ -363,37 +352,46 @@ const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
         )}
       </Button>
 
-      {showMenu && !navigator.share && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md z-50 animate-in slide-in-from-top">
-          {shareOptions.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                option.action();
-                setShowMenu(false);
-              }}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm"
-            >
-              {option.icon}
-              {option.name}
-            </button>
-          ))}
-          {article.whatsappGroup && (
-            <div className="border-t mt-1">
-              <a
-                href={article.whatsappGroup}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm"
+      {showMenu && (
+        <div
+          className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center"
+          onClick={() => setShowMenu(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-64 max-w-full p-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold mb-3">{TRANSLATIONS.ui.share[lang]}</h3>
+            {shareOptions.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  option.action();
+                  setShowMenu(false);
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center gap-2 text-sm"
               >
-                <MessageCircle size={16} />
-                {TRANSLATIONS.ui.joinWhatsApp[lang]}
-              </a>
-            </div>
-          )}
+                {option.icon}
+                {option.name}
+              </button>
+            ))}
+            {article.whatsappGroup && (
+              <div className="border-t mt-2 pt-2">
+                <a
+                  href={article.whatsappGroup}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center gap-2 text-sm"
+                >
+                  <MessageCircle size={16} />
+                  {TRANSLATIONS.ui.joinWhatsApp[lang]}
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -451,8 +449,22 @@ const CategoryNavigation: React.FC<{
   );
 };
 
+// helper used throughout the app for human-readable dates
+const formatDate = (article: Article) => {
+  const raw = (article.createdAt || article.publishDate || article.date) as any;
+  if (!raw) return '';
+  try {
+    if (raw.seconds) {
+      return new Date(raw.seconds * 1000).toLocaleDateString();
+    }
+    const d = new Date(raw);
+    return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString();
+  } catch {
+    return String(raw);
+  }
+};
+
 // --- Enhanced Article Card ---
-// ...existing code...
 const EnhancedArticleCard: React.FC<{
   article: Article;
   onClick: (a: Article) => void;
@@ -486,6 +498,7 @@ const EnhancedArticleCard: React.FC<{
           >
             {bookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
           </button>
+       
 
 
         </div>
@@ -505,7 +518,7 @@ const EnhancedArticleCard: React.FC<{
             <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[#999]">
               <span>By {article.editor}</span>
               <span>•</span>
-              <span>{article.date}</span>
+              <span>{formatDate(article)}</span>
               <span>•</span>
               <span>{article.views || 0} views</span>
             </div>
@@ -680,8 +693,18 @@ export default function App() {
     setNewlyAddedCount(add);
     setAnimateNew(true);
 
-    // smooth scroll to the load-more anchor after DOM updates
+    // smooth scroll to the *first new item* after DOM updates
     setTimeout(() => {
+      const container = document.querySelector('[data-article-list]');
+      if (container) {
+        const idx = prevItemsRef.current;
+        const child = container.children[idx] as HTMLElement | null;
+        if (child) {
+          child.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+      }
+      // fallback to existing anchor if everything else fails
       const el = moreRef.current || document.getElementById('more-articles');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 150);
@@ -859,19 +882,6 @@ export default function App() {
       setLoading(false);
     }
   };
-  const formatDate = (article: Article) => {
-    const raw = (article.createdAt || article.publishDate || article.date) as any;
-    if (!raw) return '';
-    try {
-      if (raw.seconds) {
-        return new Date(raw.seconds * 1000).toLocaleDateString();
-      }
-      const d = new Date(raw);
-      return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString();
-    } catch {
-      return String(raw);
-    }
-  };
 
   const getCategoryIcon = (category: Category) => {
     switch (category) {
@@ -920,6 +930,7 @@ export default function App() {
       ogTitle: getMeta('meta[property="og:title"]')?.content || '',
       ogDesc: getMeta('meta[property="og:description"]')?.content || '',
       ogImage: getMeta('meta[property="og:image"]')?.content || '',
+      ogUrl: getMeta('meta[property="og:url"]')?.content || document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
       twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
       canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
     };
@@ -959,6 +970,7 @@ export default function App() {
         createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
         createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
         createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
+        createOrSetMeta('meta[property="og:url"]', 'content', defaults.ogUrl || defaults.canonical);
         createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
         createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
         return;
@@ -1017,6 +1029,7 @@ export default function App() {
       createOrSetMeta('meta[property="og:title"]', 'content', title);
       createOrSetMeta('meta[property="og:description"]', 'content', desc);
       createOrSetMeta('meta[property="og:image"]', 'content', image);
+      createOrSetMeta('meta[property="og:url"]', 'content', articleUrl);
       // also set secure_url and recommended dimensions (if known)
       createOrSetMeta('meta[property="og:image:secure_url"]', 'content', image);
       // optional: set type and fallback
@@ -1688,7 +1701,7 @@ export default function App() {
 
                                 {/* Unified list: show first `itemsToShow` articles from listArticles.
       Earlier items remain visible when loading more. */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8" data-article-list>
                                   {listArticles.slice(0, itemsToShow).map((a, index) => {
                                     const prevStart = prevItemsRef.current || 0;
                                     const isNew = index >= prevStart && index < (prevStart + newlyAddedCount);

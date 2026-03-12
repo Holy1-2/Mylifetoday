@@ -30,6 +30,11 @@ export interface Article {
   prayer: Record<Language, string>;
   date: string;
   image: string;
+  featuredImage?: string; // optional override for social previews
+  slug?: string;
+  createdAt?: any;
+  publishDate?: any;
+  updatedAt?: any;
   editor: string;
   editorBio?: string;
   tags: string[];

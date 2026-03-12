@@ -20,7 +20,7 @@ const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) =>
   const pageDesc = article?.situation?.[lang] || description || defaultDesc;
 
   const pageKeywords = keywords || defaultKeywords;
-  const pageImage = article?.image || `${siteUrl}/og-image.jpg`;
+  const pageImage = article?.featuredImage || article?.image || `${siteUrl}/og-image.jpg`;
   const pageUrl = url || siteUrl;
 
   // Open Graph locale (hindura uko bikwiye)
