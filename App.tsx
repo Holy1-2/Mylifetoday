@@ -592,7 +592,7 @@ export default function App() {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentAuthor, setNewCommentAuthor] = useState('');
-// safer persisted itemsToShow initializer (handles invalid stored values)
+  // safer persisted itemsToShow initializer (handles invalid stored values)
   const [itemsToShow, setItemsToShow] = useState<number>(() => {
     try {
       const raw = localStorage.getItem('itemsToShow');
@@ -613,8 +613,8 @@ export default function App() {
     } catch (err) {
       /* ignore */
     }
-  }, [itemsToShow]); 
-  
+  }, [itemsToShow]);
+
   const moreRef = useRef<HTMLDivElement | null>(null);
   const prevItemsRef = useRef<number>(0);
   const [animateNew, setAnimateNew] = useState<boolean>(false);
@@ -665,7 +665,7 @@ export default function App() {
 
     loadArticles();
   }, []);
-const LOAD_STEP = 4;
+  const LOAD_STEP = 4;
   const loadMore = () => {
     // remember previous shown count so we can animate the newly appended items
     prevItemsRef.current = itemsToShow;
@@ -731,7 +731,7 @@ const LOAD_STEP = 4;
     }
 
 
-     const pathMatch = window.location.pathname.match(/^\/articles\/([^\/]+)/);
+    const pathMatch = window.location.pathname.match(/^\/articles\/([^\/]+)/);
     if (pathMatch) {
       const slug = decodeURIComponent(pathMatch[1]);
       (async () => {
@@ -745,7 +745,7 @@ const LOAD_STEP = 4;
         }
       })();
     }
-  }, [articles]); 
+  }, [articles]);
 
   const navigateTo = (page: any, category?: Category) => {
     setCurrentPage(page);
@@ -859,7 +859,7 @@ const LOAD_STEP = 4;
       setLoading(false);
     }
   };
- const formatDate = (article: Article) => {
+  const formatDate = (article: Article) => {
     const raw = (article.createdAt || article.publishDate || article.date) as any;
     if (!raw) return '';
     try {
@@ -886,235 +886,242 @@ const LOAD_STEP = 4;
       default: return <Newspaper size={16} />;
     }
   };
-// Deduplicate filteredArticles by id to avoid rendering duplicates across sections
-const uniqueArticles = useMemo(() => {
-  const seen = new Set<string>();
-  return filteredArticles.filter(a => {
-    if (!a?.id) return false;
-    if (seen.has(a.id)) return false;
-    seen.add(a.id);
-    return true;
-  });
-}, [filteredArticles]);
-const featuredArticle = filteredArticles[0] || null;
-const listArticles = filteredArticles.slice(1);
-const sidebarArticles = filteredArticles.slice(1, 5);
-const trendingArticles = filteredArticles.slice(0, 4);
+  // Deduplicate filteredArticles by id to avoid rendering duplicates across sections
+  const uniqueArticles = useMemo(() => {
+    const seen = new Set<string>();
+    return filteredArticles.filter(a => {
+      if (!a?.id) return false;
+      if (seen.has(a.id)) return false;
+      seen.add(a.id);
+      return true;
+    });
+  }, [filteredArticles]);
+  const featuredArticle = filteredArticles[0] || null;
+  const listArticles = filteredArticles.slice(1);
+  const sidebarArticles = filteredArticles.slice(1, 5);
+
+  // build a separate list of trending items based purely on view counts rather than
+  // the currently filtered set.  This gives us a “most‑viewed” feed on every page.
+  const trendingArticles = useMemo(() => {
+    return [...articles]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 4);
+  }, [articles]);
   const t = useCallback((key: string): string => {
     return TRANSLATIONS[key]?.[lang] || key;
   }, [lang]);
-// ...existing code...
+  // ...existing code...
 
-useEffect(() => {
-  const getMeta = (selector: string) => document.querySelector(selector) as HTMLMetaElement | null;
-  const defaults = {
-    title: document.title,
-    description: getMeta('meta[name="description"]')?.content || '',
-    ogTitle: getMeta('meta[property="og:title"]')?.content || '',
-    ogDesc: getMeta('meta[property="og:description"]')?.content || '',
-    ogImage: getMeta('meta[property="og:image"]')?.content || '',
-    twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
-    canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
-  };
-const createOrSetMeta = (selector: string, attr: 'content' | 'href', value: string) => {
-    if (!value) return;
-    const isLink = selector.startsWith('link');
-    const existing = document.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
-    if (existing) {
-      if (isLink) (existing as HTMLLinkElement).setAttribute('href', value);
-      else (existing as HTMLMetaElement).setAttribute(attr, value);
-      return;
-    }
-    if (isLink) {
-      const l = document.createElement('link');
-      l.setAttribute('rel', 'canonical');
-      l.setAttribute('href', value);
-      document.head.appendChild(l);
-      return;
-    }
- const m = document.createElement('meta');
-    const prop = selector.includes('property') ? 'property' : 'name';
-    const match = selector.match(/"(.*?)"/) || selector.match(/=(?:'|")?([^'"\]]+)(?:'|")?/);
-    const key = match ? match[1] || match[0] : selector;
-    m.setAttribute(prop, key);
-    m.setAttribute('content', value);
-    document.head.appendChild(m);
-  };
-const applyMeta = (article: Article | null) => {
-    // remove previous injected JSON-LD if any
-    const existingSchema = document.getElementById('article-schema');
-    if (existingSchema) existingSchema.remove();
-
-    if (!article) {
-      // restore defaults
-      document.title = defaults.title;
-      createOrSetMeta('meta[name="description"]', 'content', defaults.description);
-      createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
-      createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
-      createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
-      createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
-      createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
-      return;
-    }
-
-    // Title and description
-    const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
-    const desc = (article.metaDescription || article.situation?.[lang] || '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .slice(0, 160)
-      .trim();
-
-    // PROTECTION: Only allow HTTP URLs for social images
-  const buildImageUrl = (src?: string | null) => {
-  if (!src) return null;
-  
-  // 1. BLOCK BASE64 FOR META TAGS
-  // Social crawlers ignore Base64 because it's too large for their headers
-  if (src.startsWith('data:image')) {
-    console.warn("Base64 images cannot be used for OpenGraph/Twitter tags.");
-    return `${window.location.origin}/og.png`; // Fallback to your public logo
-  }
-
-  try {
-    // 2. HANDLE CLOUDINARY TRANSFORMS
-    if (src.includes('res.cloudinary.com')) {
-      const parts = src.split('/upload/');
-      if (parts.length === 2 && !parts[1].startsWith('f_auto')) {
-        // Inject SEO optimized dimensions (1200x630 is best for Facebook/Twitter)
-        return `${parts[0]}/upload/f_auto,q_auto,c_fill,w_1200,h_630/${parts[1]}`;
+  useEffect(() => {
+    const getMeta = (selector: string) => document.querySelector(selector) as HTMLMetaElement | null;
+    const defaults = {
+      title: document.title,
+      description: getMeta('meta[name="description"]')?.content || '',
+      ogTitle: getMeta('meta[property="og:title"]')?.content || '',
+      ogDesc: getMeta('meta[property="og:description"]')?.content || '',
+      ogImage: getMeta('meta[property="og:image"]')?.content || '',
+      twitterImage: getMeta('meta[name="twitter:image"]')?.content || '',
+      canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href,
+    };
+    const createOrSetMeta = (selector: string, attr: 'content' | 'href', value: string) => {
+      if (!value) return;
+      const isLink = selector.startsWith('link');
+      const existing = document.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+      if (existing) {
+        if (isLink) (existing as HTMLLinkElement).setAttribute('href', value);
+        else (existing as HTMLMetaElement).setAttribute(attr, value);
+        return;
       }
-      return src;
-    }
+      if (isLink) {
+        const l = document.createElement('link');
+        l.setAttribute('rel', 'canonical');
+        l.setAttribute('href', value);
+        document.head.appendChild(l);
+        return;
+      }
+      const m = document.createElement('meta');
+      const prop = selector.includes('property') ? 'property' : 'name';
+      const match = selector.match(/"(.*?)"/) || selector.match(/=(?:'|")?([^'"\]]+)(?:'|")?/);
+      const key = match ? match[1] || match[0] : selector;
+      m.setAttribute(prop, key);
+      m.setAttribute('content', value);
+      document.head.appendChild(m);
+    };
+    const applyMeta = (article: Article | null) => {
+      // remove previous injected JSON-LD if any
+      const existingSchema = document.getElementById('article-schema');
+      if (existingSchema) existingSchema.remove();
 
-    // 3. HANDLE ABSOLUTE VS RELATIVE
-    const maybeUrl = new URL(src, window.location.origin);
-    return maybeUrl.href.replace(/^http:/, 'https:'); // Force HTTPS
-    
-  } catch (e) {
-    // 4. FALLBACK TO CLOUDINARY VIA ENV
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    if (cloudName && !src.startsWith('http')) {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_1200/${src}`;
-    }
-    return null;
-  }
-};
+      if (!article) {
+        // restore defaults
+        document.title = defaults.title;
+        createOrSetMeta('meta[name="description"]', 'content', defaults.description);
+        createOrSetMeta('meta[property="og:title"]', 'content', defaults.ogTitle);
+        createOrSetMeta('meta[property="og:description"]', 'content', defaults.ogDesc);
+        createOrSetMeta('meta[property="og:image"]', 'content', defaults.ogImage);
+        createOrSetMeta('meta[name="twitter:image"]', 'content', defaults.twitterImage);
+        createOrSetMeta('link[rel="canonical"]', 'href', defaults.canonical);
+        return;
+      }
 
-    const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
- 
-     const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
- 
-     document.title = title;
-     createOrSetMeta('meta[name="description"]', 'content', desc);
-     createOrSetMeta('meta[property="og:title"]', 'content', title);
-     createOrSetMeta('meta[property="og:description"]', 'content', desc);
-     createOrSetMeta('meta[property="og:image"]', 'content', image);
-     // also set secure_url and recommended dimensions (if known)
-     createOrSetMeta('meta[property="og:image:secure_url"]', 'content', image);
-     // optional: set type and fallback
-     createOrSetMeta('meta[property="og:image:type"]', 'content', 'image/jpeg');
-     createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
-     createOrSetMeta('meta[name="twitter:image"]', 'content', image);
-     createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
+      // Title and description
+      const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
+      const desc = (article.metaDescription || article.situation?.[lang] || '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .slice(0, 160)
+        .trim();
+
+      // PROTECTION: Only allow HTTP URLs for social images
+      const buildImageUrl = (src?: string | null) => {
+        if (!src) return null;
+
+        // 1. BLOCK BASE64 FOR META TAGS
+        // Social crawlers ignore Base64 because it's too large for their headers
+        if (src.startsWith('data:image')) {
+          console.warn("Base64 images cannot be used for OpenGraph/Twitter tags.");
+          return `${window.location.origin}/og.png`; // Fallback to your public logo
+        }
+
+        try {
+          // 2. HANDLE CLOUDINARY TRANSFORMS
+          if (src.includes('res.cloudinary.com')) {
+            const parts = src.split('/upload/');
+            if (parts.length === 2 && !parts[1].startsWith('f_auto')) {
+              // Inject SEO optimized dimensions (1200x630 is best for Facebook/Twitter)
+              return `${parts[0]}/upload/f_auto,q_auto,c_fill,w_1200,h_630/${parts[1]}`;
+            }
+            return src;
+          }
+
+          // 3. HANDLE ABSOLUTE VS RELATIVE
+          const maybeUrl = new URL(src, window.location.origin);
+          return maybeUrl.href.replace(/^http:/, 'https:'); // Force HTTPS
+
+        } catch (e) {
+          // 4. FALLBACK TO CLOUDINARY VIA ENV
+          const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+          if (cloudName && !src.startsWith('http')) {
+            return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_1200/${src}`;
+          }
+          return null;
+        }
+      };
+
+      const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
+
+      const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+
+      document.title = title;
+      createOrSetMeta('meta[name="description"]', 'content', desc);
+      createOrSetMeta('meta[property="og:title"]', 'content', title);
+      createOrSetMeta('meta[property="og:description"]', 'content', desc);
+      createOrSetMeta('meta[property="og:image"]', 'content', image);
+      // also set secure_url and recommended dimensions (if known)
+      createOrSetMeta('meta[property="og:image:secure_url"]', 'content', image);
+      // optional: set type and fallback
+      createOrSetMeta('meta[property="og:image:type"]', 'content', 'image/jpeg');
+      createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
+      createOrSetMeta('meta[name="twitter:image"]', 'content', image);
+      createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
       // --- JSON-LD Structured Data ---
-     // --- JSON-LD Structured Data ---
-      
+      // --- JSON-LD Structured Data ---
+
       // Safe ISO date helper — handles Firestore Timestamp, toDate(), numeric epoch, and string
-     const toISO = (raw: any): string | null => {
-    if (!raw) return null;
-    try {
-      if (typeof raw === 'number') {
-        const ms = raw < 1e12 ? raw * 1000 : raw;
-        const d = new Date(ms);
-        return isNaN(d.getTime()) ? null : d.toISOString();
-      }
-      if (raw?.seconds && typeof raw.seconds === 'number') {
-        const d = new Date(raw.seconds * 1000);
-        return isNaN(d.getTime()) ? null : d.toISOString();
-      }
-      if (typeof raw?.toDate === 'function') {
-        const d = raw.toDate();
-        return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
-      }
-      const d = new Date(raw);
-      return isNaN(d.getTime()) ? null : d.toISOString();
-    } catch {
-      return null;
-    }
-  };
+      const toISO = (raw: any): string | null => {
+        if (!raw) return null;
+        try {
+          if (typeof raw === 'number') {
+            const ms = raw < 1e12 ? raw * 1000 : raw;
+            const d = new Date(ms);
+            return isNaN(d.getTime()) ? null : d.toISOString();
+          }
+          if (raw?.seconds && typeof raw.seconds === 'number') {
+            const d = new Date(raw.seconds * 1000);
+            return isNaN(d.getTime()) ? null : d.toISOString();
+          }
+          if (typeof raw?.toDate === 'function') {
+            const d = raw.toDate();
+            return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : null;
+          }
+          const d = new Date(raw);
+          return isNaN(d.getTime()) ? null : d.toISOString();
+        } catch {
+          return null;
+        }
+      };
 
       // JSON-LD structured data
-    const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
-    const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
+      const datePublishedISO = toISO(article.createdAt) || toISO(article.publishDate) || new Date().toISOString();
+      const dateModifiedISO = toISO(article.updatedAt) || datePublishedISO;
 
-    const schemaData: Record<string, any> = {
-      "@context": "https://schema.org",
-      "@type": "NewsArticle",
-      "headline": article.title?.[lang] || "",
-      "image": [image],
-      "datePublished": datePublishedISO,
-      "dateModified": dateModifiedISO,
-      "author": [{
-        "@type": "Organization",
-        "name": TRANSLATIONS.siteName[lang],
-        "url": window.location.origin
-      }],
+      const schemaData: Record<string, any> = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": article.title?.[lang] || "",
+        "image": [image],
+        "datePublished": datePublishedISO,
+        "dateModified": dateModifiedISO,
+        "author": [{
+          "@type": "Organization",
+          "name": TRANSLATIONS.siteName[lang],
+          "url": window.location.origin
+        }],
         "publisher": {
-        "@type": "Organization",
-        "name": TRANSLATIONS.siteName[lang],
-        "logo": {
-          "@type": "ImageObject",
-          "url": `${window.location.origin}/logo.png`
+          "@type": "Organization",
+          "name": TRANSLATIONS.siteName[lang],
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${window.location.origin}/logo.png`
+          }
+        },
+        "description": desc,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
         }
-      },
-      "description": desc,
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": articleUrl
-      }
+      };
+
+      const script = document.createElement('script');
+      script.id = 'article-schema';
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(schemaData);
+      document.head.appendChild(script);
     };
 
-     const script = document.createElement('script');
-    script.id = 'article-schema';
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(schemaData);
-    document.head.appendChild(script);
-  };
+    applyMeta(activeArticle);
+  }, [activeArticle, lang]);
+  const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, content }) => {
+    const paragraphs = content.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+    return (
+      <article className="max-w-4xl mx-auto px-4 py-16">
+        <div className="bg-white p-8 rounded-lg shadow-sm">
+          <header className="mb-8">
+            <h1 className="text-4xl font-extrabold leading-tight mb-2">{title}</h1>
+            <p className="text-sm text-gray-500">Last updated: <time>{new Date().toLocaleDateString()}</time></p>
+          </header>
 
-  applyMeta(activeArticle);
-}, [activeArticle, lang]);
-const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, content }) => {
-  const paragraphs = content.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-  return (
-    <article className="max-w-4xl mx-auto px-4 py-16">
-      <div className="bg-white p-8 rounded-lg shadow-sm">
-        <header className="mb-8">
-          <h1 className="text-4xl font-extrabold leading-tight mb-2">{title}</h1>
-          <p className="text-sm text-gray-500">Last updated: <time>{new Date().toLocaleDateString()}</time></p>
-        </header>
-
-        <div className="prose prose-lg max-w-none text-gray-800">
-          {paragraphs.map((para, idx) => {
-            if (/^\d+\./m.test(para)) {
-              const items = para.split(/\n/).map(s => s.replace(/^\s*\d+\.\s*/, '').trim()).filter(Boolean);
-              return (
-                <ol key={idx} className="list-decimal ml-6 mb-4">
-                  {items.map((it, i) => <li key={i}>{it}</li>)}
-                </ol>
-              );
-            }
-            const lines = para.split(/\n/).map((l, i) => <span key={i}>{l}{i < para.split(/\n/).length - 1 && <br />}</span>);
-            return <p key={idx}>{lines}</p>;
-          })}
+          <div className="prose prose-lg max-w-none text-gray-800">
+            {paragraphs.map((para, idx) => {
+              if (/^\d+\./m.test(para)) {
+                const items = para.split(/\n/).map(s => s.replace(/^\s*\d+\.\s*/, '').trim()).filter(Boolean);
+                return (
+                  <ol key={idx} className="list-decimal ml-6 mb-4">
+                    {items.map((it, i) => <li key={i}>{it}</li>)}
+                  </ol>
+                );
+              }
+              const lines = para.split(/\n/).map((l, i) => <span key={i}>{l}{i < para.split(/\n/).length - 1 && <br />}</span>);
+              return <p key={idx}>{lines}</p>;
+            })}
+          </div>
         </div>
-      </div>
-    </article>
-  );
-};
-// ...existing code...
+      </article>
+    );
+  };
+  // ...existing code...
   // Open article helper — increments views and loads latest article + comments
- const openArticle = useCallback(async (article: Article) => {
+  const openArticle = useCallback(async (article: Article) => {
     try {
       // Optimistically set active article so UI responds quickly
       setActiveArticle(article);
@@ -1131,7 +1138,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
           console.error('Failed to ensure or save slug:', err);
         }
       }
-       if (article?.id) {
+      if (article?.id) {
         // Only increment views once per device (localStorage) to avoid duplicate views
         try {
           const raw = localStorage.getItem('viewedArticles');
@@ -1147,7 +1154,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
 
 
         // Update URL so share links work and direct links open
-       try {
+        try {
           const slug = (article.slug) || articles.find(a => a.id === article.id)?.slug || article.id;
           const url = `/articles/${encodeURIComponent(slug)}`;
           window.history.pushState({}, '', url);
@@ -1156,7 +1163,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
         }
 
         // Refresh article from DB to get latest counts/fields
-       try {
+        try {
           const fresh = await getArticleById(article.id);
           if (fresh) setActiveArticle(fresh as Article);
         } catch (err) {
@@ -1164,7 +1171,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
         }
 
         // Load comments for this article
-       try {
+        try {
           setCommentsLoading(true);
           const fetched = await getCommentsByArticle(article.id);
           setComments(fetched as Comment[]);
@@ -1349,7 +1356,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
                   </div>
                   <div className="flex flex-col gap-6">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Resources</h4>
-                    
+
 
                     <button
                       onClick={() => navigateTo('privacy')}
@@ -1379,7 +1386,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
           <main className="flex-1">
             {activeArticle ? (
               <article className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in duration-500">
-               <button
+                <button
                   onClick={() => setActiveArticle(null)}
                   className="flex items-center gap-2 text-xs font-black uppercase tracking-widest mb-10 hover:gap-4 transition-all group"
                 >
@@ -1497,7 +1504,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
                       </div>
                     </div>
                   )}
-     <div className="border-t-4 border-black pt-12">
+                  <div className="border-t-4 border-black pt-12">
                     <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">{TRANSLATIONS.ui.dailyPracticalStep[lang]}</h4>
                     <p className="text-xl font-medium"><SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
                   </div>
@@ -1509,7 +1516,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
                 </div>
 
                 {/* Comments Section */}
-              <section className="mt-20">
+                <section className="mt-20">
                   <h3 className="text-3xl font-black uppercase tracking-tighter mb-10 flex items-center gap-3"><MessageCircle /> {TRANSLATIONS.ui.comments[lang]}</h3>
                   <div className="space-y-8">
                     {commentsLoading ? (
@@ -1526,7 +1533,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
                       ))
                     )}
 
-                   <div className="bg-gray-50 p-8">
+                    <div className="bg-gray-50 p-8">
                       <h5 className="text-xs font-bold uppercase mb-4">{TRANSLATIONS.ui.addYourThoughts[lang]}</h5>
                       <input value={newCommentAuthor} onChange={(e) => setNewCommentAuthor(e.target.value)} placeholder={TRANSLATIONS.ui.nameOptionalPlaceholder[lang]} className="w-full p-3 mb-3 border border-gray-200" />
                       <textarea value={newCommentText} onChange={(e) => setNewCommentText(e.target.value)} className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all" placeholder={TRANSLATIONS.ui.respectfulDiscoursePlaceholder[lang]}></textarea>
@@ -1659,180 +1666,180 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
                           />
                         ) : (
                           <>
-                          <div className="flex flex-col lg:flex-row gap-12">
-  {/* Featured / Big Column (scrollable container for featured + undercards) */}
-  {/* Featured / Big Column */}
-<div className="lg:w-2/3">
-  {/* NOTE: remove inner scroll — let the whole page scroll normally.
+                            <div className="flex flex-col lg:flex-row gap-12">
+                              {/* Featured / Big Column (scrollable container for featured + undercards) */}
+                              {/* Featured / Big Column */}
+                              <div className="lg:w-2/3">
+                                {/* NOTE: remove inner scroll — let the whole page scroll normally.
       Featured and subsequent cards flow with page scrolling. */}
-  {/* Featured */}
-    {featuredArticle && (
-      <div className="relative mb-8">
-        <EnhancedArticleCard
-          article={featuredArticle}
-          onClick={openArticle}
-          variant="big"
-          bookmarked={bookmarks.includes(featuredArticle.id)}
-          onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
-          onLoadMore={loadMore}
-        />
-      </div>
-    )}
+                                {/* Featured */}
+                                {featuredArticle && (
+                                  <div className="relative mb-8">
+                                    <EnhancedArticleCard
+                                      article={featuredArticle}
+                                      onClick={openArticle}
+                                      variant="big"
+                                      bookmarked={bookmarks.includes(featuredArticle.id)}
+                                      onToggleBookmark={() => toggleBookmark(featuredArticle.id)}
+                                      onLoadMore={loadMore}
+                                    />
+                                  </div>
+                                )}
 
-  {/* Unified list: show first `itemsToShow` articles from listArticles.
+                                {/* Unified list: show first `itemsToShow` articles from listArticles.
       Earlier items remain visible when loading more. */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {listArticles.slice(0, itemsToShow).map((a, index) => {
-        const prevStart = prevItemsRef.current || 0;
-        const isNew = index >= prevStart && index < (prevStart + newlyAddedCount);
-        const animClass = isNew
-          ? (animateNew ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')
-          : 'opacity-100 translate-y-0';
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                  {listArticles.slice(0, itemsToShow).map((a, index) => {
+                                    const prevStart = prevItemsRef.current || 0;
+                                    const isNew = index >= prevStart && index < (prevStart + newlyAddedCount);
+                                    const animClass = isNew
+                                      ? (animateNew ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')
+                                      : 'opacity-100 translate-y-0';
 
-        return (
-          <div
-            key={a.id}
-            className={`transform transition-all duration-600 ${animClass}`}
-          >
-            <EnhancedArticleCard
-              article={a}
-              onClick={openArticle}
-              variant="small"
-              bookmarked={bookmarks.includes(a.id)}
-              onToggleBookmark={() => toggleBookmark(a.id)}
-            />
-          </div>
-        );
-      })}
-    </div>
+                                    return (
+                                      <div
+                                        key={a.id}
+                                        className={`transform transition-all duration-600 ${animClass}`}
+                                      >
+                                        <EnhancedArticleCard
+                                          article={a}
+                                          onClick={openArticle}
+                                          variant="small"
+                                          bookmarked={bookmarks.includes(a.id)}
+                                          onToggleBookmark={() => toggleBookmark(a.id)}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
 
-    {/* Footer Controls */}
-    <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
-      {listArticles.length > itemsToShow ? (
-        <div className="flex gap-4">
-          <Button variant="primary" onClick={loadMore}>
-            Load more
-          </Button>
-          <Button 
-            variant="secondary" 
-            onClick={() => {
-              const leftCol = moreRef.current?.closest('[style]') as HTMLElement | null;
-              if (leftCol) leftCol.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          >
-            Scroll to top
-          </Button>
-        </div>
-      ) : listArticles.length > 0 ? (
-        <div className="flex flex-col items-center gap-4 pb-10">
-          <span className="text-gray-500 text-sm">All articles loaded</span>
-          {itemsToShow > 4 && (
-            <Button 
-              variant="secondary" 
-              onClick={() => {
-                setItemsToShow(4);
-                const leftCol = moreRef.current?.closest('[style]') as HTMLElement | null;
-                if (leftCol) {
-                  setTimeout(() => leftCol.scrollTo({ top: 0, behavior: 'smooth' }), 80);
-                }
-              }}
-            >
-              Show less
-            </Button>
-          )}
-        </div>
-      ) : null}
-    </div>
-  </div>
+                                {/* Footer Controls */}
+                                <div className="mt-8 flex justify-center" ref={moreRef} id="more-articles">
+                                  {listArticles.length > itemsToShow ? (
+                                    <div className="flex gap-4">
+                                      <Button variant="primary" onClick={loadMore}>
+                                        Load more
+                                      </Button>
+                                      <Button
+                                        variant="secondary"
+                                        onClick={() => {
+                                          const leftCol = moreRef.current?.closest('[style]') as HTMLElement | null;
+                                          if (leftCol) leftCol.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                      >
+                                        Scroll to top
+                                      </Button>
+                                    </div>
+                                  ) : listArticles.length > 0 ? (
+                                    <div className="flex flex-col items-center gap-4 pb-10">
+                                      <span className="text-gray-500 text-sm">All articles loaded</span>
+                                      {itemsToShow > 4 && (
+                                        <Button
+                                          variant="secondary"
+                                          onClick={() => {
+                                            setItemsToShow(4);
+                                            const leftCol = moreRef.current?.closest('[style]') as HTMLElement | null;
+                                            if (leftCol) {
+                                              setTimeout(() => leftCol.scrollTo({ top: 0, behavior: 'smooth' }), 80);
+                                            }
+                                          }}
+                                        >
+                                          Show less
+                                        </Button>
+                                      )}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
 
 
-  {/* Sidebar / List Column (sticky aside) */}
-  <div className="lg:w-1/3 lg:pl-12 border-l-0 lg:border-l border-black/10">
-    <div className="sticky top-24 space-y-12">
-      {/* Categories */}
-      <div>
-        <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-4">
-          Quick Categories
-        </h4>
-        <div className="space-y-2">
-          {Object.values(Category).slice(0, 5).map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className="w-full text-left p-3 hover:bg-gray-50 transition-colors flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-3">
-                {getCategoryIcon(cat)}
-                <span className="text-sm font-bold">
-                  {TRANSLATIONS.categories[cat][lang]}
-                </span>
-              </div>
-              <span className="text-xs text-gray-400 group-hover:text-black">
-                {articleCounts[cat] || 0}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+                              {/* Sidebar / List Column (sticky aside) */}
+                              <div className="lg:w-1/3 lg:pl-12 border-l-0 lg:border-l border-black/10">
+                                <div className="sticky top-24 space-y-12">
+                                  {/* Categories */}
+                                  <div>
+                                    <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-4">
+                                      Quick Categories
+                                    </h4>
+                                    <div className="space-y-2">
+                                      {Object.values(Category).slice(0, 5).map(cat => (
+                                        <button
+                                          key={cat}
+                                          onClick={() => setActiveCategory(cat)}
+                                          className="w-full text-left p-3 hover:bg-gray-50 transition-colors flex items-center justify-between group"
+                                        >
+                                          <div className="flex items-center gap-3">
+                                            {getCategoryIcon(cat)}
+                                            <span className="text-sm font-bold">
+                                              {TRANSLATIONS.categories[cat][lang]}
+                                            </span>
+                                          </div>
+                                          <span className="text-xs text-gray-400 group-hover:text-black">
+                                            {articleCounts[cat] || 0}
+                                          </span>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
 
-      {/* Sidebar Feed */}
-      <div>
-        <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-6">
-          Daily Bread Feed
-        </h4>
-        <div className="space-y-6">
-          {sidebarArticles.map(a => (
-            <EnhancedArticleCard
-              key={a.id}
-              article={a}
-              onClick={openArticle}
-              variant="small"
-              showCategory={false}
-              bookmarked={bookmarks.includes(a.id)}
-              onToggleBookmark={() => toggleBookmark(a.id)}
-            />
-          ))}
-        </div>
-      </div>
+                                  {/* Sidebar Feed */}
+                                  <div>
+                                    <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-300 mb-6">
+                                      Daily Bread Feed
+                                    </h4>
+                                    <div className="space-y-6">
+                                      {sidebarArticles.map(a => (
+                                        <EnhancedArticleCard
+                                          key={a.id}
+                                          article={a}
+                                          onClick={openArticle}
+                                          variant="small"
+                                          showCategory={false}
+                                          bookmarked={bookmarks.includes(a.id)}
+                                          onToggleBookmark={() => toggleBookmark(a.id)}
+                                        />
+                                      ))}
+                                    </div>
+                                  </div>
 
-      {/* Subscription Box */}
-      <div className="bg-black text-white p-6 rounded shadow-xl">
-        <h4 className="text-xl font-bold mb-2 italic">Get Biblical Clarity</h4>
-        <p className="text-xs font-bold uppercase tracking-widest mb-4 opacity-60">
-          Weekly newsletter on faith & health
-        </p>
-        <input
-          type="email"
-          placeholder="Your Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-white/10 border border-white/20 p-3 mb-3 text-sm outline-none placeholder-gray-400 focus:border-white/50 transition-colors"
-        />
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={() => handleSubscribe(email)}
-        >
-          {TRANSLATIONS.ui.subscribe[lang]}
-        </Button>
-        <Button
-          variant="primary"
-          className="w-full mt-3 border border-white/20"
-          onClick={() => navigateTo('donate')}
-        >
-          {TRANSLATIONS.ui.donate[lang]}
-        </Button>
-      </div>
-    </div>
-  </div>
-</div>
+                                  {/* Subscription Box */}
+                                  <div className="bg-black text-white p-6 rounded shadow-xl">
+                                    <h4 className="text-xl font-bold mb-2 italic">Get Biblical Clarity</h4>
+                                    <p className="text-xs font-bold uppercase tracking-widest mb-4 opacity-60">
+                                      Weekly newsletter on faith & health
+                                    </p>
+                                    <input
+                                      type="email"
+                                      placeholder="Your Email"
+                                      value={email}
+                                      onChange={(e) => setEmail(e.target.value)}
+                                      className="w-full bg-white/10 border border-white/20 p-3 mb-3 text-sm outline-none placeholder-gray-400 focus:border-white/50 transition-colors"
+                                    />
+                                    <Button
+                                      variant="secondary"
+                                      className="w-full"
+                                      onClick={() => handleSubscribe(email)}
+                                    >
+                                      {TRANSLATIONS.ui.subscribe[lang]}
+                                    </Button>
+                                    <Button
+                                      variant="primary"
+                                      className="w-full mt-3 border border-white/20"
+                                      onClick={() => navigateTo('donate')}
+                                    >
+                                      {TRANSLATIONS.ui.donate[lang]}
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
 
                             {/* Trending Feed */}
                             {trendingArticles.length > 0 && (
                               <div className="mt-20 border-t-4 border-black pt-12">
                                 <div className="flex items-center justify-between mb-12">
                                   <h3 className="text-3xl font-black uppercase tracking-tighter">
-                                    Trending Discourse
+                                    Most Viewed Articles
                                   </h3>
                                   <Button variant="ghost" size="sm">
                                     View All <ChevronRight size={14} />
@@ -1895,7 +1902,7 @@ const LegalArticle: React.FC<{ title: string; content: string }> = ({ title, con
                   </div>
                 )}
 
-              {currentPage === 'privacy' && (
+                {currentPage === 'privacy' && (
                   <LegalArticle title={TRANSLATIONS.ui.privacyTitle[lang]} content={LEGAL.privacy[lang]} />
                 )}
 
