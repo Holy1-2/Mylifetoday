@@ -14,7 +14,7 @@ export const INITIAL_DONATION_STATS: DonationStats = {
 
 export const TRANSLATIONS: Translations = {
    siteName: {
-      en: 'My life Today',
+      en: 'With God Daily',
       rw: 'Kubana n\'Imana',
       sw: 'Maisha ya Leo',
       fr: 'vivre avec Dieu chaque jour',

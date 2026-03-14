@@ -1461,7 +1461,7 @@ export default function App() {
 
               <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
                 <div className="flex flex-col gap-2">
-                  <p>© {new Date().getFullYear()} My Life Today DIGITAL NETWORK. ALL RIGHTS RESERVED.</p>
+                  <p>© {new Date().getFullYear()} With God Daily DIGITAL NETWORK. ALL RIGHTS RESERVED.</p>
                   <p className="flex items-center gap-2">DESIGNED BY <span className="text-white">TOPRAY</span> • ARCHITECTED BY AN EXPERT</p>
                 </div>
                 <div className="flex gap-8">
