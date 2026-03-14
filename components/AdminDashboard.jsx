@@ -18,7 +18,7 @@ import "react-quill-new/dist/quill.snow.css";
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [email, setEmail] = useState('admin@Mylifetoday.com');
+  const [email, setEmail] = useState('admin@WithGodDaily.com');
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [articles, setArticles] = useState([]);
@@ -102,7 +102,7 @@ const AdminDashboard = () => {
       setStats({
         totalArticles: articlesData.length,
         totalSubscribers: subsData.length,
-        todaysViews: articlesData.reduce((sum, article) => sum   (article.views || 0), 0),
+        todaysViews: articlesData.reduce((sum, article) => sum(article.views || 0), 0),
         engagementRate: '72%'
       });
     } catch (error) {
@@ -126,11 +126,11 @@ const AdminDashboard = () => {
       toast.success('Welcome to Admin Dashboard!');
     } catch (firebaseError) {
       // Fallback for development
-      if (email === 'admin@Mylifetoday.com' && password === 'admin123') {
+      if (email === 'admin@WithGodDaily.com' && password === 'admin123') {
         setIsAuthenticated(true);
         toast.success('Welcome to Admin Dashboard! (Development Mode)');
       } else {
-        setError('Invalid credentials. Use admin@Mylifetoday.com / admin123');
+        setError('Invalid credentials. Use admin@WithGodDaily.com / admin123');
         toast.error('Login failed');
       }
     } finally {
@@ -326,7 +326,7 @@ const AdminDashboard = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl mb-4">
               <Shield className="text-white" size={32} />
             </div>
-            <h1 className="text-3xl font-black text-white mb-2">Mylifetoday</h1>
+            <h1 className="text-3xl font-black text-white mb-2">WithGodDaily</h1>
             <p className="text-gray-400">Admin Dashboard</p>
           </div>
 
@@ -341,7 +341,7 @@ const AdminDashboard = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                    placeholder="admin@Mylifetoday.com"
+                    placeholder="admin@WithGodDaily.com"
                     required
                   />
                 </div>
@@ -387,7 +387,7 @@ const AdminDashboard = () => {
               </button>
 
               <p className="text-center text-gray-500 text-sm">
-                Demo: admin@Mylifetoday.com / admin123
+                Demo: admin@WithGodDaily.com / admin123
               </p>
             </div>
           </form>
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">The Mylifetoday</h1>
+              <h1 className="text-xl font-bold text-gray-900">The WithGodDaily</h1>
               <p className="text-sm text-gray-500">Admin Dashboard</p>
             </div>
           </div>
@@ -465,8 +465,8 @@ const AdminDashboard = () => {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${activeTab === item.id
-                        ? 'bg-red-50 text-red-700 font-semibold'
-                        : 'hover:bg-gray-50 text-gray-700'
+                      ? 'bg-red-50 text-red-700 font-semibold'
+                      : 'hover:bg-gray-50 text-gray-700'
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -701,8 +701,8 @@ const ArticlesManagement = ({ articles, onEdit, onDelete, searchTerm, setSearchT
               </td>
               <td className="px-6 py-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${article.status === 'published'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-yellow-100 text-yellow-800'
                   }`}>
                   {article.status || 'draft'}
                 </span>
@@ -985,7 +985,7 @@ const ArticleEditor = ({
                   onClick={addHealthHack}
                   className="mt-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
                 >
-                    Add Health Hack
+                  Add Health Hack
                 </button>
               </div>
 
@@ -1017,7 +1017,7 @@ const ArticleEditor = ({
                   onClick={addHerbalRemedy}
                   className="mt-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
                 >
-                    Add Herbal Remedy
+                  Add Herbal Remedy
                 </button>
               </div>
             </div>

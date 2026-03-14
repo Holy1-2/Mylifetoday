@@ -1,105 +1,105 @@
 import { Category, Article, Translations, Language, DonationStats } from './types';
 
 export const LANGUAGES: { code: Language; label: string }[] = [
-  { code: 'en', label: 'English' },
-  { code: 'rw', label: 'Kinyarwanda' },
-  { code: 'sw', label: 'Swahili' },
-  { code: 'fr', label: 'Français' },
+   { code: 'en', label: 'English' },
+   { code: 'rw', label: 'Kinyarwanda' },
+   { code: 'sw', label: 'Swahili' },
+   { code: 'fr', label: 'Français' },
 ];
 
 export const INITIAL_DONATION_STATS: DonationStats = {
-  current: 45000,
-  goal: 100000
+   current: 45000,
+   goal: 100000
 };
 
 export const TRANSLATIONS: Translations = {
-  siteName: {
-    en: 'My life Today',
-    rw: 'Kubana n\'Imana',
-    sw: 'Maisha ya Leo',
-    fr: 'vivre avec Dieu chaque jour',
-  },
-  tagline: {
-    en: 'Editorial Faith, Life & Health',
-    rw: 'Kuba muri kristo',
-    sw: 'Hekima na Afya katika Mungu',
-    fr: 'Foi, Vie et Santé Editoriale',
-  },
-  categories: {
-    [Category.DAILY_LIFE]: { en: 'Daily Life', rw: 'Ubuzima bwa buri munsi', sw: 'Maisha ya Kila Siku', fr: 'Vie Quotidienne' },
-    [Category.MONEY_WORK]: { en: 'Economy', rw: 'Amafaranga', sw: 'Uchumi', fr: 'Économie' },
-    [Category.RELATIONSHIPS]: { en: 'Relationships', rw: 'Imibanire', sw: 'Mahusiano', fr: 'Relations' },
-    [Category.MENTAL_HEALTH]: { en: 'Mind', rw: 'Intekerezo', sw: 'Akili', fr: 'Mental' },
-    [Category.TECH]: { en: 'Technology', rw: 'Ikoranabuhanga', sw: 'Teknolojia', fr: 'Technologie' },
-    [Category.SOCIETY]: { en: 'Society', rw: 'Umuryango', sw: 'Jamii', fr: 'Société' },
-    [Category.HOPE]: { en: 'Hope', rw: 'Ibyiringiro', sw: 'Tumaini', fr: 'Espoir' },
-    [Category.HEALTH]: { en: 'Health', rw: 'Ubuzima', sw: 'Afya', fr: 'Santé' },
-  },
-  ui: {
-    readMore: { en: 'Read Full Story', rw: 'Soma byose', sw: 'Soma Zaidi', fr: 'Lire la Suite' },
-    latestArticles: { en: 'Trending Insights', rw: 'Inyigisho zigezweho', sw: 'Maarifa Mapya', fr: 'Dernières Analyses' },
-    searchPlaceholder: { en: 'Find topics...', rw: 'Shaka ibintu...', sw: 'Tafuta mada...', fr: 'Chercher...' },
-    share: { en: 'Share', rw: 'Sangiza', sw: 'Shiriki', fr: 'Partager' },
-    byLabel: { en: 'By', rw: 'Na', sw: 'Na', fr: 'Par' },
-   moreFrom: { en: 'More from', rw: 'Izindi nkuru z\' ', sw: 'Zaidi kutoka', fr: 'Plus de' },
-   dailyPracticalStep: { en: 'Daily Practical Step', rw: 'Intambwe ya buri munsi', sw: 'Hatua ya Kila Siku', fr: 'Étape pratique quotidienne' },
-   closingPrayer: { en: 'Closing Prayer', rw: 'Isengesho ', sw: 'Sala ya Mwisho', fr: 'Prière de clôture' },
-   addYourThoughts: { en: 'Add your thoughts', rw: 'Tanga igitekerezo', sw: 'Ongeza mawazo yako', fr: 'Ajoutez vos pensées' },
-   nameOptionalPlaceholder: { en: 'Your name (optional)', rw: 'Amazina yawe ', sw: 'Jina lako (hiari)', fr: 'Votre nom (optionnel)' },
-   respectfulDiscoursePlaceholder: { en: 'Your comment...', rw: 'Igitekerezo cyawe...', sw: 'Mazungumzo yenye heshima tu...', fr: 'Discussions respectueuses seulement...' },
-   loadingComments: { en: 'Loading comments...', rw: 'Turimo kwohereza ibitekerezo...', sw: 'Inapakia maoni...', fr: 'Chargement des commentaires...' },
-   library: { en: 'library', rw: 'isomero', sw: 'maktaba', fr: 'bibliothèque' },
-   editorialDesk: { en: 'Editorial Desk', rw: 'Umwanditsi', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
-    comments: { en: 'Discourse', rw: 'Ibitekerezo', sw: 'Maoni', fr: 'Commentaires' },
-    healthSection: { en: 'Health & Wellness', rw: 'Ubuzima n\'Imirire', sw: 'Afya na Ustawi', fr: 'Santé et Bien-être' },
-    donate: { en: 'Support Our Mission', rw: 'Shyigikira umurimo', sw: 'Changia Huduma', fr: 'Soutenir notre mission' },
-    donationGoal: { en: 'Digital Ministry Goal', rw: 'Intego y\'umurimo', sw: 'Lengo la Huduma', fr: 'Objectif du Ministère' },
-    donationHeader: { en: 'Support {site}', rw: 'Shyigikira {site}', sw: 'Tusaidie {site}', fr: 'Soutenir {site}' },
-   donationDescription: {
-     en: 'Your donation helps cover hosting, domain, and this gospel to reach many.',
-   rw: 'Inkunga yawe ifasha kwishyura hosting, domain, no gutuma ubu butumwa bugera kuri benshi.',
-     sw: 'Mchango wako husaidia kufunika gharama za hosting, domain, na maendeleo ya vipengele vipya.',
-     fr: 'Votre don aide à couvrir l\'hébergement, le domaine et le développement de nouvelles fonctionnalités.'
+   siteName: {
+      en: 'My life Today',
+      rw: 'Kubana n\'Imana',
+      sw: 'Maisha ya Leo',
+      fr: 'vivre avec Dieu chaque jour',
    },
-  mobileMoneyLabel: { en: 'Mobile Money (MoMo)', rw: 'Mobile Money (MoMo)', sw: 'Mobile Money (MoMo)', fr: 'Mobile Money (MoMo)' },
-   bankTransferLabel: { en: 'Bank Transfer', rw: 'Kohereza kuri Banki', sw: 'Uhamisho wa Benki', fr: 'Virement bancaire' },
-   donationPurposeLabel: { en: 'Purpose', rw: 'Intego', sw: 'Madhumuni', fr: 'Objet' },
-   copyMoMo: { en: 'Copy MoMo', rw: 'Koporora MoMo', sw: 'Nakili MoMo', fr: 'Copier MoMo' },
-   copyBank: { en: 'Copy Bank', rw: 'Koporora Numero ya Banki', sw: 'Nakili Benki', fr: 'Copier Banque' },
-    copy: { en: 'Copy Account', rw: 'Koporora izina rya konti', sw: 'Nakili Akaunti', fr: 'Copier le compte' },
-    copied: { en: 'Copied!', rw: 'Byakopye!', sw: 'Imenakiliwa!', fr: 'Copié !' },
-    subscribe: { en: 'Subscribe', rw: 'Iyandikishe', sw: 'Jiandikishe', fr: 'S\'abonner' },
-    postComment: { en: 'Post Comment', rw: 'Ohereza igitekerezo', sw: 'Tuma Maoni', fr: 'Poster le commentaire' },
-    joinWhatsApp: { en: 'Join WhatsApp Group', rw: 'Injira mu itsinda rya WhatsApp', sw: 'Jiunge na WhatsApp', fr: 'Rejoindre WhatsApp' },
-    privacyTitle: { en: 'Privacy Policy', rw: 'Politiki y\'Ubwisanzure', sw: 'Sera ya Faragha', fr: 'Politique de confidentialité' },
-    termsTitle: { en: 'Terms of Service', rw: 'Amategeko yo Gukoresha', sw: 'Sheria za Huduma', fr: 'Conditions d\'utilisation' },
-    home: { en: 'Home', rw: 'Ahabanza', sw: 'Nyumbani', fr: 'Accueil' },
-    health: { en: 'Health', rw: 'Ubuzima', sw: 'Afya', fr: 'Santé' },
-    search: { en: 'Search', rw: 'Shaka', sw: 'Tafuta', fr: 'Rechercher' },
-    admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
-     portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
-   contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' }
-  }
+   tagline: {
+      en: 'Editorial Faith, Life & Health',
+      rw: 'Kuba muri kristo',
+      sw: 'Hekima na Afya katika Mungu',
+      fr: 'Foi, Vie et Santé Editoriale',
+   },
+   categories: {
+      [Category.DAILY_LIFE]: { en: 'Daily Life', rw: 'Ubuzima bwa buri munsi', sw: 'Maisha ya Kila Siku', fr: 'Vie Quotidienne' },
+      [Category.MONEY_WORK]: { en: 'Economy', rw: 'Amafaranga', sw: 'Uchumi', fr: 'Économie' },
+      [Category.RELATIONSHIPS]: { en: 'Relationships', rw: 'Imibanire', sw: 'Mahusiano', fr: 'Relations' },
+      [Category.MENTAL_HEALTH]: { en: 'Mind', rw: 'Intekerezo', sw: 'Akili', fr: 'Mental' },
+      [Category.TECH]: { en: 'Technology', rw: 'Ikoranabuhanga', sw: 'Teknolojia', fr: 'Technologie' },
+      [Category.SOCIETY]: { en: 'Society', rw: 'Umuryango', sw: 'Jamii', fr: 'Société' },
+      [Category.HOPE]: { en: 'Hope', rw: 'Ibyiringiro', sw: 'Tumaini', fr: 'Espoir' },
+      [Category.HEALTH]: { en: 'Health', rw: 'Ubuzima', sw: 'Afya', fr: 'Santé' },
+   },
+   ui: {
+      readMore: { en: 'Read Full Story', rw: 'Soma byose', sw: 'Soma Zaidi', fr: 'Lire la Suite' },
+      latestArticles: { en: 'Trending Insights', rw: 'Inyigisho zigezweho', sw: 'Maarifa Mapya', fr: 'Dernières Analyses' },
+      searchPlaceholder: { en: 'Find topics...', rw: 'Shaka ibintu...', sw: 'Tafuta mada...', fr: 'Chercher...' },
+      share: { en: 'Share', rw: 'Sangiza', sw: 'Shiriki', fr: 'Partager' },
+      byLabel: { en: 'By', rw: 'Na', sw: 'Na', fr: 'Par' },
+      moreFrom: { en: 'More from', rw: 'Izindi nkuru z\' ', sw: 'Zaidi kutoka', fr: 'Plus de' },
+      dailyPracticalStep: { en: 'Daily Practical Step', rw: 'Intambwe ya buri munsi', sw: 'Hatua ya Kila Siku', fr: 'Étape pratique quotidienne' },
+      closingPrayer: { en: 'Closing Prayer', rw: 'Isengesho ', sw: 'Sala ya Mwisho', fr: 'Prière de clôture' },
+      addYourThoughts: { en: 'Add your thoughts', rw: 'Tanga igitekerezo', sw: 'Ongeza mawazo yako', fr: 'Ajoutez vos pensées' },
+      nameOptionalPlaceholder: { en: 'Your name (optional)', rw: 'Amazina yawe ', sw: 'Jina lako (hiari)', fr: 'Votre nom (optionnel)' },
+      respectfulDiscoursePlaceholder: { en: 'Your comment...', rw: 'Igitekerezo cyawe...', sw: 'Mazungumzo yenye heshima tu...', fr: 'Discussions respectueuses seulement...' },
+      loadingComments: { en: 'Loading comments...', rw: 'Turimo kwohereza ibitekerezo...', sw: 'Inapakia maoni...', fr: 'Chargement des commentaires...' },
+      library: { en: 'library', rw: 'isomero', sw: 'maktaba', fr: 'bibliothèque' },
+      editorialDesk: { en: 'Editorial Desk', rw: 'Umwanditsi', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
+      comments: { en: 'Discourse', rw: 'Ibitekerezo', sw: 'Maoni', fr: 'Commentaires' },
+      healthSection: { en: 'Health & Wellness', rw: 'Ubuzima n\'Imirire', sw: 'Afya na Ustawi', fr: 'Santé et Bien-être' },
+      donate: { en: 'Support Our Mission', rw: 'Shyigikira umurimo', sw: 'Changia Huduma', fr: 'Soutenir notre mission' },
+      donationGoal: { en: 'Digital Ministry Goal', rw: 'Intego y\'umurimo', sw: 'Lengo la Huduma', fr: 'Objectif du Ministère' },
+      donationHeader: { en: 'Support {site}', rw: 'Shyigikira {site}', sw: 'Tusaidie {site}', fr: 'Soutenir {site}' },
+      donationDescription: {
+         en: 'Your donation helps cover hosting, domain, and this gospel to reach many.',
+         rw: 'Inkunga yawe ifasha kwishyura hosting, domain, no gutuma ubu butumwa bugera kuri benshi.',
+         sw: 'Mchango wako husaidia kufunika gharama za hosting, domain, na maendeleo ya vipengele vipya.',
+         fr: 'Votre don aide à couvrir l\'hébergement, le domaine et le développement de nouvelles fonctionnalités.'
+      },
+      mobileMoneyLabel: { en: 'Mobile Money (MoMo)', rw: 'Mobile Money (MoMo)', sw: 'Mobile Money (MoMo)', fr: 'Mobile Money (MoMo)' },
+      bankTransferLabel: { en: 'Bank Transfer', rw: 'Kohereza kuri Banki', sw: 'Uhamisho wa Benki', fr: 'Virement bancaire' },
+      donationPurposeLabel: { en: 'Purpose', rw: 'Intego', sw: 'Madhumuni', fr: 'Objet' },
+      copyMoMo: { en: 'Copy MoMo', rw: 'Koporora MoMo', sw: 'Nakili MoMo', fr: 'Copier MoMo' },
+      copyBank: { en: 'Copy Bank', rw: 'Koporora Numero ya Banki', sw: 'Nakili Benki', fr: 'Copier Banque' },
+      copy: { en: 'Copy Account', rw: 'Koporora izina rya konti', sw: 'Nakili Akaunti', fr: 'Copier le compte' },
+      copied: { en: 'Copied!', rw: 'Byakopye!', sw: 'Imenakiliwa!', fr: 'Copié !' },
+      subscribe: { en: 'Subscribe', rw: 'Iyandikishe', sw: 'Jiandikishe', fr: 'S\'abonner' },
+      postComment: { en: 'Post Comment', rw: 'Ohereza igitekerezo', sw: 'Tuma Maoni', fr: 'Poster le commentaire' },
+      joinWhatsApp: { en: 'Join WhatsApp Group', rw: 'Injira mu itsinda rya WhatsApp', sw: 'Jiunge na WhatsApp', fr: 'Rejoindre WhatsApp' },
+      privacyTitle: { en: 'Privacy Policy', rw: 'Politiki y\'Ubwisanzure', sw: 'Sera ya Faragha', fr: 'Politique de confidentialité' },
+      termsTitle: { en: 'Terms of Service', rw: 'Amategeko yo Gukoresha', sw: 'Sheria za Huduma', fr: 'Conditions d\'utilisation' },
+      home: { en: 'Home', rw: 'Ahabanza', sw: 'Nyumbani', fr: 'Accueil' },
+      health: { en: 'Health', rw: 'Ubuzima', sw: 'Afya', fr: 'Santé' },
+      search: { en: 'Search', rw: 'Shaka', sw: 'Tafuta', fr: 'Rechercher' },
+      admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
+      portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
+      contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' }
+   }
 };
 
 export const DONATION = {
-  momoNumber: '+250795756252',
-  momoName: 'HIRWA AMANI TOPRAY ',
-  bankName: 'Bank of Kigali',
-  bankAccount: '4006112964359',
-  purpose: 'Digital Ministry & Health Awareness'
+   momoNumber: '+250795756252',
+   momoName: 'HIRWA AMANI TOPRAY ',
+   bankName: 'Bank of Kigali',
+   bankAccount: '4006112964359',
+   purpose: 'Digital Ministry & Health Awareness'
 };
 
 export const SOCIAL_LINKS = {
-  whatsapp: 'https://whatsapp.com/channel/0029VbCMYTyBadmitOpkBC15',
-  facebook: 'https://www.facebook.com/profile.php?id=61559771027291',
-  instagram: 'https://www.instagram.com/hirwa.topray/',
-  email: 'contact@theMylifetoday.org'
+   whatsapp: 'https://whatsapp.com/channel/0029VbCMYTyBadmitOpkBC15',
+   facebook: 'https://www.facebook.com/profile.php?id=61559771027291',
+   instagram: 'https://www.instagram.com/hirwa.topray/',
+   email: 'contact@theWithGodDaily.org'
 };
 
 export const LEGAL = {
-  privacy: {
-    en: `At The Mylifetoday, we deeply respect your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we collect, use, and safeguard the data you provide while using our platform.
+   privacy: {
+      en: `At The WithGodDaily, we deeply respect your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we collect, use, and safeguard the data you provide while using our platform.
 
 1. Information We Collect:
    - Email addresses for newsletter subscriptions
@@ -137,7 +137,7 @@ export const LEGAL = {
 
 Contact us for any privacy concerns. Your trust is sacred to us.`,
 
-    rw: `Ku Mylifetoday, dukunda kubahiriza ubwisanzure bwawe kandi dushishikaye kurinda amakuru yawe. Iyi Politiki y'Ubwisanzure isobanura uko dukusanya, dukoresha, kandi dukinga amakuru waduhaye utekereza.
+      rw: `Ku WithGodDaily, dukunda kubahiriza ubwisanzure bwawe kandi dushishikaye kurinda amakuru yawe. Iyi Politiki y'Ubwisanzure isobanura uko dukusanya, dukoresha, kandi dukinga amakuru waduhaye utekereza.
 
 1. Amakuru Dukusanya:
    - Imeli zo kwandikisha mu itangazo
@@ -175,7 +175,7 @@ Contact us for any privacy concerns. Your trust is sacred to us.`,
 
 Twandikire iyo ufite ibibazo by'ubwisanzure. Ukwizera kwawe ni icyubahiro.`,
 
-    sw: `Katika Mylifetoday, tunathamini faragha yako na tumekusudia kulinda taarifa zako binafsi. Sera hii ya Faragha inaelezea jinsi tunavyokusanya, kutumia, na kulinda data unayotoa unapotumia jukwaa letu.
+      sw: `Katika WithGodDaily, tunathamini faragha yako na tumekusudia kulinda taarifa zako binafsi. Sera hii ya Faragha inaelezea jinsi tunavyokusanya, kutumia, na kulinda data unayotoa unapotumia jukwaa letu.
 
 1. Taarifa Tunazokusanya:
    - Anwani za barua pepe kwa usajili wa jarida
@@ -213,7 +213,7 @@ Twandikire iyo ufite ibibazo by'ubwisanzure. Ukwizera kwawe ni icyubahiro.`,
 
 Wasiliana nasi kwa maswali yoyote ya faragha. Uaminifu wako ni takatifu kwetu.`,
 
-    fr: `Chez The Mylifetoday, nous respectons profondément votre vie privée et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité décrit comment nous collectons, utilisons et protégeons les données que vous fournissez lors de l'utilisation de notre plateforme.
+      fr: `Chez The WithGodDaily, nous respectons profondément votre vie privée et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité décrit comment nous collectons, utilisons et protégeons les données que vous fournissez lors de l'utilisation de notre plateforme.
 
 1. Informations que nous collectons:
    - Adresses e-mail pour les abonnements à la newsletter
@@ -250,21 +250,21 @@ Wasiliana nasi kwa maswali yoyote ya faragha. Uaminifu wako ni takatifu kwetu.`,
    - L'utilisation continue constitue l'acceptation des changements
 
 Contactez-nous pour toute préoccupation concernant la confidentialité. Votre confiance nous est sacrée.`
-  },
+   },
 
-  terms: {
-    en: `Terms of Service for The Mylifetoday Digital Network
+   terms: {
+      en: `Terms of Service for The WithGodDaily Digital Network
 
 Last Updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Welcome to The Mylifetoday! By accessing and using our platform, you agree to be bound by these Terms of Service.
+Welcome to The WithGodDaily! By accessing and using our platform, you agree to be bound by these Terms of Service.
 
 1. Acceptance of Terms
    - By using our website, mobile applications, or services, you accept these Terms.
    - If you disagree with any part, please discontinue use immediately.
 
 2. Description of Service
-   - The Mylifetoday provides editorial content combining Biblical wisdom, health insights, and practical life guidance.
+   - The WithGodDaily provides editorial content combining Biblical wisdom, health insights, and practical life guidance.
    - We reserve the right to modify or discontinue services at any time.
 
 3. User Responsibilities
@@ -275,7 +275,7 @@ Welcome to The Mylifetoday! By accessing and using our platform, you agree to be
    - Do not attempt to compromise platform security
 
 4. Content Ownership
-   - All editorial content is owned by The Mylifetoday Digital Network
+   - All editorial content is owned by The WithGodDaily Digital Network
    - Users retain rights to their comments and contributions
    - By posting content, you grant us a non-exclusive license to display it
 
@@ -322,18 +322,18 @@ Welcome to The Mylifetoday! By accessing and using our platform, you agree to be
 
 Thank you for being part of our community. Together, we build a space of wisdom, health, and faith.`,
 
-    rw: `Amategeko yo Gukoresha Urubuga rwa Mylifetoday
+      rw: `Amategeko yo Gukoresha Urubuga rwa WithGodDaily
 
 Iheruka Gusubirwamo: ${new Date().toLocaleDateString('rw-RW', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya mategeko.
+Murakaza neza kuri WithGodDaily! Mukoresha urubuga rwacu, mwemera kubahiriza aya mategeko.
 
 1. Kwemera Amategeko
    - Ukoresha urubuga, porogaramu, cyangwa serivisi zacu, wemeye aya mategeko.
    - Utemera icyo ari cyo cyose, reka gukoresha ako kanya.
 
 2. Ibyo Serivisi Zacu Zitanga
-   - Mylifetoday itanga ibyigisho by'ubuhanuzi, ubuzima, n'inama z'ubuzima.
+   - WithGodDaily itanga ibyigisho by'ubuhanuzi, ubuzima, n'inama z'ubuzima.
    - Dufite uburenganzira bwo guhindura cyangwa guhagarika serivisi igihe icyo ari cyo.
 
 3. Inshingano z'Umukoresha
@@ -344,7 +344,7 @@ Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya 
    - Ntugerageze kurimbura umutekano w'urubuga
 
 4. Uburenganzira bw'Ibirimo
-   - Byose biri kuri Mylifetoday ni ibyacu
+   - Byose biri kuri WithGodDaily ni ibyacu
    - Abakoresha bafite uburenganzira ku bitekerezo byabo
    - Ukandika ibintu, uduha uruhushya rwo kubigaragaza
 
@@ -355,7 +355,7 @@ Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya 
    - Ntitwabazwa n'ibyemezo by'ubuzima byakozwe hakurikijwe ibyacu
 
 6. Iby'Ubwizigirwa
-   - Ibiri kuri Mylifetoday bishingiye ku myemerere ya Bibiliya
+   - Ibiri kuri WithGodDaily bishingiye ku myemerere ya Bibiliya
    - Twubaha imyemerere itandukanye ariko tugaharanira gukomeza umwimerere wacu
   
    - Ibiri hano bishobora kudahura nizindi nyigisho
@@ -386,24 +386,24 @@ Murakaza neza kuri Mylifetoday! Mukoresha urubuga rwacu, mwemera kubahiriza aya 
    
 
 12. Amakuru yo Kutwandikira
-    - Ibibazo: contact@theMylifetoday.org
+    - Ibibazo: contact@theWithGodDaily.org
     - WhatsApp: ${SOCIAL_LINKS.whatsapp}
     - Isaha yo gusubiza: iminsi 2-3 y'akazi
 
 Murakoze kuba mu muryango wacu. Hamwe, dushyiraho ahantu h'ubwenge, ubuzima n'ukwizera.`,
 
-    sw: `Sheria za Huduma za Mtandao wa Digital wa Mylifetoday
+      sw: `Sheria za Huduma za Mtandao wa Digital wa WithGodDaily
 
 Ilisasishwa Mwisho: ${new Date().toLocaleDateString('sw-KE', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Karibu kwenye Mylifetoday! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria hizi za Huduma.
+Karibu kwenye WithGodDaily! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria hizi za Huduma.
 
 1. Kukubali Sheria
    - Kwa kutumia tovuti, programu, au huduma zetu, unakubali Sheria hizi.
    - Ukikataa sehemu yoyote, tafadhali acha kutumia mara moja.
 
 2. Maelezo ya Huduma
-   - Mylifetoday inatoa maudhui ya kiuhakika yanayounganisha hekima ya Biblia, maelezo ya afya, na mwongozo wa vitendo wa maisha.
+   - WithGodDaily inatoa maudhui ya kiuhakika yanayounganisha hekima ya Biblia, maelezo ya afya, na mwongozo wa vitendo wa maisha.
    - Tunahifadhi haki ya kurekebisha au kusitisha huduma wakati wowote.
 
 3. Majukumu ya Mtumiaji
@@ -414,7 +414,7 @@ Karibu kwenye Mylifetoday! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria 
    - Usijaribu kudhoofisha usalama wa jukwaa
 
 4. Umiliki wa Maudhui
-   - Maudhui yote ya kiuhakika ni mali ya Mtandao wa Digital wa Mylifetoday
+   - Maudhui yote ya kiuhakika ni mali ya Mtandao wa Digital wa WithGodDaily
    - Watumiaji wanahifadhi haki za maoni na michango yao
    - Kwa kuchapisha maudhui, unatupa leseni isiyo ya kipekee ya kuionyesha
 
@@ -455,24 +455,24 @@ Karibu kwenye Mylifetoday! Kwa kutumia jukwaa letu, unakubali kuzingatia Sheria 
     - Migogoro itatatuliwa kwa mazungumzo ya amani kwanza
 
 12. Maelezo ya Mawasiliano
-    - Kwa maswali: contact@theMylifetoday.org
+    - Kwa maswali: contact@theWithGodDaily.org
     - WhatsApp: ${SOCIAL_LINKS.whatsapp}
     - Muda wa kujibu: siku 2-3 za kazi
 
 Asante kwa kuwa sehemu ya jumuiya yetu. Pamoja, tunaunda nafasi ya hekima, afya na imani.`,
 
-    fr: `Conditions d'Utilisation du Réseau Numérique The Mylifetoday
+      fr: `Conditions d'Utilisation du Réseau Numérique The WithGodDaily
 
 Dernière mise à jour: ${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Bienvenue sur The Mylifetoday ! En accédant et en utilisant notre plateforme, vous acceptez d'être lié par ces Conditions d'Utilisation.
+Bienvenue sur The WithGodDaily ! En accédant et en utilisant notre plateforme, vous acceptez d'être lié par ces Conditions d'Utilisation.
 
 1. Acceptation des Conditions
    - En utilisant notre site web, applications mobiles ou services, vous acceptez ces Conditions.
    - Si vous n'êtes pas d'accord avec une partie, veuillez cesser immédiatement toute utilisation.
 
 2. Description du Service
-   - The Mylifetoday fournit du contenu éditorial combinant sagesse biblique, conseils de santé et guide de vie pratique.
+   - The WithGodDaily fournit du contenu éditorial combinant sagesse biblique, conseils de santé et guide de vie pratique.
    - Nous nous réservons le droit de modifier ou d'interrompre les services à tout moment.
 
 3. Responsabilités de l'Utilisateur
@@ -483,7 +483,7 @@ Bienvenue sur The Mylifetoday ! En accédant et en utilisant notre plateforme, v
    - Ne pas tenter de compromettre la sécurité de la plateforme
 
 4. Propriété du Contenu
-   - Tout le contenu éditorial appartient à The Mylifetoday Digital Network
+   - Tout le contenu éditorial appartient à The WithGodDaily Digital Network
    - Les utilisateurs conservent les droits sur leurs commentaires et contributions
    - En publiant du contenu, vous nous accordez une licence non exclusive pour l'afficher
 
@@ -524,112 +524,112 @@ Bienvenue sur The Mylifetoday ! En accédant et en utilisant notre plateforme, v
     - Les différends seront résolus d'abord par le dialogue pacifique
 
 12. Informations de Contact
-    - Pour les questions : contact@theMylifetoday.org
+    - Pour les questions : contact@theWithGodDaily.org
     - WhatsApp : ${SOCIAL_LINKS.whatsapp}
     - Délai de réponse : 2-3 jours ouvrables
 
 Merci de faire partie de notre communauté. Ensemble, nous construisons un espace de sagesse, de santé et de foi.`
-  }
+   }
 };
 
 const baseArticles: Article[] = [
-  {
-    id: 'h1',
-    category: Category.HEALTH,
-    date: 'Oct 26, 2024',
-    editor: 'Dr. Jean Uwizeye',
-    editorBio: 'Specialist in nutrition and herbal medicine with 15 years of clinical practice.',
-    tags: ['Health', 'Natural', 'Diet'],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1000',
-    title: {
-      en: 'The Biblical Diet: Foods for Longevity',
-      rw: 'Imirire ya Bibiliya n\'Ubuzima burambye',
-      sw: 'Chakula cha Biblia na Maisha Marefu',
-      fr: 'Le Régime Biblique : Aliments pour la Longévité'
-    },
-    situation: {
-      en: 'Modern processed foods are causing a rise in lifestyle diseases. Returning to natural, God-given foods is essential.',
-      rw: 'Ibiryo bitunganyirizwa mu nganda biri guteza indwara nyinshi. Gusubira ku biryo karemano ni ingenzi.',
-      sw: 'Vyakula vya kisasa vinasababisha magonjwa mengi. Kurudi kwenye vyakula vya asili ni muhimu.',
-      fr: 'Les aliments transformés modernes provoquent une augmentation des maladies de civilisation.'
-    },
-    verse: {
-      en: 'Genesis 1:29 - Then God said, "I give you every seed-bearing plant on the face of the whole earth..."',
-      rw: 'Itangiriro 1:29 - Imana iravuga iti "Dore mbahaye imimero yose yera imbuto..."',
-      sw: 'Mwanzo 1:29 - Mungu akasema, "Tazama, nimewapa kila mmea uzaao mbegu..."',
-      fr: 'Genèse 1:29 - Et Dieu dit: "Voici, je vous donne toute herbe portant de la semence..." '
-    },
-    teaching: {
-      en: 'Our bodies are temples. Nourishing them with whole grains, honey, and fresh plants reflects stewardship of Gods gift.',
-      rw: 'Imibiri yacu ni insengero. Kuyigaburira neza bitanga icyubahiro Imana.',
-      sw: 'Miili yetu ni hekalu la Mungu. Kuilisha vizuri ni wajibu wetu.',
-      fr: 'Nos corps sont des temples. Les nourrir correctement est un acte d\'intendance.'
-    },
-    practice: {
-      en: 'Replace one processed snack today with an apple or a handful of nuts.',
-      rw: 'Kura ibiryo bifunze ushyireho imbuto uyu munsi.',
-      sw: 'Badilisha chakula cha kusindika kwa matunda leo.',
-      fr: 'Remplacez une collation transformée par un fruit aujourd\'hui.'
-    },
-    prayer: {
-      en: 'Lord, help me to honor You by taking care of the body You gave me.',
-      rw: 'Mwami mfasha guha icyubahiro umubiri wanjye ubinyuze mu mirire.',
-      sw: 'Bwana, nisaidie kuuheshimu mwili wangu kwa kula vizuri.',
-      fr: 'Seigneur, aide-moi à t\'honorer en prenant soin de mon corps.'
-    },
-    healthHacks: ['Drink water with lemon every morning', 'Walk 30 mins after dinner', 'Limit refined sugar'],
-    herbalRemedies: ['Ginger tea for digestion', 'Garlic for immune support', 'Honey and Cinnamon for cough'],
-    comments: [{ id: '1', author: 'Marie', text: 'This changed my diet completely!', date: 'Oct 27, 2024' }]
-  },
-  {
-    id: '1',
-    category: Category.DAILY_LIFE,
-    date: 'Oct 24, 2024',
-    editor: 'Elias Niyitegeka',
-    tags: ['Stress', 'Faith', 'Mental Health'],
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1000',
-    title: {
-      en: 'Finding Peace in a Stressful Season',
-      rw: 'Kubona amahoro mu bihe bigoye',
-      sw: 'Kupata Amani katika Majira ya Msongo wa Mawazo',
-      fr: 'Trouver la Paix dans une Saison Stressante'
-    },
-    situation: {
-      en: 'Life feels overwhelming with endless bills and work pressure. Many believers struggle to find rest.',
-      rw: 'Ubuzima burasa naho buremereye kubera inshingano nyinshi. Abemera benshi ntibaruhuka.',
-      sw: 'Maisha yanahisi kulemea kwa bili zisizoisha na shinikizo la kazi.',
-      fr: 'La vie semble accablante avec des factures interminables et la pression du travail.'
-    },
-    verse: {
-      en: 'Philippians 4:6-7 - Do not be anxious about anything...',
-      rw: 'Abafilipi 4:6-7 - Ntimukagire icyo mwiganyira...',
-      sw: 'Wafilipi 4:6-7 - Msijisumbue kwa neno lo lote...',
-      fr: 'Philippiens 4:6-7 - Ne vous inquiétez de rien...'
-    },
-    teaching: {
-      en: 'God invites us to trade our anxiety for His supernatural peace through prayer and total reliance on His Mylifetoday.',
-      rw: 'Imana iduhamagarira guhara imihangayiko yacu tukayakira amahoro yayo binyuze mu masengesho.',
-      sw: 'Mungu anatualika kubadilisha wasiwasi wetu kwa amani yake ya ajabu kupitia maombi.',
-      fr: 'Dieu nous invite à échanger notre anxiété contre sa paix surnaturelle par la prière.'
-    },
-    practice: {
-      en: 'Spend 5 minutes in silence today, listing 3 things you are grateful for.',
-      rw: 'Fata iminota 5 utuje, wandike ibintu 3 ushimira Imana.',
-      sw: 'Tumia dakika 5 kwa utulivu leo, ukiorodhesha vitu 3 unavyoshukuru.',
-      fr: 'Passez 5 minutes en silence aujourd\'hui, en listant 3 choses pour lesquelles vous êtes reconnaissant.'
-    },
-    prayer: {
-      en: 'Lord, give me the strength to trust You with my worries.',
-      rw: 'Mwami, mpa imbaraga zo kukwizera mu byo ntekereza byose.',
-      sw: 'Bwana, nipe nguvu ya kukuamini kwa wasiwasi wangu.',
-      fr: 'Seigneur, donne-moi la force de Te faire confiance pour mes soucis.'
-    }
-  }
+   {
+      id: 'h1',
+      category: Category.HEALTH,
+      date: 'Oct 26, 2024',
+      editor: 'Dr. Jean Uwizeye',
+      editorBio: 'Specialist in nutrition and herbal medicine with 15 years of clinical practice.',
+      tags: ['Health', 'Natural', 'Diet'],
+      image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1000',
+      title: {
+         en: 'The Biblical Diet: Foods for Longevity',
+         rw: 'Imirire ya Bibiliya n\'Ubuzima burambye',
+         sw: 'Chakula cha Biblia na Maisha Marefu',
+         fr: 'Le Régime Biblique : Aliments pour la Longévité'
+      },
+      situation: {
+         en: 'Modern processed foods are causing a rise in lifestyle diseases. Returning to natural, God-given foods is essential.',
+         rw: 'Ibiryo bitunganyirizwa mu nganda biri guteza indwara nyinshi. Gusubira ku biryo karemano ni ingenzi.',
+         sw: 'Vyakula vya kisasa vinasababisha magonjwa mengi. Kurudi kwenye vyakula vya asili ni muhimu.',
+         fr: 'Les aliments transformés modernes provoquent une augmentation des maladies de civilisation.'
+      },
+      verse: {
+         en: 'Genesis 1:29 - Then God said, "I give you every seed-bearing plant on the face of the whole earth..."',
+         rw: 'Itangiriro 1:29 - Imana iravuga iti "Dore mbahaye imimero yose yera imbuto..."',
+         sw: 'Mwanzo 1:29 - Mungu akasema, "Tazama, nimewapa kila mmea uzaao mbegu..."',
+         fr: 'Genèse 1:29 - Et Dieu dit: "Voici, je vous donne toute herbe portant de la semence..." '
+      },
+      teaching: {
+         en: 'Our bodies are temples. Nourishing them with whole grains, honey, and fresh plants reflects stewardship of Gods gift.',
+         rw: 'Imibiri yacu ni insengero. Kuyigaburira neza bitanga icyubahiro Imana.',
+         sw: 'Miili yetu ni hekalu la Mungu. Kuilisha vizuri ni wajibu wetu.',
+         fr: 'Nos corps sont des temples. Les nourrir correctement est un acte d\'intendance.'
+      },
+      practice: {
+         en: 'Replace one processed snack today with an apple or a handful of nuts.',
+         rw: 'Kura ibiryo bifunze ushyireho imbuto uyu munsi.',
+         sw: 'Badilisha chakula cha kusindika kwa matunda leo.',
+         fr: 'Remplacez une collation transformée par un fruit aujourd\'hui.'
+      },
+      prayer: {
+         en: 'Lord, help me to honor You by taking care of the body You gave me.',
+         rw: 'Mwami mfasha guha icyubahiro umubiri wanjye ubinyuze mu mirire.',
+         sw: 'Bwana, nisaidie kuuheshimu mwili wangu kwa kula vizuri.',
+         fr: 'Seigneur, aide-moi à t\'honorer en prenant soin de mon corps.'
+      },
+      healthHacks: ['Drink water with lemon every morning', 'Walk 30 mins after dinner', 'Limit refined sugar'],
+      herbalRemedies: ['Ginger tea for digestion', 'Garlic for immune support', 'Honey and Cinnamon for cough'],
+      comments: [{ id: '1', author: 'Marie', text: 'This changed my diet completely!', date: 'Oct 27, 2024' }]
+   },
+   {
+      id: '1',
+      category: Category.DAILY_LIFE,
+      date: 'Oct 24, 2024',
+      editor: 'Elias Niyitegeka',
+      tags: ['Stress', 'Faith', 'Mental Health'],
+      image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1000',
+      title: {
+         en: 'Finding Peace in a Stressful Season',
+         rw: 'Kubona amahoro mu bihe bigoye',
+         sw: 'Kupata Amani katika Majira ya Msongo wa Mawazo',
+         fr: 'Trouver la Paix dans une Saison Stressante'
+      },
+      situation: {
+         en: 'Life feels overwhelming with endless bills and work pressure. Many believers struggle to find rest.',
+         rw: 'Ubuzima burasa naho buremereye kubera inshingano nyinshi. Abemera benshi ntibaruhuka.',
+         sw: 'Maisha yanahisi kulemea kwa bili zisizoisha na shinikizo la kazi.',
+         fr: 'La vie semble accablante avec des factures interminables et la pression du travail.'
+      },
+      verse: {
+         en: 'Philippians 4:6-7 - Do not be anxious about anything...',
+         rw: 'Abafilipi 4:6-7 - Ntimukagire icyo mwiganyira...',
+         sw: 'Wafilipi 4:6-7 - Msijisumbue kwa neno lo lote...',
+         fr: 'Philippiens 4:6-7 - Ne vous inquiétez de rien...'
+      },
+      teaching: {
+         en: 'God invites us to trade our anxiety for His supernatural peace through prayer and total reliance on His WithGodDaily.',
+         rw: 'Imana iduhamagarira guhara imihangayiko yacu tukayakira amahoro yayo binyuze mu masengesho.',
+         sw: 'Mungu anatualika kubadilisha wasiwasi wetu kwa amani yake ya ajabu kupitia maombi.',
+         fr: 'Dieu nous invite à échanger notre anxiété contre sa paix surnaturelle par la prière.'
+      },
+      practice: {
+         en: 'Spend 5 minutes in silence today, listing 3 things you are grateful for.',
+         rw: 'Fata iminota 5 utuje, wandike ibintu 3 ushimira Imana.',
+         sw: 'Tumia dakika 5 kwa utulivu leo, ukiorodhesha vitu 3 unavyoshukuru.',
+         fr: 'Passez 5 minutes en silence aujourd\'hui, en listant 3 choses pour lesquelles vous êtes reconnaissant.'
+      },
+      prayer: {
+         en: 'Lord, give me the strength to trust You with my worries.',
+         rw: 'Mwami, mpa imbaraga zo kukwizera mu byo ntekereza byose.',
+         sw: 'Bwana, nipe nguvu ya kukuamini kwa wasiwasi wangu.',
+         fr: 'Seigneur, donne-moi la force de Te faire confiance pour mes soucis.'
+      }
+   }
 ];
 
 export const MOCK_ARTICLES: Article[] = Array.from({ length: 30 }).map((_, i) => ({
-  ...baseArticles[i % 2],
-  id: `${i + 1}`,
-  date: `Oct ${24 - Math.floor(i / 3)}, 2024`,
-  image: `https://picsum.photos/seed/${i + 100}/1200/800`
+   ...baseArticles[i % 2],
+   id: `${i + 1}`,
+   date: `Oct ${24 - Math.floor(i / 3)}, 2024`,
+   image: `https://picsum.photos/seed/${i + 100}/1200/800`
 }));

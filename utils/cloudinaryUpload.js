@@ -1,8 +1,8 @@
-export const uploadToCloudinary = async (file, folder = "Mylifetoday") => {
+export const uploadToCloudinary = async (file, folder = "WithGodDaily") => {
   if (!file) throw new Error("No file provided");
 
   const cloudName = "dpmklbfbt";
-  const uploadPreset = "mylifetoday";
+  const uploadPreset = "WithGodDaily";
 
   const formData = new FormData();
   formData.append("file", file);

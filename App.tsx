@@ -498,7 +498,7 @@ const EnhancedArticleCard: React.FC<{
           >
             {bookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
           </button>
-       
+
 
 
         </div>
@@ -1970,7 +1970,7 @@ export default function App() {
                   <a href="https://devtopray.netlify.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
                     {t('portfolio')} <ExternalLink size={12} />
                   </a>
-                  <a href="mailto:contact@theMylifetoday.org" className="flex items-center gap-2 hover:text-white transition-colors">
+                  <a href="mailto:contact@theWithGodDaily.org" className="flex items-center gap-2 hover:text-white transition-colors">
                     {t('contactEditorial')}
                   </a>
                 </div>
