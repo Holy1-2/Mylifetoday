@@ -6,12 +6,9 @@ import dotenv from 'dotenv';
 // Load variables
 dotenv.config();
 
-// Helper to get env variables safely in Node
 const getEnv = (key) => {
   const value = process.env[key];
-  if (!value) {
-    console.warn(`⚠️ Warning: ${key} is not defined in environment variables.`);
-  }
+  if (!value) console.warn(`⚠️ Warning: ${key} is not defined.`);
   return value;
 };
 
@@ -27,9 +24,8 @@ const firebaseConfig = {
 const BASE_URL = 'https://kubananimanaburimunsi.vercel.app';
 
 async function generateSitemap() {
-  // Guard clause: Don't initialize Firebase if config is broken
   if (!firebaseConfig.apiKey) {
-    console.error("❌ Critical Error: Firebase API Key is missing. Skipping sitemap generation.");
+    console.error("❌ Firebase API Key is missing.");
     process.exit(1); 
   }
 
@@ -39,18 +35,26 @@ async function generateSitemap() {
 
     const staticPages = ['', '/donate', '/terms', '/privacy'];
     
-    // Fetch articles
+    // Fetch articles from Firestore
     const querySnapshot = await getDocs(collection(db, "articles"));
     const articles = [];
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      const dateSource = data.updatedAt || data.createdAt || { seconds: Date.now() / 1000 };
       
-      articles.push({
-        id: doc.id,
-        lastMod: new Date(dateSource.seconds * 1000).toISOString().split('T')[0]
-      });
+      // Handle timestamps correctly
+      const dateSource = data.updatedAt || data.createdAt || { seconds: Date.now() / 1000 };
+      const formattedDate = new Date(dateSource.seconds * 1000).toISOString().split('T')[0];
+
+      // Logic using your 'slug' field
+      if (data.slug) {
+        articles.push({
+          slug: data.slug.trim(), // Remove any accidental spaces
+          lastMod: formattedDate
+        });
+      } else {
+        console.warn(`⚠️ Article ID ${doc.id} is missing a 'slug' field. Skipping.`);
+      }
     });
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -63,22 +67,22 @@ async function generateSitemap() {
     </url>`).join('')}
   ${articles.map(article => `
     <url>
-      <loc>${BASE_URL}/article/${article.id}</loc>
+      <loc>${BASE_URL}/articles/${encodeURI(article.slug)}</loc>
       <lastmod>${article.lastMod}</lastmod>
       <changefreq>monthly</changefreq>
     </url>`).join('')}
 </urlset>`;
 
-    // Ensure public folder exists (Vite projects usually have it, but just in case)
+    // Save to the public folder
     if (!fs.existsSync('./public')) {
       fs.mkdirSync('./public');
     }
 
     fs.writeFileSync('./public/sitemap.xml', sitemap);
-    console.log('✅ Sitemap generated successfully!');
+    console.log(`✅ Success! Sitemap generated with ${articles.length} articles.`);
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error generating sitemap:', error);
+    console.error('❌ Error:', error);
     process.exit(1);
   }
 }
