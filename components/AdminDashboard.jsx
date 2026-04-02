@@ -221,14 +221,33 @@ const App = () => {
         mediaEmbeds: (defaultFilled.mediaEmbeds || []).filter(m => m && m.toString().trim())
       };
 
+      // Ensure multilingual fields are plain strings (no nested object or non-serializable values)
+      const normalizeLocaleMap = (obj = {}) => ({
+        en: String((obj && obj.en) || '').trim(),
+        fr: String((obj && obj.fr) || '').trim(),
+        rw: String((obj && obj.rw) || '').trim(),
+        sw: String((obj && obj.sw) || '').trim(),
+      });
+
+      const firestoreData = {
+        ...cleanData,
+        title: normalizeLocaleMap(cleanData.title),
+        situation: normalizeLocaleMap(cleanData.situation),
+        verse: normalizeLocaleMap(cleanData.verse),
+        teaching: normalizeLocaleMap(cleanData.teaching),
+        practice: normalizeLocaleMap(cleanData.practice),
+        prayer: normalizeLocaleMap(cleanData.prayer),
+        closure: normalizeLocaleMap(cleanData.closure),
+      };
+
       // Clean arrays
-      
+
       let result;
       if (currentArticle) {
-        result = await updateArticle(currentArticle.id, cleanData);
+        result = await updateArticle(currentArticle.id, firestoreData);
         toast.success('Article updated successfully!');
       } else {
-        result = await addArticle(cleanData);
+        result = await addArticle(firestoreData);
         toast.success(formData.status === 'draft' ? 'Draft saved successfully!' : 'Article published successfully!');
       }
 
@@ -346,319 +365,319 @@ const App = () => {
     }));
     setEmbedInput('');
   };
-const updateHerbalRemedy = (index, value) => {
-  const newRemedies = [...(formData.herbalRemedies || [])];
-  newRemedies[index] = value;
-  setFormData(prev => ({ ...prev, herbalRemedies: newRemedies }));
-};
-const addHealthHack = () => {
-  setFormData(prev => ({
-    ...prev,
-    healthHacks: [...(prev.healthHacks || []), '']
-  }));
-};const addHerbalRemedy = () => {
-  setFormData(prev => ({
-    ...prev,
-    herbalRemedies: [...(prev.herbalRemedies || []), '']
-  }));
-};const updateHealthHack = (index, value) => {
-  const newHacks = [...(formData.healthHacks || [])];
-  newHacks[index] = value;
-  setFormData(prev => ({ ...prev, healthHacks: newHacks }));
-};
+  const updateHerbalRemedy = (index, value) => {
+    const newRemedies = [...(formData.herbalRemedies || [])];
+    newRemedies[index] = value;
+    setFormData(prev => ({ ...prev, herbalRemedies: newRemedies }));
+  };
+  const addHealthHack = () => {
+    setFormData(prev => ({
+      ...prev,
+      healthHacks: [...(prev.healthHacks || []), '']
+    }));
+  }; const addHerbalRemedy = () => {
+    setFormData(prev => ({
+      ...prev,
+      herbalRemedies: [...(prev.herbalRemedies || []), '']
+    }));
+  }; const updateHealthHack = (index, value) => {
+    const newHacks = [...(formData.healthHacks || [])];
+    newHacks[index] = value;
+    setFormData(prev => ({ ...prev, healthHacks: newHacks }));
+  };
 
-const handleEditArticle = (article) => {
-  setCurrentArticle(article);
-  setFormData({
-    title: article.title || { en: '', fr: '', rw: '', sw: '' },
-    situation: article.situation || { en: '', fr: '', rw: '', sw: '' },
-    verse: article.verse || { en: '', fr: '', rw: '', sw: '' },
-    teaching: article.teaching || { en: '', fr: '', rw: '', sw: '' },
-    practice: article.practice || { en: '', fr: '', rw: '', sw: '' },
-    prayer: article.prayer || { en: '', fr: '', rw: '', sw: '' },
-    closure: article.closure || { en: '', fr: '', rw: '', sw: '' },
-    category: article.category || Category.DAILY_LIFE,
-    editor: article.editor || 'Hirwa Amani Topray',
-    editorBio: article.editorBio || 'bible lover and  using it for global optismistic changes',
-    image: article.image || '',
-    featuredImage: article.featuredImage || '',
-    healthHacks: article.healthHacks || [''],
-    herbalRemedies: article.herbalRemedies || [''],
-    tags: article.tags || [],
-    metaDescription: article.metaDescription || '',
-    keywords: article.keywords || '',
-    whatsappGroup: article.whatsappGroup || '',
-    telegramChannel: article.telegramChannel || '',
-    publishDate: article.publishDate || new Date().toISOString().split('T')[0],
-    featured: article.featured || false,
-    status: article.status || 'draft'
-  });
-  setIsEditing(true);
-  window.scrollTo(0, 0);
-};
+  const handleEditArticle = (article) => {
+    setCurrentArticle(article);
+    setFormData({
+      title: article.title || { en: '', fr: '', rw: '', sw: '' },
+      situation: article.situation || { en: '', fr: '', rw: '', sw: '' },
+      verse: article.verse || { en: '', fr: '', rw: '', sw: '' },
+      teaching: article.teaching || { en: '', fr: '', rw: '', sw: '' },
+      practice: article.practice || { en: '', fr: '', rw: '', sw: '' },
+      prayer: article.prayer || { en: '', fr: '', rw: '', sw: '' },
+      closure: article.closure || { en: '', fr: '', rw: '', sw: '' },
+      category: article.category || Category.DAILY_LIFE,
+      editor: article.editor || 'Hirwa Amani Topray',
+      editorBio: article.editorBio || 'bible lover and  using it for global optismistic changes',
+      image: article.image || '',
+      featuredImage: article.featuredImage || '',
+      healthHacks: article.healthHacks || [''],
+      herbalRemedies: article.herbalRemedies || [''],
+      tags: article.tags || [],
+      metaDescription: article.metaDescription || '',
+      keywords: article.keywords || '',
+      whatsappGroup: article.whatsappGroup || '',
+      telegramChannel: article.telegramChannel || '',
+      publishDate: article.publishDate || new Date().toISOString().split('T')[0],
+      featured: article.featured || false,
+      status: article.status || 'draft'
+    });
+    setIsEditing(true);
+    window.scrollTo(0, 0);
+  };
 
-const handleDeleteArticle = async (id) => {
-  if (window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
-    try {
-      await deleteArticle(id);
-      setArticles(articles.filter(article => article.id !== id));
-      toast.success('Article deleted successfully');
-    } catch (error) {
-      toast.error('Failed to delete article');
+  const handleDeleteArticle = async (id) => {
+    if (window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
+      try {
+        await deleteArticle(id);
+        setArticles(articles.filter(article => article.id !== id));
+        toast.success('Article deleted successfully');
+      } catch (error) {
+        toast.error('Failed to delete article');
+      }
     }
-  }
-};
+  };
 
-const handleExportSubscriptions = () => {
-  const csv = subscriptions.map(sub =>
-    `${sub.email},${sub.name || ''},${sub.subscribedAt || ''}`
-  ).join('\n');
+  const handleExportSubscriptions = () => {
+    const csv = subscriptions.map(sub =>
+      `${sub.email},${sub.name || ''},${sub.subscribedAt || ''}`
+    ).join('\n');
 
-  const blob = new Blob([`Email,Name,Subscribed At\n${csv}`], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'subscriptions.csv';
-  a.click();
+    const blob = new Blob([`Email,Name,Subscribed At\n${csv}`], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'subscriptions.csv';
+    a.click();
 
-  toast.success('Subscriptions exported successfully');
-};
+    toast.success('Subscriptions exported successfully');
+  };
 
-// filteredArticles is no longer needed; ArticlesManagement will apply its own search/status/category filters
-const filteredArticles = articles; // keep for compatibility but no filtering
+  // filteredArticles is no longer needed; ArticlesManagement will apply its own search/status/category filters
+  const filteredArticles = articles; // keep for compatibility but no filtering
 
-if (!isAuthenticated) {
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <Toaster position="top-right" />
-      <div className="bg-white shadow-lg border border-gray-200 rounded-2xl p-8 max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 rounded-2xl mb-4">
-            <Shield className="text-red-600" size={32} />
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <Toaster position="top-right" />
+        <div className="bg-white shadow-lg border border-gray-200 rounded-2xl p-8 max-w-md w-full">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 rounded-2xl mb-4">
+              <Shield className="text-red-600" size={32} />
+            </div>
+            <h1 className="text-3xl font-black text-gray-900 mb-2">My Life Today</h1>
+            <p className="text-gray-500">Admin Dashboard</p>
           </div>
-          <h1 className="text-3xl font-black text-gray-900 mb-2">My Life Today</h1>
-          <p className="text-gray-500">Admin Dashboard</p>
-        </div>
 
-        <form onSubmit={handleLogin}>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  placeholder="you@domain.com"
-                  required
-                />
+          <form onSubmit={handleLogin}>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                    placeholder="you@domain.com"
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  placeholder="Enter password"
-                  required
-                />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                    placeholder="Enter password"
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
-                <p className="text-red-600 text-sm">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-lg font-bold text-sm hover:from-red-700 hover:to-red-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Authenticating...
-                </>
-              ) : (
-                <>
-                  <LogIn size={18} />
-                  Sign In
-                </>
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
+                  <p className="text-red-600 text-sm">{error}</p>
+                </div>
               )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-lg font-bold text-sm hover:from-red-700 hover:to-red-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Authenticating...
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={18} />
+                    Sign In
+                  </>
+                )}
+              </button>
+
+              <p className="text-center text-gray-500 text-sm">
+                Sign in with your admin credentials (stored in Firebase)
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-right" />
+
+      {/* Top Navigation */}
+      <header className="bg-white border-b border-gray-200">
+        <div className="px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 rounded-lg"
+            >
+              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">My Life Today</h1>
+              <p className="text-sm text-gray-500">Admin Dashboard</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search articles..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              />
+            </div>
+
+            <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+              <Bell size={22} />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
 
-            <p className="text-center text-gray-500 text-sm">
-              Sign in with your admin credentials (stored in Firebase)
-            </p>
+            <button
+              onClick={() => {
+                logoutUser();
+                setIsAuthenticated(false);
+                toast.success('Logged out successfully');
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-sm transition-colors"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
           </div>
-        </form>
+        </div>
+      </header>
+
+      <div className="flex">
+        {/* Sidebar */}
+        {sidebarOpen && (
+          <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)]">
+            <nav className="p-4">
+              <div className="space-y-1">
+                {[
+                  { id: 'dashboard', icon: <Grid size={20} />, label: 'Dashboard' },
+                  { id: 'articles', icon: <FileText size={20} />, label: 'Articles', count: articles.length },
+                  { id: 'subscriptions', icon: <Users size={20} />, label: 'Subscribers', count: subscriptions.length },
+                  { id: 'analytics', icon: <BarChart size={20} />, label: 'Analytics' },
+                  { id: 'settings', icon: <Settings size={20} />, label: 'Settings' }
+                ].map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${activeTab === item.id
+                      ? 'bg-red-50 text-red-700 font-semibold'
+                      : 'hover:bg-gray-50 text-gray-700'
+                      }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </div>
+                    {item.count !== undefined && (
+                      <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
+                        {item.count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-lg font-bold text-sm hover:from-red-700 hover:to-red-800 transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                  <Plus size={20} />
+                  New Article
+                </button>
+              </div>
+            </nav>
+          </aside>
+        )}
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          {isEditing ? (
+            <ArticleEditor
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleSubmitArticle}
+              onCancel={resetForm}
+              loading={loading}
+              currentArticle={currentArticle}
+              handleImageUpload={handleImageUpload}
+              addHealthHack={addHealthHack}
+              addHerbalRemedy={addHerbalRemedy}
+              updateHealthHack={updateHealthHack}
+              handleVideoUpload={handleVideoUpload}
+              updateHerbalRemedy={updateHerbalRemedy}
+              modules={modules}
+            />
+          ) : (
+            <>
+              {activeTab === 'dashboard' && (
+                <DashboardOverview stats={stats} articles={articles} subscriptions={subscriptions} />
+              )}
+
+              {activeTab === 'articles' && (
+                <ArticlesManagement
+                  articles={articles}
+                  onEdit={handleEditArticle}
+                  onDelete={handleDeleteArticle}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+              )}
+
+              {activeTab === 'subscriptions' && (
+                <SubscriptionsManagement
+                  subscriptions={subscriptions}
+                  onExport={handleExportSubscriptions}
+                />
+              )}
+
+              {activeTab === 'analytics' && (
+                <AnalyticsDashboard stats={stats} articles={articles} />
+              )}
+
+              {activeTab === 'settings' && (
+                <SettingsPanel />
+              )}
+            </>
+          )}
+        </main>
       </div>
     </div>
   );
-}
-
-return (
-  <div className="min-h-screen bg-gray-50">
-    <Toaster position="top-right" />
-
-    {/* Top Navigation */}
-    <header className="bg-white border-b border-gray-200">
-      <div className="px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg"
-          >
-            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">My Life Today</h1>
-            <p className="text-sm text-gray-500">Admin Dashboard</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            />
-          </div>
-
-          <button className="p-2 hover:bg-gray-100 rounded-lg relative">
-            <Bell size={22} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          <button
-            onClick={() => {
-              logoutUser();
-              setIsAuthenticated(false);
-              toast.success('Logged out successfully');
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-sm transition-colors"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <div className="flex">
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)]">
-          <nav className="p-4">
-            <div className="space-y-1">
-              {[
-                { id: 'dashboard', icon: <Grid size={20} />, label: 'Dashboard' },
-                { id: 'articles', icon: <FileText size={20} />, label: 'Articles', count: articles.length },
-                { id: 'subscriptions', icon: <Users size={20} />, label: 'Subscribers', count: subscriptions.length },
-                { id: 'analytics', icon: <BarChart size={20} />, label: 'Analytics' },
-                { id: 'settings', icon: <Settings size={20} />, label: 'Settings' }
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${activeTab === item.id
-                    ? 'bg-red-50 text-red-700 font-semibold'
-                    : 'hover:bg-gray-50 text-gray-700'
-                    }`}
-                >
-                  <div className="flex items-center gap-3">
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </div>
-                  {item.count !== undefined && (
-                    <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-lg font-bold text-sm hover:from-red-700 hover:to-red-800 transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <Plus size={20} />
-                New Article
-              </button>
-            </div>
-          </nav>
-        </aside>
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 p-6">
-        {isEditing ? (
-          <ArticleEditor
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleSubmitArticle}
-            onCancel={resetForm}
-            loading={loading}
-            currentArticle={currentArticle}
-            handleImageUpload={handleImageUpload}
-            addHealthHack={addHealthHack}
-            addHerbalRemedy={addHerbalRemedy}
-            updateHealthHack={updateHealthHack}
-             handleVideoUpload={handleVideoUpload}
-            updateHerbalRemedy={updateHerbalRemedy}
-            modules={modules}
-          />
-        ) : (
-          <>
-            {activeTab === 'dashboard' && (
-              <DashboardOverview stats={stats} articles={articles} subscriptions={subscriptions} />
-            )}
-
-            {activeTab === 'articles' && (
-              <ArticlesManagement
-                articles={articles}
-                onEdit={handleEditArticle}
-                onDelete={handleDeleteArticle}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
-            )}
-
-            {activeTab === 'subscriptions' && (
-              <SubscriptionsManagement
-                subscriptions={subscriptions}
-                onExport={handleExportSubscriptions}
-              />
-            )}
-
-            {activeTab === 'analytics' && (
-              <AnalyticsDashboard stats={stats} articles={articles} />
-            )}
-
-            {activeTab === 'settings' && (
-              <SettingsPanel />
-            )}
-          </>
-        )}
-      </main>
-    </div>
-  </div>
-);
 };
 
 // Sub-components for better organization
@@ -963,7 +982,7 @@ const ArticleEditor = ({
   currentArticle,
   handleImageUpload,
   addHealthHack,
-    handleVideoUpload, 
+  handleVideoUpload,
   addHerbalRemedy,
   updateHealthHack,
   updateHerbalRemedy,
@@ -978,31 +997,31 @@ const ArticleEditor = ({
     { code: 'sw', label: 'Swahili' },
     { code: 'rw', label: 'Kinyarwanda' }
   ];
-const addEmbed = () => {
-  if (!embedInput.trim()) return;
-  
-  // Simple YouTube link conversion
-  const generateEmbedHTML = (input) => {
-    try {
-      const ytMatch = input.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/);
-      if (ytMatch) {
-        return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allowfullscreen></iframe>`;
+  const addEmbed = () => {
+    if (!embedInput.trim()) return;
+
+    // Simple YouTube link conversion
+    const generateEmbedHTML = (input) => {
+      try {
+        const ytMatch = input.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/);
+        if (ytMatch) {
+          return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allowfullscreen></iframe>`;
+        }
+      } catch { }
+
+      if (input.trim().startsWith('<iframe')) {
+        return input;
       }
-    } catch { }
-    
-    if (input.trim().startsWith('<iframe')) {
       return input;
-    }
-    return input;
+    };
+
+    const html = generateEmbedHTML(embedInput.trim());
+    setFormData(prev => ({
+      ...prev,
+      mediaEmbeds: [...(prev.mediaEmbeds || []), html]
+    }));
+    setEmbedInput('');
   };
-  
-  const html = generateEmbedHTML(embedInput.trim());
-  setFormData(prev => ({
-    ...prev,
-    mediaEmbeds: [...(prev.mediaEmbeds || []), html]
-  }));
-  setEmbedInput('');
-};
   // Safe setter for localized fields (won't clobber other languages)
   const setLocalizedField = (field, value) => {
     setFormData(prev => {

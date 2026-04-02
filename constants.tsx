@@ -79,7 +79,7 @@ export const TRANSLATIONS: Translations = {
       admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
       portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
       contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' },
-      similarArticles: { en: 'Similar Articles', rw: 'Inyigisho zisusanywa', sw: 'Makala Zinazofanana', fr: 'Articles Similaires' }
+      similarArticles: { en: 'Similar Articles', rw: 'Soma n\'ibi' , sw: 'Makala Zinazofanana', fr: 'Articles Similaires' }
    }
 };
 
