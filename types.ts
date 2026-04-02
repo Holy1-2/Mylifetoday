@@ -41,6 +41,7 @@ export interface Article {
   comments?: Comment[];
   healthHacks?: string[];
   herbalRemedies?: string[];
+  videos?: string[];
 }
 
 export interface Translations {

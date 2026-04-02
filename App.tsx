@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useMemo, useCallback, useRef } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Menu, X, Search, Heart, Briefcase,
   Smartphone, Users, Globe, BookOpen, Sun,
@@ -409,42 +410,7 @@ const CategoryNavigation: React.FC<{
 
   return (
     <div className="mb-12">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-black uppercase tracking-tighter">Browse Categories</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setViewAll(!viewAll)}
-          className="text-xs"
-        >
-          {viewAll ? 'Show Less' : 'View All'} <ChevronRight size={14} />
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <button
-          onClick={() => onCategorySelect(null)}
-          className={`p-4 border-2 flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === null ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
-        >
-          <LayoutGrid size={20} />
-          <span className="text-xs font-bold uppercase">All</span>
-          <span className="text-xs opacity-60">{Object.values(articleCounts).reduce((a, b) => a + b, 0)}</span>
-        </button>
-
-        {displayedCategories.map(category => (
-          <button
-            key={category}
-            onClick={() => onCategorySelect(category)}
-            className={`p-4 border-2 flex flex-col items-center justify-center gap-2 transition-all ${activeCategory === category ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
-          >
-            {getCategoryIcon(category)}
-            <span className="text-xs font-bold uppercase text-center">
-              {TRANSLATIONS.categories[category][lang]}
-            </span>
-            <span className="text-xs opacity-60">{articleCounts[category] || 0}</span>
-          </button>
-        ))}
-      </div>
+     
     </div>
   );
 };
@@ -600,7 +566,11 @@ const EnhancedArticleCard: React.FC<{
 
 // --- Main App ---
 export default function App() {
-  const [lang, setLang] = useState<Language>('rw');
+  const { lang: urlLang } = useParams<{ lang: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [lang, setLangState] = useState<Language>('rw');
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
@@ -640,6 +610,25 @@ export default function App() {
       return [];
     }
   });
+
+  const setLang = (newLang: Language) => {
+    setLangState(newLang);
+    const currentPath = location.pathname.replace(/^\/[^\/]+/, '');
+    navigate(`/${newLang}${currentPath}${location.search}`);
+  };
+
+  useEffect(() => {
+    if (urlLang && LANGUAGES.includes(urlLang as Language) && urlLang !== lang) {
+      setLangState(urlLang as Language);
+    }
+  }, [urlLang]);
+
+  useEffect(() => {
+    if (!urlLang) {
+      navigate('/rw', { replace: true });
+    }
+  }, [urlLang, navigate]);
+
   const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms'>('home');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -754,7 +743,7 @@ export default function App() {
     }
 
 
-    const pathMatch = window.location.pathname.match(/^\/articles\/([^\/]+)/);
+    const pathMatch = window.location.pathname.match(/^\/[^\/]+\/article\/([^\/]+)/);
     if (pathMatch) {
       const slug = decodeURIComponent(pathMatch[1]);
       (async () => {
@@ -1368,9 +1357,19 @@ export default function App() {
                     ))}
                   </div>
                   <div className="flex flex-col gap-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Resources</h4>
-
-
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Language</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {LANGUAGES.map(l => (
+                        <button
+                          key={l.code}
+                          onClick={() => setLang(l.code)}
+                          className={`text-lg font-bold px-4 py-2 border border-black/10 hover:border-black transition-all ${lang === l.code ? 'bg-black text-white' : ''}`}
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mt-8">Resources</h4>
                     <button
                       onClick={() => navigateTo('privacy')}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
@@ -1489,44 +1488,174 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Article content remains the same */}
-                <div className="space-y-12 max-w-none text-black/80 font-sans leading-relaxed">
-                  <p className="text-2xl font-medium leading-tight text-gray-700">"<SafeHTMLRenderer html={activeArticle.situation[lang]} />"</p>
+                {/* Article content - continuous reading experience */}
+                <div className="max-w-none text-gray-800 leading-relaxed text-lg">
+                  {/* Situation/Intro */}
+                  {activeArticle.situation[lang] && (
+                    <div className="mb-8">
+                      <SafeHTMLRenderer html={activeArticle.situation[lang]} />
+                    </div>
+                  )}
 
 
-                  <div className="space-y-6">
+
+                  {/* Main teaching content */}
+                  <div className="mb-12">
                     <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
                   </div>
-                  {/* Health content: same color scheme, different clean layout (no green bg) */}
+
+                  {/* Video embeds */}
+                  {activeArticle.videos && activeArticle.videos.length > 0 && (
+                    <div className="my-12 space-y-6">
+                      {activeArticle.videos.map((videoUrl, index) => (
+                        <div key={index} className="aspect-video w-full max-w-4xl mx-auto mb-8">
+                          <iframe
+                            src={videoUrl}
+                            className="w-full h-full rounded-lg shadow-lg"
+                            allowFullScreen
+                            title={`Video ${index + 1}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Media embeds */}
+                  {activeArticle.mediaEmbeds && activeArticle.mediaEmbeds.length > 0 && (
+                    <div className="my-12 space-y-6">
+                      {activeArticle.mediaEmbeds.map((embedHtml, index) => (
+                        <div key={index} className="flex justify-center mb-8">
+                          <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Health content for health articles */}
                   {activeArticle.category === Category.HEALTH && (
-                    <div className="p-6 space-y-6 border border-gray-100 rounded-md">
-                      <h4 className="text-2xl font-bold uppercase tracking-tight">Health Insights</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <h5 className="font-semibold mb-3">Health Hacks</h5>
-                          <ul className="list-disc list-inside space-y-2 text-sm">
-                            {activeArticle.healthHacks?.map((h, i) => <li key={i}>{h}</li>)}
+                    <div className="my-12">
+                      {activeArticle.healthHacks && activeArticle.healthHacks.length > 0 && (
+                        <div className="mb-8">
+                          <h4 className="text-xl font-bold mb-4 text-gray-900">Health Hacks</h4>
+                          <ul className="space-y-3">
+                            {activeArticle.healthHacks.map((hack, i) => (
+                              <li key={i} className="flex items-start gap-3">
+                                <span className="text-gray-600 mt-1">•</span>
+                                <span className="text-gray-800">{hack}</span>
+                              </li>
+                            ))}
                           </ul>
                         </div>
-                        <div>
-                          <h5 className="font-semibold mb-3">Herbal Remedies</h5>
-                          <ul className="list-disc list-inside space-y-2 text-sm">
-                            {activeArticle.herbalRemedies?.map((h, i) => <li key={i}>{h}</li>)}
+                      )}
+                      {activeArticle.herbalRemedies && activeArticle.herbalRemedies.length > 0 && (
+                        <div className="mb-8">
+                          <h4 className="text-xl font-bold mb-4 text-gray-900">Herbal Remedies</h4>
+                          <ul className="space-y-3">
+                            {activeArticle.herbalRemedies.map((remedy, i) => (
+                              <li key={i} className="flex items-start gap-3">
+                                <span className="text-gray-600 mt-1">•</span>
+                                <span className="text-gray-800">{remedy}</span>
+                              </li>
+                            ))}
                           </ul>
                         </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Daily practical step */}
+                  {activeArticle.practice[lang] && (
+                    <div className="my-12 pt-8 border-t border-gray-200">
+                      <h3 className="text-xl font-bold mb-6 text-gray-900">{TRANSLATIONS.ui.dailyPracticalStep[lang]}</h3>
+                      <div className="text-lg text-gray-800 leading-relaxed">
+                        <SafeHTMLRenderer html={activeArticle.practice[lang]} />
                       </div>
                     </div>
                   )}
-                  <div className="border-t-4 border-black pt-12">
-                    <h4 className="text-2xl font-black uppercase tracking-tighter mb-6">{TRANSLATIONS.ui.dailyPracticalStep[lang]}</h4>
-                    <p className="text-xl font-medium"><SafeHTMLRenderer html={activeArticle.practice[lang]} /></p>
-                  </div>
 
-                  <div className="text-center py-12 border-b-2 border-black">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">{TRANSLATIONS.ui.closingPrayer[lang]}</h4>
-                    <p className="text-2xl leading-tight">"<SafeHTMLRenderer html={activeArticle.prayer[lang]} />"</p>
-                  </div>
+                  {/* Health Hacks */}
+                  {activeArticle.healthHacks && activeArticle.healthHacks.length > 0 && (
+                    <div className="my-12 pt-8 border-t border-gray-200">
+                      <h3 className="text-xl font-bold mb-6 text-gray-900">Health Hacks</h3>
+                      <ul className="space-y-3">
+                        {activeArticle.healthHacks.map((hack, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="flex-shrink-0 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-sm font-bold">{index + 1}</span>
+                            <span className="text-gray-700 leading-relaxed">{hack}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Herbal Remedies */}
+                  {activeArticle.herbalRemedies && activeArticle.herbalRemedies.length > 0 && (
+                    <div className="my-12 pt-8 border-t border-gray-200">
+                      <h3 className="text-xl font-bold mb-6 text-gray-900">Herbal Remedies</h3>
+                      <ul className="space-y-3">
+                        {activeArticle.herbalRemedies.map((remedy, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="flex-shrink-0 w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold">{index + 1}</span>
+                            <span className="text-gray-700 leading-relaxed">{remedy}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
+
+                {/* Video Embeds */}
+                {activeArticle.videos && activeArticle.videos.length > 0 && (
+                  <section className="mt-12">
+                    <h3 className="text-2xl font-bold mb-6">Related Videos</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {activeArticle.videos.map((video, index) => (
+                        <div key={index} className="aspect-video">
+                          <iframe
+                            src={video.includes('youtube.com') ? video.replace('watch?v=', 'embed/') : video}
+                            className="w-full h-full rounded-lg"
+                            allowFullScreen
+                            title={`Video ${index + 1}`}
+                          ></iframe>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Similar Articles */}
+                {(() => {
+                  const similarArticles = articles
+                    .filter(a => a.id !== activeArticle.id && a.category === activeArticle.category)
+                    .slice(0, 4);
+                  return similarArticles.length > 0 ? (
+                    <section className="mt-20">
+                      <h3 className="text-3xl font-black uppercase tracking-tighter mb-10">{TRANSLATIONS.ui.similarArticles[lang]}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {similarArticles.map(article => (
+                          <div
+                            key={article.id}
+                            className="group cursor-pointer relative border border-gray-200  overflow-hidden hover:shadow-lg transition-all duration-300"
+                            onClick={() => openArticle(article)}
+                          >
+                            <div className="aspect-video overflow-hidden">
+                              <img
+                                src={article.image}
+                                alt={article.title[lang]}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <h4 className="font-bold text-white text-sm line-clamp-2 mb-2 drop-shadow-lg">{article.title[lang]}</h4>
+                              <p className="text-xs text-white opacity-75 drop-shadow">{formatDate(article)}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null;
+                })()}
 
                 {/* Comments Section */}
                 <section className="mt-20">
@@ -1881,7 +2010,44 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Other pages remain the same */}
+                {currentPage === 'health' && (
+                  <div className="max-w-7xl mx-auto px-4 py-12">
+                    <div className="mb-12">
+                      <h1 className="text-5xl md:text-7xl font-black leading-none tracking-tighter mb-8 italic">
+                        {TRANSLATIONS.ui.healthSection[lang]}
+                      </h1>
+                      <p className="text-xl text-gray-600 max-w-2xl">
+                        Biblical wisdom for physical and spiritual health
+                      </p>
+                    </div>
+
+                    {articles.filter(a => a.category === Category.HEALTH).length === 0 ? (
+                      <EmptyState
+                        icon={<Activity size={32} />}
+                        title="Health articles coming soon"
+                        description="We're preparing biblical health and wellness content for you."
+                        action={
+                          <Button onClick={() => navigateTo('home')} variant="outline">
+                            Browse All Articles
+                          </Button>
+                        }
+                      />
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {articles.filter(a => a.category === Category.HEALTH).map(article => (
+                          <EnhancedArticleCard
+                            key={article.id}
+                            article={article}
+                            onClick={openArticle}
+                            variant="grid"
+                            bookmarked={bookmarks.includes(article.id)}
+                            onToggleBookmark={() => toggleBookmark(article.id)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {currentPage === 'donate' && (
                   <div className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in">

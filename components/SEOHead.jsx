@@ -1,6 +1,6 @@
 // SEOHead.jsx (mu Kinyarwanda)
 import React from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) => {
   const siteName = "Kubana n’Imana Buri Munsi";
@@ -13,14 +13,14 @@ const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) =>
     "Ubukristo, Bibiliya, isengesho, kwizera, ubuzima bwa buri munsi, amahoro y’umutima, inama z’Imana";
 
   const pageTitle =
-    article?.title?.[lang]
+    (typeof article?.title?.[lang] === 'string')
       ? `${article.title[lang]} | ${siteName}`
       : title || defaultTitle;
 
-  const pageDesc = article?.situation?.[lang] || description || defaultDesc;
+  const pageDesc = (typeof article?.situation?.[lang] === 'string') ? article.situation[lang] : description || defaultDesc;
 
   const pageKeywords = keywords || defaultKeywords;
-  const pageImage = article?.featuredImage || article?.image || `${siteUrl}/og-image.jpg`;
+  const pageImage = (typeof article?.featuredImage === 'string') ? article.featuredImage : (typeof article?.image === 'string') ? article.image : `${siteUrl}/og-image.jpg`;
   const pageUrl = url || siteUrl;
 
   // Open Graph locale (hindura uko bikwiye)
@@ -53,16 +53,25 @@ const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) =>
       <meta name="twitter:description" content={pageDesc} />
       <meta name="twitter:image" content={pageImage} />
 
+      {/* Hreflang for multilingual SEO */}
+      {article && typeof article.id === 'string' && (
+        <>
+          <link rel="alternate" hreflang="rw" href={`${siteUrl}/rw/article/${article.id}`} />
+          <link rel="alternate" hreflang="en" href={`${siteUrl}/en/article/${article.id}`} />
+          <link rel="alternate" hreflang="fr" href={`${siteUrl}/fr/article/${article.id}`} />
+        </>
+      )}
+
       {/* Structured Data (Schema.org) */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": article ? "Article" : "WebSite",
           "name": siteName,
-          "headline": pageTitle,
-          "description": pageDesc,
-          "image": pageImage,
-          "url": pageUrl,
+          "headline": typeof pageTitle === 'string' ? pageTitle : defaultTitle,
+          "description": typeof pageDesc === 'string' ? pageDesc : defaultDesc,
+          "image": typeof pageImage === 'string' ? pageImage : `${siteUrl}/og-image.jpg`,
+          "url": typeof pageUrl === 'string' ? pageUrl : siteUrl,
           "author": {
             "@type": "Person",
             "name": "Topray",
@@ -78,7 +87,7 @@ const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) =>
           "datePublished": article?.date,
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": pageUrl,
+            "@id": typeof pageUrl === 'string' ? pageUrl : siteUrl,
           },
         })}
       </script>

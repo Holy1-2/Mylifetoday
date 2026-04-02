@@ -1,6 +1,6 @@
 import { db } from '../config/firebaseConfig';
 import { collection, query, where, limit, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { addDoc, serverTimestamp, getDoc, deleteDoc, increment,orderBy } from 'firebase/firestore';
+import { addDoc, serverTimestamp, getDoc, deleteDoc, increment, orderBy } from 'firebase/firestore';
 
 // Articles Collection
 export const articlesCollection = collection(db, 'articles');
@@ -70,7 +70,7 @@ const slugify = (text = '') => {
 };
 export const ensureUniqueSlugAndSave = async (articleId, titleOrCandidate) => {
   if (!articleId) return null;
-  const base = slugify(titleOrCandidate || articleId);
+  const base = slugify(String(titleOrCandidate || articleId));
   let candidate = base || articleId;
   let counter = 0;
   // loop until unique or safety limit
@@ -91,7 +91,7 @@ export const ensureUniqueSlugAndSave = async (articleId, titleOrCandidate) => {
     counter += 1;
     candidate = `${base}-${counter}`;
   }
-   try {
+  try {
     const docRef = doc(db, 'articles', articleId);
     await updateDoc(docRef, { slug: articleId });
   } catch (err) { /* ignore */ }

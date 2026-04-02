@@ -78,7 +78,8 @@ export const TRANSLATIONS: Translations = {
       search: { en: 'Search', rw: 'Shaka', sw: 'Tafuta', fr: 'Rechercher' },
       admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
       portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
-      contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' }
+      contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' },
+      similarArticles: { en: 'Similar Articles', rw: 'Inyigisho zisusanywa', sw: 'Makala Zinazofanana', fr: 'Articles Similaires' }
    }
 };
 

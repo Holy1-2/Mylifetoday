@@ -40,8 +40,8 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content }) => {
   const markdownContent = htmlToMarkdown(content);
 
   return (
-    <div className="prose prose-lg max-w-none font-serif leading-relaxed">
-      <ReactMarkdown 
+    <div className="prose prose-lg max-w-none font-sans font-light leading-relaxed">
+      <ReactMarkdown
         rehypePlugins={[rehypeRaw]}
         components={{
           h2: ({ node, ...props }) => (
