@@ -283,7 +283,7 @@ const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   // always use the shareable URL for the specific article
-  const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+  const articleUrl = `${window.location.origin}/articles/${encodeURIComponent(article.slug)}`;
 
   const shareOptions = [
     {
@@ -410,7 +410,7 @@ const CategoryNavigation: React.FC<{
 
   return (
     <div className="mb-12">
-     
+
     </div>
   );
 };
@@ -473,12 +473,12 @@ const EnhancedArticleCard: React.FC<{
             {TRANSLATIONS.categories[article.category][lang]}
           </span>
         )}
-        <h3 className="text-3xl md:text-5xl font-bold leading-none tracking-tight group-hover:underline mb-4">
+        <h3 className="text-3xl md:text-5xl font-bold font-serif leading-none tracking-tight group-hover:underline mb-4">
           {article.title[lang]}
         </h3>
-        <p className="text-[#555] text-lg leading-relaxed line-clamp-3 mb-6">
+        <div className="text-[#555] text-lg leading-relaxed line-clamp-3 mb-6">
           <SafeHTMLRenderer html={article.situation[lang]} />
-        </p>
+        </div>
         {showMetadata && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[#999]">
@@ -513,10 +513,10 @@ const EnhancedArticleCard: React.FC<{
               {TRANSLATIONS.categories[article.category][lang]}
             </span>
           )}
-          <h4 className="text-lg font-bold leading-tight group-hover:underline mb-2">{article.title[lang]}</h4>
-          <p className="text-sm text-gray-600 line-clamp-2 mb-2 flex-1">
+          <h4 className="text-lg font-bold font-serif leading-tight group-hover:underline mb-2">{article.title[lang]}</h4>
+          <div className="text-sm text-gray-600 line-clamp-2 mb-2 flex-1">
             <SafeHTMLRenderer html={article.situation[lang]} />
-          </p>
+          </div>
           <div className="flex items-center justify-between mt-auto">
             <span className="text-[9px] font-bold uppercase tracking-widest text-[#999]">{article.date}</span>
             <button
@@ -555,7 +555,7 @@ const EnhancedArticleCard: React.FC<{
           {TRANSLATIONS.categories[article.category][lang]}
         </span>
       </div>
-      <h5 className="font-bold leading-tight group-hover:underline mb-1">{article.title[lang]}</h5>
+      <h5 className="font-bold font-serif leading-tight group-hover:underline mb-1">{article.title[lang]}</h5>
       <div className="flex items-center justify-between text-[10px] text-gray-500">
         <span>{article.date}</span>
         <span>{article.views || 0} views</span>
@@ -570,7 +570,10 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [lang, setLangState] = useState<Language>('rw');
+  const [lang, setLangState] = useState<Language>(() => {
+    const saved = localStorage.getItem('lang');
+    return (saved && LANGUAGES.includes(saved as Language)) ? saved as Language : 'rw';
+  });
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newCommentText, setNewCommentText] = useState('');
@@ -613,21 +616,51 @@ export default function App() {
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);
-    const currentPath = location.pathname.replace(/^\/[^\/]+/, '');
-    navigate(`/${newLang}${currentPath}${location.search}`);
+    localStorage.setItem('lang', newLang);
   };
 
-  useEffect(() => {
-    if (urlLang && LANGUAGES.includes(urlLang as Language) && urlLang !== lang) {
-      setLangState(urlLang as Language);
-    }
-  }, [urlLang]);
+
 
   useEffect(() => {
-    if (!urlLang) {
-      navigate('/rw', { replace: true });
+    const pathParts = location.pathname.split('/').filter(Boolean);
+    let articleId = null;
+    if (pathParts.length === 3 && pathParts[1] === 'article') {
+      articleId = decodeURIComponent(pathParts[2]);
+    } else if (pathParts.length === 2 && pathParts[0] === 'article') {
+      articleId = decodeURIComponent(pathParts[1]);
     }
-  }, [urlLang, navigate]);
+    if (articleId) {
+      getArticleById(articleId).then(article => {
+        if (article) {
+          if (!activeArticle || activeArticle.id !== article.id) {
+            setActiveArticle(article);
+          }
+          // increment views if not viewed
+          try {
+            const raw = localStorage.getItem('viewedArticles');
+            const viewed = raw ? JSON.parse(raw) : [];
+            if (!viewed.includes(article.id)) {
+              incrementArticleViews(article.id);
+              localStorage.setItem('viewedArticles', JSON.stringify([...viewed, article.id]));
+            }
+          } catch (err) {
+            // ignore
+          }
+          // load comments
+          getCommentsByArticle(article.id).then(comments => setComments(comments as Comment[])).catch(() => setComments([]));
+        } else {
+          // article not found, set null
+          setActiveArticle(null);
+        }
+      }).catch(() => {
+        // error, set null
+        setActiveArticle(null);
+      });
+    } else if (pathParts.length <= 1 || (pathParts.length === 1 && LANGUAGES.includes(pathParts[0] as Language))) {
+      setActiveArticle(null);
+      setComments([]);
+    }
+  }, [location.pathname, navigate]);
 
   const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms'>('home');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
@@ -742,22 +775,33 @@ export default function App() {
       setActiveCategory(categoryParam as Category);
     }
 
-
-    const pathMatch = window.location.pathname.match(/^\/[^\/]+\/article\/([^\/]+)/);
+    // Extract language and slug from URL path
+    const pathMatch = window.location.pathname.match(/^\/([a-z]{2})\/articles\/([^\/]+)/);
     if (pathMatch) {
-      const slug = decodeURIComponent(pathMatch[1]);
-      (async () => {
-        try {
-          // Try find in-memory first, fallback to server fetch by slug
-          let a = articles.find(x => x.slug === slug);
-          if (!a) a = await getArticleBySlug(slug);
-          if (a) openArticle(a);
-        } catch (err) {
-          console.error('Failed to open article from route', err);
-        }
-      })();
+      const langFromUrl = pathMatch[1];
+      const slug = decodeURIComponent(pathMatch[2]);
+
+      // If language in URL doesn't match current language, update it
+      if (langFromUrl !== lang) {
+        setLang(langFromUrl);
+      } else {
+        // Language matches, load the article
+        (async () => {
+          try {
+            // Try find in-memory first, fallback to server fetch by slug
+            let a = articles.find(x => x.slug === slug);
+            if (!a) a = await getArticleBySlug(slug);
+            if (a) {
+              // Set article directly without navigating
+              setActiveArticle(a);
+            }
+          } catch (err) {
+            console.error('Failed to open article from route', err);
+          }
+        })();
+      }
     }
-  }, [articles]);
+  }, [articles, lang]);
 
   const navigateTo = (page: any, category?: Category) => {
     setCurrentPage(page);
@@ -772,8 +816,8 @@ export default function App() {
     // Update URL without page reload
     const params = new URLSearchParams();
     if (category) params.set('category', category);
-    const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', url);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    navigate(`/${lang}${query}`);
   };
 
   // fast local-first search (instant suggestions) + server fallback
@@ -799,7 +843,7 @@ export default function App() {
       // update URL
       const params = new URLSearchParams(window.location.search);
       params.set('search', term);
-      window.history.pushState({}, '', `?${params.toString()}`);
+      navigate(`?${params.toString()}`);
       return;
     }
 
@@ -811,7 +855,7 @@ export default function App() {
       setShowSearch(true);
       const params = new URLSearchParams(window.location.search);
       params.set('search', term);
-      window.history.pushState({}, '', `?${params.toString()}`);
+      navigate(`?${params.toString()}`);
     } catch (err) {
       console.error('Search error:', err);
     } finally {
@@ -833,7 +877,7 @@ export default function App() {
   // Share an article (native share when available, otherwise copy link)
   const handleShare = async (article: Article | null) => {
     if (!article) return;
-    const url = `${window.location.origin}${window.location.pathname}?article=${article.id}`;
+    const url = `${window.location.origin}/articles/${encodeURIComponent(article.slug)}`;
     try {
       if (navigator.share) {
         await navigator.share({
@@ -1011,7 +1055,7 @@ export default function App() {
 
       const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
 
-      const articleUrl = `${window.location.origin}/articles/${article.slug || article.id}`;
+      const articleUrl = `${window.location.origin}/articles/${encodeURIComponent(article.slug || article.id)}`;
 
       document.title = title;
       createOrSetMeta('meta[name="description"]', 'content', desc);
@@ -1122,66 +1166,17 @@ export default function App() {
     );
   };
   // ...existing code...
-  // Open article helper — increments views and loads latest article + comments
+  // Open article helper — sets active article and navigates
   const openArticle = useCallback(async (article: Article) => {
     try {
       // Optimistically set active article so UI responds quickly
       setActiveArticle(article);
 
-      // If article doesn't have a slug, generate + persist one and update local state
-      if (article?.id && !article.slug) {
-        try {
-          const newSlug = await ensureUniqueSlugAndSave(article.id, article.title?.[lang] || article.title || article.id);
-          // reflect new slug in current activeArticle and articles list
-          setActiveArticle(prev => prev ? { ...prev, slug: newSlug } : prev);
-          setArticles(prev => prev.map(a => a.id === article.id ? { ...a, slug: newSlug } : a));
-          setFilteredArticles(prev => prev.map(a => a.id === article.id ? { ...a, slug: newSlug } : a));
-        } catch (err) {
-          console.error('Failed to ensure or save slug:', err);
-        }
-      }
-      if (article?.id) {
-        // Only increment views once per device (localStorage) to avoid duplicate views
-        try {
-          const raw = localStorage.getItem('viewedArticles');
-          const viewed = raw ? JSON.parse(raw) : [];
-          if (!viewed.includes(article.id)) {
-            await incrementArticleViews(article.id);
-            viewed.push(article.id);
-            localStorage.setItem('viewedArticles', JSON.stringify(viewed));
-          }
-        } catch (err) {
-          console.error('Failed to increment views or access storage:', err);
-        }
-
-
-        // Update URL so share links work and direct links open
-        try {
-          const slug = (article.slug) || articles.find(a => a.id === article.id)?.slug || article.id;
-          const url = `/articles/${encodeURIComponent(slug)}`;
-          window.history.pushState({}, '', url);
-        } catch (err) {
-          // non-fatal
-        }
-
-        // Refresh article from DB to get latest counts/fields
-        try {
-          const fresh = await getArticleById(article.id);
-          if (fresh) setActiveArticle(fresh as Article);
-        } catch (err) {
-          console.error('Failed to fetch article after opening:', err);
-        }
-
-        // Load comments for this article
-        try {
-          setCommentsLoading(true);
-          const fetched = await getCommentsByArticle(article.id);
-          setComments(fetched as Comment[]);
-        } catch (err) {
-          console.error('Failed loading comments:', err);
-        } finally {
-          setCommentsLoading(false);
-        }
+      // Update URL so share links work and direct links open
+      try {
+        navigate(`/${lang}/articles/${encodeURIComponent(article.slug)}`);
+      } catch (err) {
+        // non-fatal
       }
       window.scrollTo(0, 0);
     } catch (err) {
@@ -1221,6 +1216,7 @@ export default function App() {
           keywords="Kubana n'Imana, Bibiliya, Ijambo ry'Imana, inyigisho, isengesho, kwizera, amahoro y'umutima, umubano, amafaranga, ubuzima bwa buri munsi, gikirisitu"
           article={activeArticle}
           lang={lang}
+          url={window.location.href}
         />
 
         <div className="min-h-screen flex flex-col selection:bg-black selection:text-white">
@@ -1399,7 +1395,7 @@ export default function App() {
             {activeArticle ? (
               <article className="max-w-4xl mx-auto px-4 py-20 animate-in fade-in duration-500">
                 <button
-                  onClick={() => setActiveArticle(null)}
+                  onClick={() => navigate(`/${lang}`)}
                   className="flex items-center gap-2 text-xs font-black uppercase tracking-widest mb-10 hover:gap-4 transition-all group"
                 >
                   <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
