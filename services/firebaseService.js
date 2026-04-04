@@ -99,7 +99,7 @@ export const ensureUniqueSlugAndSave = async (articleId, titleOrCandidate) => {
 };
 
 export const addArticle = async (articleData) => {
-  return await addDoc(articlesCollection, {
+  const docRef = await addDoc(articlesCollection, {
     ...articleData,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -107,6 +107,9 @@ export const addArticle = async (articleData) => {
     likes: 0,
     shares: 0
   });
+  // Generate and set slug after adding
+  const slug = await ensureUniqueSlugAndSave(docRef.id, articleData.title?.rw || articleData.title?.en || docRef.id);
+  return docRef;
 };
 
 export const updateArticle = async (id, updates) => {
