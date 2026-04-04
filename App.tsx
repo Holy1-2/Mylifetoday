@@ -623,14 +623,14 @@ export default function App() {
 
   useEffect(() => {
     const pathParts = location.pathname.split('/').filter(Boolean);
-    let articleId = null;
-    if (pathParts.length === 3 && pathParts[1] === 'article') {
-      articleId = decodeURIComponent(pathParts[2]);
-    } else if (pathParts.length === 2 && pathParts[0] === 'article') {
-      articleId = decodeURIComponent(pathParts[1]);
+    let slug = null;
+    if (pathParts.length === 3 && pathParts[1] === 'articles') {
+      slug = decodeURIComponent(pathParts[2]);
+    } else if (pathParts.length === 2 && pathParts[0] === 'articles') {
+      slug = decodeURIComponent(pathParts[1]);
     }
-    if (articleId) {
-      getArticleById(articleId).then(article => {
+    if (slug) {
+      getArticleBySlug(slug).then(article => {
         if (article) {
           if (!activeArticle || activeArticle.id !== article.id) {
             setActiveArticle(article);
