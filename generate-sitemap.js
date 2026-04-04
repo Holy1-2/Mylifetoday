@@ -26,22 +26,23 @@ const BASE_URL = 'https://kubananimanaburimunsi.vercel.app';
 async function generateSitemap() {
   if (!firebaseConfig.apiKey) {
     console.error("❌ Firebase API Key is missing.");
-    process.exit(1); 
+    process.exit(1);
   }
 
   try {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    const locales = ['rw', 'en', 'fr'];
     const staticPages = ['', '/donate', '/terms', '/privacy'];
-    
+
     // Fetch articles from Firestore
     const querySnapshot = await getDocs(collection(db, "articles"));
     const articles = [];
-    
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      
+
       // Handle timestamps correctly
       const dateSource = data.updatedAt || data.createdAt || { seconds: Date.now() / 1000 };
       const formattedDate = new Date(dateSource.seconds * 1000).toISOString().split('T')[0];
@@ -59,18 +60,18 @@ async function generateSitemap() {
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${staticPages.map(path => `
+  ${staticPages.flatMap(path => locales.map(locale => `
     <url>
-      <loc>${BASE_URL}${path}</loc>
+      <loc>${BASE_URL}/${locale}${path}</loc>
       <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
       <changefreq>weekly</changefreq>
-    </url>`).join('')}
-  ${articles.map(article => `
+    </url>`)).join('')}
+  ${articles.flatMap(article => locales.map(locale => `
     <url>
-      <loc>${BASE_URL}/articles/${encodeURI(article.slug)}</loc>
+      <loc>${BASE_URL}/${locale}/articles/${encodeURI(article.slug)}</loc>
       <lastmod>${article.lastMod}</lastmod>
       <changefreq>monthly</changefreq>
-    </url>`).join('')}
+    </url>`)).join('')}
 </urlset>`;
 
     // Save to the public folder
