@@ -95,7 +95,7 @@ export const SOCIAL_LINKS = {
    whatsapp: 'https://whatsapp.com/channel/0029VbCMYTyBadmitOpkBC15',
    facebook: 'https://www.facebook.com/profile.php?id=61559771027291',
    instagram: 'https://www.instagram.com/hirwa.topray/',
-   email: 'contact@theWithGodDaily.org'
+   email: 'amanitoprayhirwa@gmail.com'
 };
 
 export const LEGAL = {
