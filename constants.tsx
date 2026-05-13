@@ -52,6 +52,7 @@ export const TRANSLATIONS: Translations = {
       loadingComments: { en: 'Loading comments...', rw: 'Turimo kwohereza ibitekerezo...', sw: 'Inapakia maoni...', fr: 'Chargement des commentaires...' },
       library: { en: 'library', rw: 'isomero', sw: 'maktaba', fr: 'bibliothèque' },
       editorialDesk: { en: 'Editorial Desk', rw: 'Umwanditsi', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
+      editorBioFallback: { en: 'A seasoned writer dedicated to sharing Biblical truths with modern wisdom.', rw: 'Umwanditsi uzi neza wandika ibyerekeye Imana n\'ubuhanga.', sw: 'Mwandishi mwenye uzoefu anayeshiriki mafundisho ya Biblia na hekima ya kisasa.', fr: 'Un écrivain expérimenté dédié au partage des vérités bibliques avec la sagesse moderne.' },
       comments: { en: 'Discourse', rw: 'Ibitekerezo', sw: 'Maoni', fr: 'Commentaires' },
       healthSection: { en: 'Health & Wellness', rw: 'Ubuzima n\'Imirire', sw: 'Afya na Ustawi', fr: 'Santé et Bien-être' },
       donate: { en: 'Support Our Mission', rw: 'Shyigikira umurimo', sw: 'Changia Huduma', fr: 'Soutenir notre mission' },

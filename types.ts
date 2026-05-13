@@ -19,6 +19,7 @@ export interface Comment {
   author: string;
   text: string;
   date: string;
+  createdAt?: any;
 }
 
 export interface Article {
@@ -44,18 +45,16 @@ export interface Article {
   healthHacks?: string[];
   herbalRemedies?: string[];
   videos?: string[];
+  whatsappGroup?: string;
+  views?: number;
+  metaDescription?: Record<Language, string>;
+  mediaEmbeds?: string[];
 }
 
 export interface Translations {
   siteName: Record<Language, string>;
   tagline: Record<Language, string>;
   categories: Record<Category, Record<Language, string>>;
-  ui: {
-    readMore: Record<Language, string>;
-    latestArticles: Record<Language, string>;
-    searchPlaceholder: Record<Language, string>;
-    share: Record<Language, string>;
-    comments: Record<Language, string>;
-    healthSection: Record<Language, string>;
-  };
+  ui: Record<string, Record<Language, string>>;
+  [key: string]: any; // Allow dynamic access
 }

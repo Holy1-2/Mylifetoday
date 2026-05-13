@@ -1,5 +1,5 @@
 import { db } from '../config/firebaseConfig';
-import { collection, query, where, limit, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, updateDoc, startAfter } from 'firebase/firestore';
 import { addDoc, serverTimestamp, getDoc, deleteDoc, increment, orderBy } from 'firebase/firestore';
 
 // Articles Collection
@@ -139,6 +139,17 @@ export const addComment = async (articleId, comment) => {
 
 export const getCommentsByArticle = async (articleId) => {
   const q = query(commentsCollection, where('articleId', '==', articleId), orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getCategories = async () => {
+  const snapshot = await getDocs(categoriesCollection);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getArticlesByCategory = async (category) => {
+  const q = query(articlesCollection, where('category', '==', category), orderBy('createdAt', 'desc'));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };

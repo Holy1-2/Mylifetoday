@@ -478,14 +478,14 @@ const EnhancedArticleCard: React.FC<{
         </div>
         {showCategory && (
           <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-2 block">
-            {TRANSLATIONS.categories[article.category][lang]}
+            {TRANSLATIONS.categories[article.category]?.[lang] || article.category}
           </span>
         )}
         <h3 className="text-3xl md:text-5xl font-bold font-serif leading-none tracking-tight group-hover:underline mb-4">
-          {article.title[lang]}
+          {article.title?.[lang] || article.title?.en || 'Untitled Article'}
         </h3>
         <div className="text-[#555] text-lg leading-relaxed line-clamp-3 mb-6">
-          <SafeHTMLRenderer html={article.situation[lang]} />
+          <SafeHTMLRenderer html={article.situation?.[lang] || article.situation?.en || ''} />
         </div>
         {showMetadata && (
           <div className="flex items-center justify-between">
@@ -510,7 +510,7 @@ const EnhancedArticleCard: React.FC<{
         <div className="w-32 h-32 flex-shrink-0 overflow-hidden relative">
           <img
             src={article.image}
-            alt={article.title[lang]}
+            alt={article.title?.[lang] || article.title?.en || 'Article'}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -518,12 +518,12 @@ const EnhancedArticleCard: React.FC<{
         <div className="flex flex-col flex-1">
           {showCategory && (
             <span className="text-[9px] font-bold text-red-600 uppercase tracking-widest mb-1">
-              {TRANSLATIONS.categories[article.category][lang]}
+              {TRANSLATIONS.categories[article.category]?.[lang] || article.category}
             </span>
           )}
-          <h4 className="text-lg font-bold font-serif leading-tight group-hover:underline mb-2">{article.title[lang]}</h4>
+          <h4 className="text-lg font-bold font-serif leading-tight group-hover:underline mb-2">{article.title?.[lang] || article.title?.en || 'Untitled Article'}</h4>
           <div className="text-sm text-gray-600 line-clamp-2 mb-2 flex-1">
-            <SafeHTMLRenderer html={article.situation[lang]} />
+            <SafeHTMLRenderer html={article.situation?.[lang] || article.situation?.en || ''} />
           </div>
           <div className="flex items-center justify-between mt-auto">
             <span className="text-[9px] font-bold uppercase tracking-widest text-[#999]">{article.date}</span>
@@ -548,7 +548,7 @@ const EnhancedArticleCard: React.FC<{
       <div className="aspect-square overflow-hidden mb-4 relative">
         <img
           src={article.image}
-          alt={article.title[lang]}
+          alt={article.title?.[lang] || article.title?.en || 'Article'}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />
@@ -560,10 +560,10 @@ const EnhancedArticleCard: React.FC<{
           {bookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </button>
         <span className="absolute bottom-3 left-3 text-[10px] font-bold text-white uppercase tracking-widest bg-black/80 px-2 py-1">
-          {TRANSLATIONS.categories[article.category][lang]}
+          {TRANSLATIONS.categories[article.category]?.[lang] || article.category}
         </span>
       </div>
-      <h5 className="font-bold font-serif leading-tight group-hover:underline mb-1">{article.title[lang]}</h5>
+      <h5 className="font-bold font-serif leading-tight group-hover:underline mb-1">{article.title?.[lang] || article.title?.en || 'Untitled Article'}</h5>
       <div className="flex items-center justify-between text-[10px] text-gray-500">
         <span>{article.date}</span>
         <span>{article.views || 0} views</span>
@@ -571,6 +571,46 @@ const EnhancedArticleCard: React.FC<{
     </div>
   );
 };
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode; fallback?: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center p-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Something went wrong</h2>
+            <p className="text-gray-600 mb-4">We encountered an error while loading this content.</p>
+            <button
+              onClick={() => this.setState({ hasError: false, error: undefined })}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 // --- Main App ---
 export default function App() {
@@ -580,7 +620,7 @@ export default function App() {
 
   const [lang, setLangState] = useState<Language>(() => {
     const saved = localStorage.getItem('lang');
-    return (saved && LANGUAGES.includes(saved as Language)) ? saved as Language : 'rw';
+    return (saved && LANGUAGES.some(lang => lang.code === saved)) ? saved as Language : 'rw';
   });
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
@@ -641,7 +681,7 @@ export default function App() {
       getArticleBySlug(slug).then(article => {
         if (article) {
           if (!activeArticle || activeArticle.id !== article.id) {
-            setActiveArticle(article);
+            setActiveArticle(article as Article);
           }
           // increment views if not viewed
           try {
@@ -664,13 +704,13 @@ export default function App() {
         // error, set null
         setActiveArticle(null);
       });
-    } else if (pathParts.length <= 1 || (pathParts.length === 1 && LANGUAGES.includes(pathParts[0] as Language))) {
+    } else if (pathParts.length <= 1 || (pathParts.length === 1 && LANGUAGES.some(lang => lang.code === pathParts[0]))) {
       setActiveArticle(null);
       setComments([]);
     }
   }, [location.pathname, navigate]);
 
-  const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'health' | 'admin' | 'privacy' | 'terms' | 'donate'>('home');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -690,13 +730,14 @@ export default function App() {
       try {
         setLoading(true);
         const data = await getArticles();
-        setArticles(data);
-        setFilteredArticles(data);
+        setArticles(data as Article[]);
+        setFilteredArticles(data as Article[]);
 
         // Calculate article counts per category
         const counts = {} as Record<Category, number>;
+        const articlesData = data as Article[];
         Object.values(Category).forEach(cat => {
-          counts[cat] = data.filter(a => a.category === cat).length;
+          counts[cat] = articlesData.filter(a => a.category === cat).length;
         });
         setArticleCounts(counts);
       } catch (error) {
@@ -790,15 +831,15 @@ export default function App() {
       const slug = decodeURIComponent(pathMatch[2]);
 
       // If language in URL doesn't match current language, update it
-      if (langFromUrl !== lang) {
-        setLang(langFromUrl);
+      if (langFromUrl !== lang && LANGUAGES.some(l => l.code === langFromUrl)) {
+        setLang(langFromUrl as Language);
       } else {
         // Language matches, load the article
         (async () => {
           try {
             // Try find in-memory first, fallback to server fetch by slug
             let a = articles.find(x => x.slug === slug);
-            if (!a) a = await getArticleBySlug(slug);
+            if (!a) a = (await getArticleBySlug(slug)) as Article | undefined;
             if (a) {
               // Set article directly without navigating
               setActiveArticle(a);
@@ -859,7 +900,7 @@ export default function App() {
     try {
       setSearchLoading(true);
       const results = await searchArticles(term);
-      setSearchResults(results);
+      setSearchResults(results as Article[]);
       setShowSearch(true);
       const params = new URLSearchParams(window.location.search);
       params.set('search', term);
@@ -1024,7 +1065,7 @@ export default function App() {
 
       // Title and description
       const title = `${article.title?.[lang] || TRANSLATIONS.siteName[lang]} • ${TRANSLATIONS.siteName[lang]}`;
-      const desc = (article.metaDescription || article.situation?.[lang] || '')
+      const desc = (typeof article.metaDescription === 'string' ? article.metaDescription : article.metaDescription?.[lang] || article.situation?.[lang] || '')
         .replace(/<[^>]+>/g, '')
         .replace(/&nbsp;/g, ' ')
         .slice(0, 160)
@@ -1068,7 +1109,7 @@ export default function App() {
 
       const image = buildImageUrl(article.featuredImage) || buildImageUrl(article.image) || defaults.ogImage || `${window.location.origin}/og.png`;
 
-      const articleUrl = `${window.location.origin}/articles/${encodeURIComponent(article.slug || article.id)}`;
+      const articleUrl = `${window.location.origin}/${lang}/articles/${encodeURIComponent(article.slug || article.id)}`;
 
       document.title = title;
       createOrSetMeta('meta[name="description"]', 'content', desc);
@@ -1081,6 +1122,8 @@ export default function App() {
       // optional: set type and fallback
       createOrSetMeta('meta[property="og:image:type"]', 'content', 'image/jpeg');
       createOrSetMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
+      createOrSetMeta('meta[name="twitter:title"]', 'content', title);
+      createOrSetMeta('meta[name="twitter:description"]', 'content', desc);
       createOrSetMeta('meta[name="twitter:image"]', 'content', image);
       createOrSetMeta('link[rel="canonical"]', 'href', articleUrl);
       // --- JSON-LD Structured Data ---
@@ -1187,7 +1230,7 @@ export default function App() {
 
       // Update URL so share links work and direct links open
       try {
-        navigate(`/${lang}/articles/${encodeURIComponent(article.slug)}`);
+        navigate(`/${lang}/articles/${encodeURIComponent(article.slug || article.id)}`);
       } catch (err) {
         // non-fatal
       }
@@ -1287,7 +1330,7 @@ export default function App() {
                       key={l.code}
                       onClick={() => setLang(l.code)}
                       className={`text-[9px] font-black px-2 py-1 border border-black/10 hover:border-black transition-all ${lang === l.code ? 'bg-black text-white' : ''}`}
-                      aria-label={`Switch to ${l.name}`}
+                      aria-label={`Switch to ${l.label}`}
                     >
                       {l.code}
                     </button>
@@ -1333,7 +1376,7 @@ export default function App() {
                     <ChevronRight size={12} />
                     <span className="font-bold flex items-center gap-2">
                       {getCategoryIcon(activeCategory)}
-                      {TRANSLATIONS.categories[activeCategory][lang]}
+                      {activeCategory ? (TRANSLATIONS.categories[activeCategory]?.[lang] || activeCategory) : 'All Categories'}
                     </span>
                     <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">
                       {filteredArticles.length} articles
@@ -1345,30 +1388,30 @@ export default function App() {
 
             {/* Mobile Overlay Menu */}
             {isMenuOpen && (
-              <div className="absolute top-20 left-0 w-full bg-white border-b-4 border-black p-6 sm:p-8 animate-in slide-in-from-top duration-300 shadow-2xl z-[100] max-h-[calc(100vh-5rem)] overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="absolute top-20 left-0 w-full bg-white border-b-4 border-black p-4 sm:p-6 md:p-8 animate-in slide-in-from-top duration-300 shadow-2xl z-[100] max-h-[calc(100vh-5rem)] overflow-y-auto">
+                <div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:gap-8">
                   <div className="flex flex-col gap-6">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Quick Links</h4>
                     <button
-                      onClick={() => navigateTo('home')}
+                      onClick={() => { navigateTo('home'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
                       <Home size={18} /> {t('home')}
                     </button>
                     <button
-                      onClick={() => navigateTo('health')}
+                      onClick={() => { navigateTo('health'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
                       <Activity size={18} /> {t('health')}
                     </button>
                     <button
-                      onClick={() => navigateTo('donate')}
+                      onClick={() => { navigateTo('donate'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
                       <DollarSign size={18} /> Donate
                     </button>
                     <button
-                      onClick={() => navigateTo('privacy')}
+                      onClick={() => { navigateTo('privacy'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
                       <Shield size={18} /> Privacy
@@ -1381,17 +1424,17 @@ export default function App() {
                     </button>
                   </div>
 
-                  <div className="flex flex-col gap-6 md:col-span-2">
+                  <div className="flex flex-col gap-6 lg:col-span-2">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Categories</h4>
                     {Object.values(Category).map(cat => (
                       <button
                         key={cat}
-                        onClick={() => { navigateTo('home', cat); }}
+                        onClick={() => { navigateTo('home', cat); setIsMenuOpen(false); }}
                         className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 transition-all flex items-center gap-3 justify-between group"
                       >
                         <div className="flex items-center gap-3">
                           {getCategoryIcon(cat)}
-                          {TRANSLATIONS.categories[cat][lang]}
+                          {TRANSLATIONS.categories[cat]?.[lang] || cat}
                         </div>
                         <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                           ({articleCounts[cat] || 0})
@@ -1400,7 +1443,7 @@ export default function App() {
                     ))}
                   </div>
 
-                  <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-6 lg:col-span-1">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Language</h4>
                     <div className="flex flex-wrap gap-2">
                       {LANGUAGES.map(l => (
@@ -1429,39 +1472,39 @@ export default function App() {
                   className="flex items-center gap-2 text-xs font-black uppercase tracking-widest mb-10 hover:gap-4 transition-all group"
                 >
                   <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                  {`Return to ${activeCategory ? TRANSLATIONS.categories[activeCategory][lang] : TRANSLATIONS.ui.library[lang]}`}
+                  {`Return to ${activeCategory ? (TRANSLATIONS.categories[activeCategory]?.[lang] || activeCategory) : (TRANSLATIONS.ui.library?.[lang] || 'Library')}`}
                 </button>
 
                 <header className="mb-12">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold text-red-600 uppercase tracking-widest">
-                      {TRANSLATIONS.categories[activeArticle.category][lang]}
+                      {activeArticle?.category ? (TRANSLATIONS.categories[activeArticle.category]?.[lang] || activeArticle.category) : 'Article'}
                     </span>
                     <ShareMenu article={activeArticle} />
                   </div>
 
                   <h1 className="text-5xl md:text-7xl font-black leading-none tracking-tighter mb-8 italic">
-                    {activeArticle.title[lang]}
+                    {activeArticle?.title?.[lang] || activeArticle?.title?.en || 'Untitled Article'}
                   </h1>
 
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-y border-black py-6 text-xs font-bold uppercase tracking-widest text-gray-500">
                     <div className="flex items-center gap-3">
                       <User size={16} />
-                      <span> {activeArticle.editor}</span>
+                      <span> {activeArticle?.editor || 'Anonymous'}</span>
                       <span className="hidden md:inline">•</span>
                       <Clock size={16} />
-                      <span>{formatDate(activeArticle)}</span>
+                      <span>{activeArticle ? formatDate(activeArticle) : 'Unknown date'}</span>
                       <span className="hidden md:inline">•</span>
                       <Eye size={16} />
-                      <span>{activeArticle.views || 0} views</span>
+                      <span>{activeArticle?.views || 0} views</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <button
-                        onClick={() => { navigateTo('home', activeArticle.category); setActiveArticle(null); }}
+                        onClick={() => { navigateTo('home', activeArticle?.category); setActiveArticle(null); }}
                         className="flex items-center gap-2 hover:text-black transition-colors"
                       >
                         <Tag size={16} />
-                        {`${TRANSLATIONS.ui.moreFrom[lang]} ${TRANSLATIONS.categories[activeArticle.category][lang]}`}
+                        {`${TRANSLATIONS.ui.moreFrom?.[lang] || 'More from'} ${activeArticle?.category ? (TRANSLATIONS.categories[activeArticle.category]?.[lang] || activeArticle.category) : 'Category'}`}
                       </button>
                     </div>
                   </div>
@@ -1469,9 +1512,9 @@ export default function App() {
 
                 <div className="mb-12 aspect-video overflow-hidden relative">
                   <img
-                    src={activeArticle.image}
+                    src={activeArticle?.image || '/placeholder-image.jpg'}
                     className="w-full h-full object-cover"
-                    alt={activeArticle.title[lang]}
+                    alt={activeArticle?.title?.[lang] || activeArticle?.title?.en || 'Article image'}
                     loading="eager"
                   />
                   <div className="absolute bottom-4 right-4 flex gap-2">
@@ -1517,9 +1560,9 @@ export default function App() {
                 {/* Article content - continuous reading experience */}
                 <article className="max-w-none text-gray-900 text-lg leading-8 font-serif serif space-y-12 divide-y divide-gray-200">
                   {/* Situation/Intro */}
-                  {activeArticle.situation[lang] && (
+                  {(activeArticle?.situation?.[lang] || activeArticle?.situation?.en) && (
                     <section className="py-10">
-                      <SafeHTMLRenderer html={activeArticle.situation[lang]} className="text-gray-800" />
+                      <SafeHTMLRenderer html={activeArticle.situation[lang] || activeArticle.situation.en || ''} className="text-gray-800" />
                     </section>
                   )}
 
@@ -1527,11 +1570,11 @@ export default function App() {
 
                   {/* Main teaching content */}
                   <section className="py-10">
-                    <SafeHTMLRenderer html={activeArticle.teaching[lang]} className="text-gray-800" />
+                    <SafeHTMLRenderer html={activeArticle?.teaching?.[lang] || activeArticle?.teaching?.en || ''} className="text-gray-800" />
                   </section>
 
                   {/* Video embeds */}
-                  {activeArticle.videos && activeArticle.videos.length > 0 && (
+                  {activeArticle?.videos && activeArticle.videos.length > 0 && (
                     <section className="py-10 space-y-6">
                       {activeArticle.videos.map((videoUrl, index) => (
                         <div key={index} className="aspect-video w-full max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg">
@@ -1547,7 +1590,7 @@ export default function App() {
                   )}
 
                   {/* Media embeds */}
-                  {activeArticle.mediaEmbeds && activeArticle.mediaEmbeds.length > 0 && (
+                  {activeArticle?.mediaEmbeds && activeArticle.mediaEmbeds.length > 0 && (
                     <section className="py-10 space-y-6">
                       {activeArticle.mediaEmbeds.map((embedHtml, index) => (
                         <div key={index} className="flex justify-center mb-8">
@@ -1788,7 +1831,7 @@ export default function App() {
                             icon={<Newspaper size={32} />}
                             title="No articles found"
                             description={activeCategory
-                              ? `There are no articles in the ${TRANSLATIONS.categories[activeCategory][lang]} category yet.`
+                              ? `There are no articles in the ${TRANSLATIONS.categories[activeCategory]?.[lang] || activeCategory} category yet.`
                               : "No articles have been published yet."
                             }
                             action={
@@ -1897,7 +1940,7 @@ export default function App() {
                                       Quick Categories
                                     </h4>
                                     <div className="space-y-2">
-                                      {Object.values(Category).slice(0, 5).map(cat => (
+                                      {Object.values(Category).slice(0, 6).map(cat => (
                                         <button
                                           key={cat}
                                           onClick={() => setActiveCategory(cat)}
@@ -1906,7 +1949,7 @@ export default function App() {
                                           <div className="flex items-center gap-3">
                                             {getCategoryIcon(cat)}
                                             <span className="text-sm font-bold">
-                                              {TRANSLATIONS.categories[cat][lang]}
+                                              {TRANSLATIONS.categories[cat]?.[lang] || cat}
                                             </span>
                                           </div>
                                           <span className="text-xs text-gray-400 group-hover:text-black">
