@@ -94,8 +94,31 @@
     rel="stylesheet" />
 
   <style>
+    :root {
+      color-scheme: light;
+      background-color: #ffffff;
+      color: #1a1a1a;
+    }
+
+    .theme-dark,
+    .theme-dark body {
+      color-scheme: dark;
+      background-color: #000000;
+      color: #ffffff;
+    }
+
     body {
       font-family: "Inter", sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: #ffffff;
+      color: #1a1a1a;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .theme-dark body {
+      background: #000000;
+      color: #ffffff;
     }
 
     h1,

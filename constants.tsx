@@ -34,6 +34,8 @@ export const TRANSLATIONS: Translations = {
       [Category.SOCIETY]: { en: 'Society', rw: 'Umuryango', sw: 'Jamii', fr: 'Société' },
       [Category.HOPE]: { en: 'Hope', rw: 'Ibyiringiro', sw: 'Tumaini', fr: 'Espoir' },
       [Category.HEALTH]: { en: 'Health', rw: 'Ubuzima', sw: 'Afya', fr: 'Santé' },
+      [Category.HISTORY]: { en: 'History', rw: 'Amateka', sw: 'Historia', fr: 'Histoire' },
+      [Category.TESTIMONY]: { en: 'Testimony', rw: 'Ubuhamya', sw: 'Ushahidi', fr: 'Témoignage' },
    },
    ui: {
       readMore: { en: 'Read Full Story', rw: 'Soma byose', sw: 'Soma Zaidi', fr: 'Lire la Suite' },
@@ -79,7 +81,7 @@ export const TRANSLATIONS: Translations = {
       admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
       portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
       contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' },
-      similarArticles: { en: 'Similar Articles', rw: 'Soma n\'ibi' , sw: 'Makala Zinazofanana', fr: 'Articles Similaires' }
+      similarArticles: { en: 'Similar Articles', rw: 'Soma n\'ibi', sw: 'Makala Zinazofanana', fr: 'Articles Similaires' }
    }
 };
 

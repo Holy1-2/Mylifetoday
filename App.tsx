@@ -16,7 +16,6 @@ import { getArticles, getArticleById, getArticleBySlug, ensureUniqueSlugAndSave,
 import SEOHead from './components/SEOHead';
 
 import SafeHTMLRenderer from './components/SafeHTMLRenderer';
-import ArticleContent from './components/ArticleContent';
 import { debounce } from 'lodash';
 
 
@@ -49,13 +48,17 @@ const getCategoryIcon = (category: Category) => {
     case 'mental_health':
       return <Heart />;
     case 'health':
-      return <DollarSign />;
+      return <Activity />;
     case 'relationships':
       return <Globe />;
     case 'daily_life':
       return <BookOpen />;
     case 'hope':
       return <Leaf />;
+    case 'history':
+      return <BookOpen />;
+    case 'testimony':
+      return <Users />;
     default:
       return <FileText />;
   }
@@ -282,8 +285,13 @@ const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
   const [copied, setCopied] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
+  const getArticleUrl = (article: Article) => {
+    const pathSegment = article.slug || article.id;
+    return `${window.location.origin}/articles/${encodeURIComponent(pathSegment)}`;
+  };
+
   // always use the shareable URL for the specific article
-  const articleUrl = `${window.location.origin}/articles/${encodeURIComponent(article.slug)}`;
+  const articleUrl = getArticleUrl(article);
 
   const shareOptions = [
     {
@@ -875,9 +883,14 @@ export default function App() {
   };
 
   // Share an article (native share when available, otherwise copy link)
+  const getArticleUrl = (article: Article) => {
+    const pathSegment = article.slug || article.id;
+    return `${window.location.origin}/articles/${encodeURIComponent(pathSegment)}`;
+  };
+
   const handleShare = async (article: Article | null) => {
     if (!article) return;
-    const url = `${window.location.origin}/articles/${encodeURIComponent(article.slug)}`;
+    const url = getArticleUrl(article);
     try {
       if (navigator.share) {
         await navigator.share({
@@ -1332,9 +1345,43 @@ export default function App() {
 
             {/* Mobile Overlay Menu */}
             {isMenuOpen && (
-              <div className="absolute top-20 left-0 w-full bg-white border-b-4 border-black p-12 animate-in slide-in-from-top duration-300 shadow-2xl z-[100]">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <div className="absolute top-20 left-0 w-full bg-white border-b-4 border-black p-6 sm:p-8 animate-in slide-in-from-top duration-300 shadow-2xl z-[100] max-h-[calc(100vh-5rem)] overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   <div className="flex flex-col gap-6">
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Quick Links</h4>
+                    <button
+                      onClick={() => navigateTo('home')}
+                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
+                    >
+                      <Home size={18} /> {t('home')}
+                    </button>
+                    <button
+                      onClick={() => navigateTo('health')}
+                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
+                    >
+                      <Activity size={18} /> {t('health')}
+                    </button>
+                    <button
+                      onClick={() => navigateTo('donate')}
+                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
+                    >
+                      <DollarSign size={18} /> Donate
+                    </button>
+                    <button
+                      onClick={() => navigateTo('privacy')}
+                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
+                    >
+                      <Shield size={18} /> Privacy
+                    </button>
+                    <button
+                      onClick={() => { setShowSearch(true); setIsMenuOpen(false); }}
+                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
+                    >
+                      <Search size={18} /> Search
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-6 md:col-span-2">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Categories</h4>
                     {Object.values(Category).map(cat => (
                       <button
@@ -1352,6 +1399,7 @@ export default function App() {
                       </button>
                     ))}
                   </div>
+
                   <div className="flex flex-col gap-6">
                     <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Language</h4>
                     <div className="flex flex-wrap gap-2">
@@ -1365,27 +1413,9 @@ export default function App() {
                         </button>
                       ))}
                     </div>
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mt-8">Resources</h4>
-                    <button
-                      onClick={() => navigateTo('privacy')}
-                      className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
-                    >
-                      <Shield /> Privacy
-                    </button>
-                  </div>
-                  <div className="flex flex-col gap-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Subscribe</h4>
-                    <div className="bg-black text-white p-6">
-                      <h5 className="text-lg font-bold mb-4">Get Daily Wisdom</h5>
-                      <input
-                        type="email"
-                        placeholder="Your Email"
-                        className="w-full bg-white/10 border border-white/20 p-3 mb-3 text-sm outline-none placeholder-gray-400"
-                      />
-                      <Button variant="secondary" className="w-full">Subscribe</Button>
-                    </div>
                   </div>
                 </div>
+
               </div>
             )}
           </nav>
@@ -1485,94 +1515,61 @@ export default function App() {
                 )}
 
                 {/* Article content - continuous reading experience */}
-                <div className="max-w-none text-gray-800 leading-relaxed text-lg">
+                <article className="max-w-none text-gray-900 text-lg leading-8 font-serif serif space-y-12 divide-y divide-gray-200">
                   {/* Situation/Intro */}
                   {activeArticle.situation[lang] && (
-                    <div className="mb-8">
-                      <SafeHTMLRenderer html={activeArticle.situation[lang]} />
-                    </div>
+                    <section className="py-10">
+                      <SafeHTMLRenderer html={activeArticle.situation[lang]} className="text-gray-800" />
+                    </section>
                   )}
 
 
 
                   {/* Main teaching content */}
-                  <div className="mb-12">
-                    <SafeHTMLRenderer html={activeArticle.teaching[lang]} />
-                  </div>
+                  <section className="py-10">
+                    <SafeHTMLRenderer html={activeArticle.teaching[lang]} className="text-gray-800" />
+                  </section>
 
                   {/* Video embeds */}
                   {activeArticle.videos && activeArticle.videos.length > 0 && (
-                    <div className="my-12 space-y-6">
+                    <section className="py-10 space-y-6">
                       {activeArticle.videos.map((videoUrl, index) => (
-                        <div key={index} className="aspect-video w-full max-w-4xl mx-auto mb-8">
+                        <div key={index} className="aspect-video w-full max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg">
                           <iframe
                             src={videoUrl}
-                            className="w-full h-full rounded-lg shadow-lg"
+                            className="w-full h-full"
                             allowFullScreen
                             title={`Video ${index + 1}`}
                           />
                         </div>
                       ))}
-                    </div>
+                    </section>
                   )}
 
                   {/* Media embeds */}
                   {activeArticle.mediaEmbeds && activeArticle.mediaEmbeds.length > 0 && (
-                    <div className="my-12 space-y-6">
+                    <section className="py-10 space-y-6">
                       {activeArticle.mediaEmbeds.map((embedHtml, index) => (
                         <div key={index} className="flex justify-center mb-8">
-                          <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
+                          <div className="w-full max-w-4xl" dangerouslySetInnerHTML={{ __html: embedHtml }} />
                         </div>
                       ))}
-                    </div>
-                  )}
-
-                  {/* Health content for health articles */}
-                  {activeArticle.category === Category.HEALTH && (
-                    <div className="my-12">
-                      {activeArticle.healthHacks && activeArticle.healthHacks.length > 0 && (
-                        <div className="mb-8">
-                          <h4 className="text-xl font-bold mb-4 text-gray-900">Health Hacks</h4>
-                          <ul className="space-y-3">
-                            {activeArticle.healthHacks.map((hack, i) => (
-                              <li key={i} className="flex items-start gap-3">
-                                <span className="text-gray-600 mt-1">•</span>
-                                <span className="text-gray-800">{hack}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {activeArticle.herbalRemedies && activeArticle.herbalRemedies.length > 0 && (
-                        <div className="mb-8">
-                          <h4 className="text-xl font-bold mb-4 text-gray-900">Herbal Remedies</h4>
-                          <ul className="space-y-3">
-                            {activeArticle.herbalRemedies.map((remedy, i) => (
-                              <li key={i} className="flex items-start gap-3">
-                                <span className="text-gray-600 mt-1">•</span>
-                                <span className="text-gray-800">{remedy}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
+                    </section>
                   )}
 
                   {/* Daily practical step */}
                   {activeArticle.practice[lang] && (
-                    <div className="my-12 pt-8 border-t border-gray-200">
-                      <h3 className="text-xl font-bold mb-6 text-gray-900">{TRANSLATIONS.ui.dailyPracticalStep[lang]}</h3>
-                      <div className="text-lg text-gray-800 leading-relaxed">
+                    <section className="py-10">
+                      <div className="text-gray-800 leading-8 space-y-6">
                         <SafeHTMLRenderer html={activeArticle.practice[lang]} />
                       </div>
-                    </div>
+                    </section>
                   )}
 
                   {/* Health Hacks */}
                   {activeArticle.healthHacks && activeArticle.healthHacks.length > 0 && (
-                    <div className="my-12 pt-8 border-t border-gray-200">
-                      <h3 className="text-xl font-bold mb-6 text-gray-900">Health Hacks</h3>
+                    <section className="py-10">
+                      <h3 className="text-2xl font-semibold mb-5 text-gray-900 tracking-tight">Health Hacks</h3>
                       <ul className="space-y-3">
                         {activeArticle.healthHacks.map((hack, index) => (
                           <li key={index} className="flex items-start gap-3">
@@ -1581,13 +1578,13 @@ export default function App() {
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    </section>
                   )}
 
                   {/* Herbal Remedies */}
                   {activeArticle.herbalRemedies && activeArticle.herbalRemedies.length > 0 && (
-                    <div className="my-12 pt-8 border-t border-gray-200">
-                      <h3 className="text-xl font-bold mb-6 text-gray-900">Herbal Remedies</h3>
+                    <section className="py-10">
+                      <h3 className="text-2xl font-semibold mb-5 text-gray-900 tracking-tight">Herbal Remedies</h3>
                       <ul className="space-y-3">
                         {activeArticle.herbalRemedies.map((remedy, index) => (
                           <li key={index} className="flex items-start gap-3">
@@ -1596,9 +1593,9 @@ export default function App() {
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    </section>
                   )}
-                </div>
+                </article>
 
                 {/* Video Embeds */}
                 {activeArticle.videos && activeArticle.videos.length > 0 && (

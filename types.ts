@@ -9,7 +9,9 @@ export enum Category {
   TECH = 'tech',
   SOCIETY = 'society',
   HOPE = 'hope',
-  HEALTH = 'health'
+  HEALTH = 'health',
+  HISTORY = 'history',
+  TESTIMONY = 'testimony'
 }
 
 export interface Comment {
