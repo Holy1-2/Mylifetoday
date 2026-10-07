@@ -85,13 +85,13 @@ export const TRANSLATIONS: Translations = {
       similarArticles: { en: 'Similar Articles', rw: 'Soma n\'ibi', sw: 'Makala Zinazofanana', fr: 'Articles Similaires' },
       healthDisclaimerTitle: {
         en: 'Health Disclaimer',
-        rw: 'Umuburo ku Buzima',
+        rw: 'Icyitonderwa ku Buzima',
         sw: 'Onyo la Afya',
         fr: 'Avertissement Santé'
       },
       healthDisclaimer: {
         en: 'The health and wellness information on this page is for general informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a qualified healthcare provider before starting any new treatment or making changes to your health routine.',
-        rw: 'Amakuru k\'ubuzima n\'ubuzima bwiza muri iyi paji ni omuri rusange kandi ntabwo asimbuza ubujyanama bw\'umuganga, gusuzuma, cyangwa kuvura. Banza ubaze umuganga w\'ubwiza mbere yo gutangira gusubiza cyangwa guhindura uburyo bwo kwita ku buzima bwawe.',
+        rw: 'Icyitonderwa ku Buzima: Amakuru yerekeye ubuzima n\'imibereho myiza ari kuri uru rubuga ni amakuru rusange gusa kandi ntabwo asimbura inama z\'abaganga b\'inzobere, gusuzuma indwara, cyangwa ubuvuzi.',
         sw: 'Taarifa za afya na ustawi kwenye ukurasa huu ni za taarifa za jumla tu na si mbadala wa ushauri, uchunguzi, au matibabu ya kitaalamu. Daima tafuta ushauri wa mtaalamu wa afya aliyehitimu kabla ya kuanza matibabu yoyote mapya.',
         fr: 'Les informations sur la santé et le bien-être sur cette page sont à titre informatif général et ne remplacent pas un avis médical professionnel, un diagnostic ou un traitement. Consultez toujours un professionnel de santé qualifié avant de commencer un traitement.'
       },
