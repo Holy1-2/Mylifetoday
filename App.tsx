@@ -17,6 +17,40 @@ import SEOHead from './components/SEOHead';
 
 import SafeHTMLRenderer from './components/SafeHTMLRenderer';
 import { debounce } from 'lodash';
+import DOMPurify from 'dompurify';
+
+const TRUSTED_EMBED_HOSTS = [
+  'youtube.com',
+  'youtu.be',
+  'vimeo.com',
+  'open.spotify.com',
+  'soundcloud.com',
+  'w.soundcloud.com',
+];
+const sanitizeEmbedHtml = (html: string): string => {
+  if (!html) return '';
+  const clean = DOMPurify.sanitize(html, { ADD_TAGS: ['iframe'] });
+  const doc = new DOMParser().parseFromString(clean, 'text/html');
+  doc.querySelectorAll('script, style, form, input, [onclick], [onerror], [onload], meta, link').forEach((el) => el.remove());
+  const iframes = doc.querySelectorAll('iframe');
+  iframes.forEach((iframe) => {
+    const src = iframe.getAttribute('src') || '';
+    try {
+      const hostname = new URL(src).hostname.replace(/^www\./, '');
+      const isTrusted = TRUSTED_EMBED_HOSTS.some((h) => hostname === h || hostname.endsWith('.' + h));
+      if (!isTrusted) iframe.remove();
+    } catch {
+      iframe.remove();
+    }
+  });
+  const allowed = ['src', 'width', 'height', 'title', 'allow', 'allowfullscreen', 'frameborder'];
+  iframes.forEach((iframe) => {
+    Array.from(iframe.attributes).forEach((attr) => {
+      if (!allowed.includes(attr.name)) iframe.removeAttribute(attr.name);
+    });
+  });
+  return doc.body.innerHTML;
+};
 
 
 // --- Context ---
@@ -159,6 +193,7 @@ const Button: React.FC<{
   };
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled || loading}
       className={`${base} ${sizes[size]} ${variants[variant]} ${className} ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
@@ -197,6 +232,7 @@ const EnhancedSearchBar: React.FC<{
     if (value.trim()) {
       debouncedSearch(value);
     } else {
+      debouncedSearch.cancel();
       onClear();
     }
   };
@@ -253,6 +289,7 @@ const EnhancedSearchBar: React.FC<{
                   onClick={handleShareSearch}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   title="Share search results"
+                  aria-label="Share search results"
                 >
                   {copied ? <Check size={16} className="text-green-600" /> : <Share2 size={16} />}
                 </button>
@@ -260,6 +297,7 @@ const EnhancedSearchBar: React.FC<{
                   onClick={handleClear}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   title="Clear search"
+                  aria-label="Clear search"
                 >
                   <X size={16} />
                 </button>
@@ -286,7 +324,8 @@ const ShareMenu: React.FC<{ article: Article }> = ({ article }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const getArticleUrl = (article: Article) => {
-    const pathSegment = article.slug || article.id;
+    const pathSegment = article?.slug || article?.id;
+    if (!pathSegment) return window.location.href;
     return `${window.location.origin}/articles/${encodeURIComponent(pathSegment)}`;
   };
 
@@ -458,7 +497,18 @@ const EnhancedArticleCard: React.FC<{
 
   if (variant === 'big') {
     return (
-      <div className="group cursor-pointer border-b border-black/10 pb-8 mb-8" onClick={() => onClick(article)}>
+      <div
+        className="group cursor-pointer border-b border-black/10 pb-8 mb-8"
+        role="link"
+        tabIndex={0}
+        onClick={() => onClick(article)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick(article);
+          }
+        }}
+      >
         <div className="aspect-video overflow-hidden mb-4 relative">
           <img
             src={article.image}
@@ -468,6 +518,7 @@ const EnhancedArticleCard: React.FC<{
           />
           <button
             onClick={handleBookmark}
+            aria-label={bookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
             className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
           >
             {bookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
@@ -485,7 +536,7 @@ const EnhancedArticleCard: React.FC<{
           {article.title?.[lang] || article.title?.en || 'Untitled Article'}
         </h3>
         <div className="text-[#555] text-lg leading-relaxed line-clamp-3 mb-6">
-          <SafeHTMLRenderer html={article.situation?.[lang] || article.situation?.en || ''} />
+          <SafeHTMLRenderer html={article.situation?.[lang] || article.situation?.en || ''} className="article-preview" />
         </div>
         {showMetadata && (
           <div className="flex items-center justify-between">
@@ -506,7 +557,18 @@ const EnhancedArticleCard: React.FC<{
 
   if (variant === 'small') {
     return (
-      <div className="group cursor-pointer flex gap-6 mb-6 pb-6 border-b border-black/10" onClick={() => onClick(article)}>
+      <div
+        className="group cursor-pointer flex gap-6 mb-6 pb-6 border-b border-black/10"
+        role="link"
+        tabIndex={0}
+        onClick={() => onClick(article)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick(article);
+          }
+        }}
+      >
         <div className="w-32 h-32 flex-shrink-0 overflow-hidden relative">
           <img
             src={article.image}
@@ -523,7 +585,7 @@ const EnhancedArticleCard: React.FC<{
           )}
           <h4 className="text-lg font-bold font-serif leading-tight group-hover:underline mb-2">{article.title?.[lang] || article.title?.en || 'Untitled Article'}</h4>
           <div className="text-sm text-gray-600 line-clamp-2 mb-2 flex-1">
-            <SafeHTMLRenderer html={article.situation?.[lang] || article.situation?.en || ''} />
+            <SafeHTMLRenderer html={article.situation?.[lang] || article.situation?.en || ''} className="article-preview" />
           </div>
           <div className="flex items-center justify-between mt-auto">
             <span className="text-[9px] font-bold uppercase tracking-widest text-[#999]">{article.date}</span>
@@ -544,7 +606,18 @@ const EnhancedArticleCard: React.FC<{
 
   // Grid variant
   return (
-    <div className="group cursor-pointer" onClick={() => onClick(article)}>
+    <div
+      className="group cursor-pointer"
+      role="link"
+      tabIndex={0}
+      onClick={() => onClick(article)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick(article);
+        }
+      }}
+    >
       <div className="aspect-square overflow-hidden mb-4 relative">
         <img
           src={article.image}
@@ -555,6 +628,7 @@ const EnhancedArticleCard: React.FC<{
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <button
           onClick={handleBookmark}
+          aria-label={bookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
           className="absolute top-3 right-3 p-1.5 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
         >
           {bookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
@@ -723,21 +797,26 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [articleCounts, setArticleCounts] = useState<Record<Category, number>>({} as Record<Category, number>);
   const [searchQuery, setSearchQuery] = useState('');
+  const [articlesCursor, setArticlesCursor] = useState<any>(null);
+  const [hasMoreServer, setHasMoreServer] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // Load articles from Firebase
+  // Load first page of published articles from Firebase (server-side pagination)
   useEffect(() => {
     const loadArticles = async () => {
       try {
         setLoading(true);
-        const data = await getArticles();
+        const result = await getArticles(null, null, 50);
+        const data = result.articles || [];
         setArticles(data as Article[]);
         setFilteredArticles(data as Article[]);
+        setArticlesCursor(result.lastDoc);
+        setHasMoreServer(result.hasMore);
 
-        // Calculate article counts per category
+        // Calculate article counts per category (from the loaded page)
         const counts = {} as Record<Category, number>;
-        const articlesData = data as Article[];
         Object.values(Category).forEach(cat => {
-          counts[cat] = articlesData.filter(a => a.category === cat).length;
+          counts[cat] = data.filter((a: Article) => a.category === cat).length;
         });
         setArticleCounts(counts);
       } catch (error) {
@@ -750,19 +829,43 @@ export default function App() {
     loadArticles();
   }, []);
   const LOAD_STEP = 4;
-  const loadMore = () => {
+  const loadMore = async () => {
     // remember previous shown count so we can animate the newly appended items
     prevItemsRef.current = itemsToShow;
 
     // listArticles is filteredArticles.slice(1) — compute remaining from that
     const totalList = Math.max(0, filteredArticles.length - 1);
     const remaining = Math.max(0, totalList - itemsToShow);
-    const add = Math.min(LOAD_STEP, remaining || LOAD_STEP);
-    if (add <= 0) return;
 
-    setItemsToShow(prev => prev + add);
-    setNewlyAddedCount(add);
-    setAnimateNew(true);
+    if (remaining > 0) {
+      // still have local items to reveal
+      setItemsToShow(prev => prev + Math.min(LOAD_STEP, remaining));
+      setNewlyAddedCount(Math.min(LOAD_STEP, remaining));
+      setAnimateNew(true);
+    } else if (hasMoreServer && articlesCursor) {
+      // fetch the next page from Firestore
+      try {
+        setLoadingMore(true);
+        const next = await getArticles(null, articlesCursor, 50);
+        const existingIds = new Set(filteredArticles.map(a => a.id));
+        const fresh = (next.articles || []).filter(a => !existingIds.has(a.id));
+        if (fresh.length === 0) {
+          setHasMoreServer(false);
+          return;
+        }
+        const merged = [...filteredArticles, ...fresh];
+        setArticles(merged);
+        setFilteredArticles(merged);
+        setArticlesCursor(next.lastDoc);
+        setHasMoreServer(next.hasMore);
+        setNewlyAddedCount(fresh.length);
+        setAnimateNew(true);
+      } catch (err) {
+        console.error('Error loading more articles:', err);
+      } finally {
+        setLoadingMore(false);
+      }
+    }
 
     // smooth scroll to the *first new item* after DOM updates
     setTimeout(() => {
@@ -825,7 +928,7 @@ export default function App() {
     }
 
     // Extract language and slug from URL path
-    const pathMatch = window.location.pathname.match(/^\/([a-z]{2})\/articles\/([^\/]+)/);
+    const pathMatch = window.location.pathname.match(/^\/([a-z]{2})\/articles\/([^/]+)/);
     if (pathMatch) {
       const langFromUrl = pathMatch[1];
       const slug = decodeURIComponent(pathMatch[2]);
@@ -866,8 +969,23 @@ export default function App() {
     const params = new URLSearchParams();
     if (category) params.set('category', category);
     const query = params.toString() ? `?${params.toString()}` : '';
-    navigate(`/${lang}${query}`);
+
+    if (page === 'home') {
+      navigate(`/${lang}${query}`);
+    } else {
+      navigate(`/${lang}/${page}${query}`);
+    }
   };
+
+  // Derive the current page from the URL so direct links / reloads work
+  useEffect(() => {
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    if (pathParts.length === 2 && ['privacy', 'terms', 'donate', 'health', 'admin'].includes(pathParts[1])) {
+      setCurrentPage(pathParts[1] as 'home' | 'health' | 'admin' | 'privacy' | 'terms' | 'donate');
+    } else if (pathParts.length === 1 && ['privacy', 'terms', 'donate', 'health', 'admin'].includes(pathParts[0])) {
+      setCurrentPage(pathParts[0] as 'home' | 'health' | 'admin' | 'privacy' | 'terms' | 'donate');
+    }
+  }, [location.pathname]);
 
   // fast local-first search (instant suggestions) + server fallback
   const handleSearch = async (searchTerm: string) => {
@@ -899,7 +1017,7 @@ export default function App() {
     // Fallback to server search only when local yields nothing
     try {
       setSearchLoading(true);
-      const results = await searchArticles(term);
+      const results = await searchArticles(term, lang, 30);
       setSearchResults(results as Article[]);
       setShowSearch(true);
       const params = new URLSearchParams(window.location.search);
@@ -925,7 +1043,8 @@ export default function App() {
 
   // Share an article (native share when available, otherwise copy link)
   const getArticleUrl = (article: Article) => {
-    const pathSegment = article.slug || article.id;
+    const pathSegment = article?.slug || article?.id;
+    if (!pathSegment) return window.location.href;
     return `${window.location.origin}/articles/${encodeURIComponent(pathSegment)}`;
   };
 
@@ -941,7 +1060,6 @@ export default function App() {
         });
       } else {
         await navigator.clipboard.writeText(url);
-        // eslint-disable-next-line no-alert
         alert('Link copied to clipboard');
       }
     } catch (err) {
@@ -950,23 +1068,41 @@ export default function App() {
   };
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeMessage, setSubscribeMessage] = useState("");
+  const [subscribeError, setSubscribeError] = useState("");
 
-  const handleSubscribe = async (email: string, name?: string) => {
-    if (!email) {
-      alert("Please enter your email");
+  const handleSubscribe = async (rawEmail: string, name?: string) => {
+    // Reset previous feedback
+    setSubscribeError("");
+    setSubscribeMessage("");
+
+    const cleanEmail = (rawEmail || "").trim().toLowerCase();
+
+    if (!cleanEmail) {
+      setSubscribeError(TRANSLATIONS.ui.subscribeEmailRequired?.[lang] || 'Please enter your email address.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
+      setSubscribeError(TRANSLATIONS.ui.subscribeEmailInvalid?.[lang] || 'Please enter a valid email address.');
       return;
     }
 
+    setSubscribing(true);
     try {
-      setLoading(true);
-
-      await addSubscription(email, name);
+      await addSubscription(cleanEmail, name);
+      setSubscribeMessage(TRANSLATIONS.ui.subscribeSuccess?.[lang] || 'Thank you for subscribing! You are now on our list.');
       setSubscribed(true);
       setEmail("");
-    } catch (error) {
-      alert("Subscription failed. Please try again.");
+    } catch (error: any) {
+      const message = error?.message || '';
+      if (/already subscribed/i.test(message)) {
+        setSubscribeError(TRANSLATIONS.ui.subscribeAlready?.[lang] || 'This email is already subscribed. Thank you!');
+      } else {
+        setSubscribeError(TRANSLATIONS.ui.subscribeFailed?.[lang] || 'Subscription failed. Please try again.');
+      }
     } finally {
-      setLoading(false);
+      setSubscribing(false);
     }
   };
 
@@ -1257,6 +1393,43 @@ export default function App() {
     });
   };
 
+  const seoMeta = (() => {
+    const siteName = TRANSLATIONS.siteName[lang] || 'Kubana n’Imana Buri Munsi';
+    if (activeArticle) return { title: '', description: '' };
+    const keys = TRANSLATIONS.ui as unknown as Record<string, Record<string, string>>;
+    switch (currentPage) {
+      case 'health':
+        return {
+          title: `${keys.health?.[lang] || 'Health'} | ${siteName}`,
+          description: `Inama z’ubuzima, ibisubizo by’imititi y’imiti n’uburyo bwo kubaho neza — ${TRANSLATIONS.siteName[lang]}.`,
+        };
+      case 'privacy':
+        return {
+          title: `${keys.privacyTitle?.[lang] || 'Privacy Policy'} | ${siteName}`,
+          description: `Igisobanuro kigufi ku buryo ${TRANSLATIONS.siteName[lang]} ibika kandi ikoresha amakuru yawe.`,
+        };
+      case 'terms':
+        return {
+          title: `${keys.termsTitle?.[lang] || 'Terms of Service'} | ${siteName}`,
+          description: `Amategeko yo gukoresha ${TRANSLATIONS.siteName[lang]}.`,
+        };
+      case 'donate':
+        return {
+          title: `${keys.donate?.[lang] || 'Support Our Mission'} | ${siteName}`,
+          description: `Shyigikira umurimo wa ${TRANSLATIONS.siteName[lang]} — kwamamaza Ijambo ry’Imana ku buzima bwa buri munsi.`,
+        };
+      default:
+        if (activeCategory) {
+          const catName = TRANSLATIONS.categories[activeCategory]?.[lang] || 'Inyigisho';
+          return {
+            title: `${catName} | ${siteName}`,
+            description: `Inyigisho z’Imana ku ngingo ya ${catName.toLowerCase()} — ${TRANSLATIONS.siteName[lang]}.`,
+          };
+        }
+        return { title: '', description: '' };
+    }
+  })();
+
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       <AuthContext.Provider value={{
@@ -1267,8 +1440,8 @@ export default function App() {
         logout: () => setUser(null)
       }}>
         <SEOHead
-          title="Kubana n'Imana Buri Munsi"
-          description="Kubana n'Imana Buri Munsi ni urubuga rutanga Ijambo ry'Imana, inyigisho ngufi, n'inama z'ubuzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y'umutima, n'iterambere mu by'umwuka."
+          title={seoMeta.title || "Kubana n'Imana Buri Munsi"}
+          description={seoMeta.description || "Kubana n’Imana Buri Munsi ni urubuga rutanga Ijambo ry’Imana, inyigisho ngufi, n'inama z’ubuzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y’umutima, n'iterambere mu by'umwuka."}
           keywords="Kubana n'Imana, Bibiliya, Ijambo ry'Imana, inyigisho, isengesho, kwizera, amahoro y'umutima, umubano, amafaranga, ubuzima bwa buri munsi, gikirisitu"
           article={activeArticle}
           lang={lang}
@@ -1301,20 +1474,20 @@ export default function App() {
                   onClick={() => navigateTo('home')}
                   className={`hover:text-red-600 transition-colors flex items-center gap-2 ${currentPage === 'home' ? 'text-red-600' : ''}`}
                 >
-                  <Home size={14} /> {t('home')}
+                  <Home size={14} /> {TRANSLATIONS.ui.home[lang]}
                 </button>
                 <button
                   onClick={() => navigateTo('health')}
                   className={`hover:text-red-600 transition-colors flex items-center gap-2 ${currentPage === 'health' ? 'text-red-600' : ''}`}
                 >
-                  <Activity size={14} /> {t('health')}
+                  <Activity size={14} /> {TRANSLATIONS.ui.health[lang]}
                 </button>
                 <div className="relative">
                   <button
                     onClick={() => setShowSearch(!showSearch)}
                     className={`hover:text-red-600 transition-colors flex items-center gap-2 ${showSearch ? 'text-red-600' : ''}`}
                   >
-                    <Search size={14} /> {t('search')}
+                    <Search size={14} /> {TRANSLATIONS.ui.search[lang]}
                   </button>
                   {searchQuery && (
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full"></span>
@@ -1371,7 +1544,7 @@ export default function App() {
                       onClick={() => setActiveCategory(null)}
                       className="hover:text-red-600 transition-colors"
                     >
-                      All Categories
+                      {TRANSLATIONS.ui.allCategories[lang]}
                     </button>
                     <ChevronRight size={12} />
                     <span className="font-bold flex items-center gap-2">
@@ -1391,41 +1564,41 @@ export default function App() {
               <div className="absolute top-20 left-0 w-full bg-white border-b-4 border-black p-4 sm:p-6 md:p-8 animate-in slide-in-from-top duration-300 shadow-2xl z-[100] max-h-[calc(100vh-5rem)] overflow-y-auto">
                 <div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:gap-8">
                   <div className="flex flex-col gap-6">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Quick Links</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">{TRANSLATIONS.ui.quickLinks[lang]}</h4>
                     <button
                       onClick={() => { navigateTo('home'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
-                      <Home size={18} /> {t('home')}
+                      <Home size={18} /> {TRANSLATIONS.ui.home[lang]}
                     </button>
                     <button
                       onClick={() => { navigateTo('health'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
-                      <Activity size={18} /> {t('health')}
+                      <Activity size={18} /> {TRANSLATIONS.ui.health[lang]}
                     </button>
                     <button
                       onClick={() => { navigateTo('donate'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
-                      <DollarSign size={18} /> Donate
+                      <DollarSign size={18} /> {TRANSLATIONS.ui.donate[lang]}
                     </button>
                     <button
                       onClick={() => { navigateTo('privacy'); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
-                      <Shield size={18} /> Privacy
+                      <Shield size={18} /> {TRANSLATIONS.ui.privacyTitle[lang]}
                     </button>
                     <button
                       onClick={() => { setShowSearch(true); setIsMenuOpen(false); }}
                       className="text-2xl font-black uppercase tracking-tighter text-left hover:text-red-600 flex items-center gap-3"
                     >
-                      <Search size={18} /> Search
+                      <Search size={18} /> {TRANSLATIONS.ui.search[lang]}
                     </button>
                   </div>
 
                   <div className="flex flex-col gap-6 lg:col-span-2">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Categories</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">{TRANSLATIONS.ui.categories[lang]}</h4>
                     {Object.values(Category).map(cat => (
                       <button
                         key={cat}
@@ -1444,7 +1617,7 @@ export default function App() {
                   </div>
 
                   <div className="flex flex-col gap-6 lg:col-span-1">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Language</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">{TRANSLATIONS.ui.language[lang]}</h4>
                     <div className="flex flex-wrap gap-2">
                       {LANGUAGES.map(l => (
                         <button
@@ -1523,11 +1696,12 @@ export default function App() {
                       size="sm"
                       onClick={() => handleShare(activeArticle)}
                       className="bg-white/90 backdrop-blur-sm"
+                      aria-label="Share article"
                     >
                       <Share2 size={16} />
                     </Button>
                     {activeArticle?.whatsappGroup && (
-                      <a href={activeArticle.whatsappGroup} target="_blank" rel="noopener noreferrer">
+                      <a href={activeArticle.whatsappGroup} target="_blank" rel="noopener noreferrer" aria-label="Join WhatsApp group">
                         <Button variant="ghost" size="sm" className="bg-white/90 backdrop-blur-sm">
                           <MessageCircle size={16} />
                         </Button>
@@ -1538,6 +1712,7 @@ export default function App() {
                       size="sm"
                       className="bg-white/90 backdrop-blur-sm"
                       onClick={() => activeArticle && toggleBookmark(activeArticle.id)}
+                      aria-label={activeArticle && bookmarks.includes(activeArticle.id) ? 'Remove from bookmarks' : 'Add to bookmarks'}
                     >
                       {activeArticle && bookmarks.includes(activeArticle.id) ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
                     </Button>
@@ -1562,7 +1737,7 @@ export default function App() {
                   {/* Situation/Intro */}
                   {(activeArticle?.situation?.[lang] || activeArticle?.situation?.en) && (
                     <section className="py-10">
-                      <SafeHTMLRenderer html={activeArticle.situation[lang] || activeArticle.situation.en || ''} className="text-gray-800" />
+                      <SafeHTMLRenderer html={activeArticle.situation[lang] || activeArticle.situation.en || ''} className="article-body text-gray-800" />
                     </section>
                   )}
 
@@ -1570,22 +1745,25 @@ export default function App() {
 
                   {/* Main teaching content */}
                   <section className="py-10">
-                    <SafeHTMLRenderer html={activeArticle?.teaching?.[lang] || activeArticle?.teaching?.en || ''} className="text-gray-800" />
+                    <SafeHTMLRenderer html={activeArticle?.teaching?.[lang] || activeArticle?.teaching?.en || ''} className="article-body text-gray-800" />
                   </section>
 
                   {/* Video embeds */}
                   {activeArticle?.videos && activeArticle.videos.length > 0 && (
                     <section className="py-10 space-y-6">
-                      {activeArticle.videos.map((videoUrl, index) => (
-                        <div key={index} className="aspect-video w-full max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg">
-                          <iframe
-                            src={videoUrl}
-                            className="w-full h-full"
-                            allowFullScreen
-                            title={`Video ${index + 1}`}
-                          />
-                        </div>
-                      ))}
+                      {activeArticle.videos.map((videoUrl, index) => {
+                        if (!/^https?:\/\//.test(videoUrl || '')) return null;
+                        return (
+                          <div key={index} className="aspect-video w-full max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg">
+                            <iframe
+                              src={videoUrl}
+                              className="w-full h-full"
+                              allowFullScreen
+                              title={`Video ${index + 1}`}
+                            />
+                          </div>
+                        );
+                      })}
                     </section>
                   )}
 
@@ -1594,7 +1772,7 @@ export default function App() {
                     <section className="py-10 space-y-6">
                       {activeArticle.mediaEmbeds.map((embedHtml, index) => (
                         <div key={index} className="flex justify-center mb-8">
-                          <div className="w-full max-w-4xl" dangerouslySetInnerHTML={{ __html: embedHtml }} />
+                          <div className="w-full max-w-4xl article-body" dangerouslySetInnerHTML={{ __html: sanitizeEmbedHtml(embedHtml) }} />
                         </div>
                       ))}
                     </section>
@@ -1604,7 +1782,7 @@ export default function App() {
                   {activeArticle.practice[lang] && (
                     <section className="py-10">
                       <div className="text-gray-800 leading-8 space-y-6">
-                        <SafeHTMLRenderer html={activeArticle.practice[lang]} />
+                        <SafeHTMLRenderer html={activeArticle.practice[lang]} className="article-body" />
                       </div>
                     </section>
                   )}
@@ -1636,6 +1814,19 @@ export default function App() {
                           </li>
                         ))}
                       </ul>
+                    </section>
+                  )}
+
+                  {/* Health disclaimer - matching the language already selected */}
+                  {activeArticle.category === 'health' && (
+                    <section className="py-6">
+                      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                        <p className="text-sm leading-relaxed text-amber-900">
+                          <strong>{TRANSLATIONS.ui.healthDisclaimerTitle?.[lang] || 'Health Disclaimer'}:</strong>{' '}
+                          {TRANSLATIONS.ui.healthDisclaimer?.[lang] || TRANSLATIONS.ui.healthDisclaimer?.en ||
+                            'The health and wellness information on this page is for general informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a qualified healthcare provider before starting any new treatment or making changes to your health routine.'}
+                        </p>
+                      </div>
                     </section>
                   )}
                 </article>
@@ -1713,15 +1904,33 @@ export default function App() {
 
                     <div className="bg-gray-50 p-8">
                       <h5 className="text-xs font-bold uppercase mb-4">{TRANSLATIONS.ui.addYourThoughts[lang]}</h5>
-                      <input value={newCommentAuthor} onChange={(e) => setNewCommentAuthor(e.target.value)} placeholder={TRANSLATIONS.ui.nameOptionalPlaceholder[lang]} className="w-full p-3 mb-3 border border-gray-200" />
-                      <textarea value={newCommentText} onChange={(e) => setNewCommentText(e.target.value)} className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all" placeholder={TRANSLATIONS.ui.respectfulDiscoursePlaceholder[lang]}></textarea>
+                      <input value={newCommentAuthor} onChange={(e) => setNewCommentAuthor(e.target.value.slice(0, 80))} placeholder={TRANSLATIONS.ui.nameOptionalPlaceholder[lang]} aria-label={TRANSLATIONS.ui.nameOptionalPlaceholder[lang]} className="w-full p-3 mb-3 border border-gray-200" />
+                      <textarea value={newCommentText} onChange={(e) => setNewCommentText(e.target.value.slice(0, 1000))} className="w-full h-32 p-4 border border-gray-200 outline-none focus:border-black transition-all" placeholder={TRANSLATIONS.ui.respectfulDiscoursePlaceholder[lang]} aria-label={TRANSLATIONS.ui.respectfulDiscoursePlaceholder[lang]}></textarea>
                       <Button className="mt-4" onClick={async () => {
-                        if (!newCommentText.trim() || !activeArticle) return;
+                        const trimmed = newCommentText.trim();
+                        const author = (newCommentAuthor?.trim() || '');
+                        if (!trimmed || !activeArticle) return;
+                        if (trimmed.length < 2) {
+                          alert('Please enter a longer comment.');
+                          return;
+                        }
+                        if (trimmed.length > 1000) {
+                          alert('Comment must be at most 1000 characters.');
+                          return;
+                        }
+                        if (/https?:\/\/|www\./i.test(trimmed)) {
+                          alert('Links are not allowed in comments.');
+                          return;
+                        }
+                        if (author.length > 80) {
+                          alert('Name must be at most 80 characters.');
+                          return;
+                        }
                         try {
                           setCommentsLoading(true);
                           await addComment(activeArticle.id, {
-                            author: newCommentAuthor?.trim() || 'Guest',
-                            text: newCommentText.trim(),
+                            author: author || 'Guest',
+                            text: trimmed,
                             date: new Date().toISOString()
                           });
                           const refreshed = await getCommentsByArticle(activeArticle.id);
@@ -1779,7 +1988,9 @@ export default function App() {
                             </p>
                           </div>
                           <div className="flex gap-3">
-                            <ShareMenu article={searchResults[0]} />
+                            {searchResults.length > 0 && (
+                              <ShareMenu article={searchResults[0]} />
+                            )}
                             <button
                               onClick={handleClearSearch}
                               className="flex items-center gap-2 text-sm font-bold hover:text-red-600 transition-colors"
@@ -1874,7 +2085,7 @@ export default function App() {
                                       ? (animateNew ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')
                                       : 'opacity-100 translate-y-0';
 
-                                    return (
+return (
                                       <div
                                         key={a.id}
                                         className={`transform transition-all duration-600 ${animClass}`}
@@ -1982,20 +2193,34 @@ export default function App() {
 
                                   {/* Subscription Box */}
                                   <div className="bg-black text-white p-6 rounded shadow-xl">
-                                    <h4 className="text-xl font-bold mb-2 italic">Get Biblical Clarity</h4>
+                                    <h4 className="text-xl font-bold mb-2 italic">{TRANSLATIONS.ui.newsletterTitle?.[lang] || 'Get Biblical Clarity'}</h4>
                                     <p className="text-xs font-bold uppercase tracking-widest mb-4 opacity-60">
-                                      Weekly newsletter on faith & health
+                                      {TRANSLATIONS.ui.newsletterSubtitle?.[lang] || 'Weekly newsletter on faith & health'}
                                     </p>
+                                    <label htmlFor="newsletter-email" className="sr-only">{TRANSLATIONS.ui.subscribeEmailPlaceholder?.[lang] || 'Email address'}</label>
                                     <input
+                                      id="newsletter-email"
                                       type="email"
-                                      placeholder="Your Email"
+                                      placeholder={TRANSLATIONS.ui.subscribeEmailPlaceholder?.[lang] || 'Your Email'}
                                       value={email}
-                                      onChange={(e) => setEmail(e.target.value)}
+                                      onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        setSubscribeError("");
+                                        setSubscribeMessage("");
+                                      }}
                                       className="w-full bg-white/10 border border-white/20 p-3 mb-3 text-sm outline-none placeholder-gray-400 focus:border-white/50 transition-colors"
                                     />
+                                    {subscribeError && (
+                                      <p className="text-red-400 text-xs mb-3 font-semibold">{subscribeError}</p>
+                                    )}
+                                    {subscribeMessage && (
+                                      <p className="text-green-400 text-xs mb-3 font-semibold">{subscribeMessage}</p>
+                                    )}
                                     <Button
                                       variant="secondary"
                                       className="w-full"
+                                      loading={subscribing}
+                                      disabled={subscribing}
                                       onClick={() => handleSubscribe(email)}
                                     >
                                       {TRANSLATIONS.ui.subscribe[lang]}
@@ -2144,7 +2369,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">{t('home')}</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">{TRANSLATIONS.ui.home[lang]}</h4>
                   {Object.values(Category).map(cat => (
                     <button
                       key={cat}
@@ -2156,7 +2381,7 @@ export default function App() {
                   ))}
                 </div>
                 <div className="flex flex-col gap-4">
-                  <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">Network</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-500 mb-4">{TRANSLATIONS.ui.network[lang]}</h4>
                   <button onClick={() => navigateTo('terms')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.termsTitle[lang]}</button>
                   <button onClick={() => navigateTo('privacy')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.privacyTitle[lang]}</button>
                   <button onClick={() => navigateTo('donate')} className="text-left text-sm font-bold uppercase hover:text-red-500">{TRANSLATIONS.ui.donate[lang]}</button>
@@ -2170,10 +2395,10 @@ export default function App() {
                 </div>
                 <div className="flex gap-8">
                   <a href="https://devtopray.netlify.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
-                    {t('portfolio')} <ExternalLink size={12} />
+                    {TRANSLATIONS.ui.portfolio[lang]} <ExternalLink size={12} />
                   </a>
                   <a href="mailto:contact@theWithGodDaily.org" className="flex items-center gap-2 hover:text-white transition-colors">
-                    {t('contactEditorial')}
+                    {TRANSLATIONS.ui.contactEditorial[lang]}
                   </a>
                 </div>
               </div>

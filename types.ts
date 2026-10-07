@@ -51,6 +51,11 @@ export interface Article {
   mediaEmbeds?: string[];
 }
 
+export interface DonationStats {
+  current: number;
+  goal: number;
+}
+
 export interface Translations {
   siteName: Record<Language, string>;
   tagline: Record<Language, string>;

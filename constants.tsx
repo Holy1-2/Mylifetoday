@@ -27,7 +27,7 @@ export const TRANSLATIONS: Translations = {
    },
    categories: {
       [Category.DAILY_LIFE]: { en: 'Daily Life', rw: 'Ubuzima bwa buri munsi', sw: 'Maisha ya Kila Siku', fr: 'Vie Quotidienne' },
-      [Category.MONEY_WORK]: { en: 'Economy', rw: 'Amafaranga', sw: 'Uchumi', fr: 'Économie' },
+      [Category.MONEY_WORK]: { en: 'Stewardship', rw: 'Ubusonga', sw: 'Uchumi', fr: 'Économie' },
       [Category.RELATIONSHIPS]: { en: 'Relationships', rw: 'Imibanire', sw: 'Mahusiano', fr: 'Relations' },
       [Category.MENTAL_HEALTH]: { en: 'Mind', rw: 'Intekerezo', sw: 'Akili', fr: 'Mental' },
       [Category.TECH]: { en: 'Technology', rw: 'Ikoranabuhanga', sw: 'Teknolojia', fr: 'Technologie' },
@@ -40,7 +40,7 @@ export const TRANSLATIONS: Translations = {
    ui: {
       readMore: { en: 'Read Full Story', rw: 'Soma byose', sw: 'Soma Zaidi', fr: 'Lire la Suite' },
       latestArticles: { en: 'Trending Insights', rw: 'Inyigisho zigezweho', sw: 'Maarifa Mapya', fr: 'Dernières Analyses' },
-      searchPlaceholder: { en: 'Find topics...', rw: 'Shaka ibintu...', sw: 'Tafuta mada...', fr: 'Chercher...' },
+      searchPlaceholder: { en: 'Find topics...', rw: 'Shaka inkuru , amateka...', sw: 'Tafuta mada...', fr: 'Chercher...' },
       share: { en: 'Share', rw: 'Sangiza', sw: 'Shiriki', fr: 'Partager' },
       byLabel: { en: 'By', rw: 'Na', sw: 'Na', fr: 'Par' },
       moreFrom: { en: 'More from', rw: 'Izindi nkuru z\' ', sw: 'Zaidi kutoka', fr: 'Plus de' },
@@ -82,7 +82,33 @@ export const TRANSLATIONS: Translations = {
       admin: { en: 'Admin', rw: 'Umuyobozi', sw: 'Msimamizi', fr: 'Administration' },
       portfolio: { en: 'Portfolio', rw: 'Porifolio', sw: 'Portfolio', fr: 'Portfolio' },
       contactEditorial: { en: 'Contact Editorial', rw: 'Guhuza n\'ubwanditsi', sw: 'Wasiliana na Uhariri', fr: 'Contacter la rédaction' },
-      similarArticles: { en: 'Similar Articles', rw: 'Soma n\'ibi', sw: 'Makala Zinazofanana', fr: 'Articles Similaires' }
+      similarArticles: { en: 'Similar Articles', rw: 'Soma n\'ibi', sw: 'Makala Zinazofanana', fr: 'Articles Similaires' },
+      healthDisclaimerTitle: {
+        en: 'Health Disclaimer',
+        rw: 'Umuburo ku Buzima',
+        sw: 'Onyo la Afya',
+        fr: 'Avertissement Santé'
+      },
+      healthDisclaimer: {
+        en: 'The health and wellness information on this page is for general informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a qualified healthcare provider before starting any new treatment or making changes to your health routine.',
+        rw: 'Amakuru k\'ubuzima n\'ubuzima bwiza muri iyi paji ni omuri rusange kandi ntabwo asimbuza ubujyanama bw\'umuganga, gusuzuma, cyangwa kuvura. Banza ubaze umuganga w\'ubwiza mbere yo gutangira gusubiza cyangwa guhindura uburyo bwo kwita ku buzima bwawe.',
+        sw: 'Taarifa za afya na ustawi kwenye ukurasa huu ni za taarifa za jumla tu na si mbadala wa ushauri, uchunguzi, au matibabu ya kitaalamu. Daima tafuta ushauri wa mtaalamu wa afya aliyehitimu kabla ya kuanza matibabu yoyote mapya.',
+        fr: 'Les informations sur la santé et le bien-être sur cette page sont à titre informatif général et ne remplacent pas un avis médical professionnel, un diagnostic ou un traitement. Consultez toujours un professionnel de santé qualifié avant de commencer un traitement.'
+      },
+      subscribeEmailPlaceholder: { en: 'Enter your email', rw: 'Andika imeyili yawe', sw: 'Weka barua pepe', fr: 'Entrez votre email' },
+      subscribeNamePlaceholder: { en: 'Your name (optional)', rw: 'Amazina yawe (bidakwiye)', sw: 'Jina lako (hiari)', fr: 'Votre nom (optionnel)' },
+      newsletterTitle: { en: 'Get Biblical Clarity', rw: 'Bona Ubusobanuro bwa Bibiliya', sw: 'Pata Ufafanuzi wa Kibiblia', fr: 'Recevez la Clarté Biblique' },
+      newsletterSubtitle: { en: 'Weekly newsletter on faith & health', rw: 'Ikete rya buri cyumweru ku kwizera n\'ubuzima', sw: 'Jarida la kila wiki juu ya imani na afya', fr: 'Bulletin hebdomadaire foi & santé' },
+      subscribeEmailRequired: { en: 'Please enter your email address.', rw: 'Nyamuneka andika imeyili yawe.', sw: 'Tafadhali ingiza barua pepe yako.', fr: 'Veuillez saisir votre adresse e-mail.' },
+      subscribeEmailInvalid: { en: 'Please enter a valid email address.', rw: 'Nyamuneka andika imeyili ikorwa.', sw: 'Tafadhali ingiza barua pepe sahihi.', fr: 'Veuillez saisir une adresse e-mail valide.' },
+      subscribeSuccess: { en: 'Thank you for subscribing! You are now on our list.', rw: 'Urakoze kwiyandikisha! Ubu uri ku rutonde rwacu.', sw: 'Asante kwa kujiandikisha! Sasa uko kwenye orodha yetu.', fr: 'Merci de vous être abonné ! Vous êtes maintenant sur notre liste.' },
+      subscribeAlready: { en: 'This email is already subscribed. Thank you!', rw: 'Iyi imeyili irasanzwe. Urakoze!', sw: 'Barua pepe hii tayari imesajiliwa. Asante!', fr: 'Cette adresse e-mail est déjà abonnée. Merci !' },
+      subscribeFailed: { en: 'Subscription failed. Please try again.', rw: 'Kwiyandikisha byanze. Gerageza bundi bushya.', sw: 'Usajili ulishindikana. Tafadhali jaribu tena.', fr: 'Échec de l\'abonnement. Veuillez réessayer.' },
+      quickLinks: { en: 'Quick Links', rw: 'Amahuza Yihuse', sw: 'Viungo vya Haraka', fr: 'Liens Rapides' },
+      categories: { en: 'Categories', rw: 'Ibyiciro', sw: 'Kategoria', fr: 'Catégories' },
+      language: { en: 'Language', rw: 'Ururimi', sw: 'Lugha', fr: 'Langue' },
+      allCategories: { en: 'All Categories', rw: 'Ibyiciro Byose', sw: 'Kategoria Zote', fr: 'Toutes les Catégories' },
+      network: { en: 'Network', rw: 'Umuyoboro', sw: 'Mtandao', fr: 'Réseau' }
    }
 };
 

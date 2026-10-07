@@ -1,24 +1,64 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 interface SafeHTMLRendererProps {
   html: string;
   className?: string;
 }
 
-const SafeHTMLRenderer: React.FC<SafeHTMLRendererProps> = ({ html, className = '' }) => {
-  // Clean and format the HTML
-  const cleanHTML = html
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+const ALLOWED_IFRAME_DOMAINS = [
+  'youtube.com',
+  'youtube-nocookie.com',
+  'www.youtube.com',
+  'youtu.be',
+  'player.vimeo.com',
+  'vimeo.com',
+  'open.spotify.com',
+  'w.soundcloud.com',
+  'soundcloud.com',
+];
 
+const sanitize = (dirty: string): string => {
+  if (!dirty) return '';
+
+  const clean = DOMPurify.sanitize(dirty, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target'],
+    ADD_TAGS: ['iframe'],
+  });
+
+  const doc = new DOMParser().parseFromString(clean, 'text/html');
+  const iframes = doc.querySelectorAll('iframe');
+
+  iframes.forEach((iframe) => {
+    const src = iframe.getAttribute('src') || '';
+    try {
+      const url = new URL(src);
+      const hostname = url.hostname.replace(/^www\./, '');
+      const isAllowed = ALLOWED_IFRAME_DOMAINS.some((d) =>
+        hostname === d || hostname.endsWith('.' + d)
+      );
+      if (!isAllowed) {
+        iframe.remove();
+      }
+    } catch {
+      iframe.remove();
+    }
+  });
+
+  // Remove remaining dangerous tags — do NOT include 'iframe' here;
+  // we already handled allowed iframes above.
+  const scripts = doc.querySelectorAll('script, style, [onclick], [onerror], [onload], form, input, meta, link');
+  scripts.forEach((el) => el.remove());
+
+  return doc.body.innerHTML;
+};
+
+const SafeHTMLRenderer: React.FC<SafeHTMLRendererProps> = ({ html, className = '' }) => {
   return (
-    <div 
+    <div
       className={`prose prose-lg max-w-none ${className}`}
-      dangerouslySetInnerHTML={{ __html: cleanHTML }}
+      dangerouslySetInnerHTML={{ __html: sanitize(html) }}
     />
   );
 };

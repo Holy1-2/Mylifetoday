@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import dotenv from 'dotenv';
@@ -7,9 +8,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const getEnv = (key) => {
-  const value = process.env[key];
-  if (!value) console.warn(`⚠️ Warning: ${key} is not defined.`);
-  return value;
+  return process.env[key];
 };
 
 const firebaseConfig = {
@@ -22,47 +21,18 @@ const firebaseConfig = {
 };
 
 const BASE_URL = 'https://kubananimanaburimunsi.vercel.app';
+const SITEMAP_PATH = path.resolve('./public/sitemap.xml');
+const CACHE_PATH = path.resolve('./data/articles-cache.json');
 
-async function generateSitemap() {
-  if (!firebaseConfig.apiKey) {
-    console.error("❌ Firebase API Key is missing.");
-    process.exit(1);
-  }
+const buildSitemapXml = (articles) => {
+  const locales = ['rw', 'en', 'fr'];
+  const staticPages = ['', '/donate', '/terms', '/privacy'];
 
-  try {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const locales = ['rw', 'en', 'fr'];
-    const staticPages = ['', '/donate', '/terms', '/privacy'];
-
-    // Fetch articles from Firestore
-    const querySnapshot = await getDocs(collection(db, "articles"));
-    const articles = [];
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-
-      // Handle timestamps correctly
-      const dateSource = data.updatedAt || data.createdAt || { seconds: Date.now() / 1000 };
-      const formattedDate = new Date(dateSource.seconds * 1000).toISOString().split('T')[0];
-
-      // Logic using your 'slug' field
-      if (data.slug) {
-        articles.push({
-          slug: data.slug.trim(), // Remove any accidental spaces
-          lastMod: formattedDate
-        });
-      } else {
-        console.warn(`⚠️ Article ID ${doc.id} is missing a 'slug' field. Skipping.`);
-      }
-    });
-
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${staticPages.flatMap(path => locales.map(locale => `
+  ${staticPages.flatMap(page => locales.map(locale => `
     <url>
-      <loc>${BASE_URL}/${locale}${path}</loc>
+      <loc>${BASE_URL}/${locale}${page}</loc>
       <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
       <changefreq>weekly</changefreq>
     </url>`)).join('')}
@@ -73,18 +43,75 @@ async function generateSitemap() {
       <changefreq>monthly</changefreq>
     </url>`)).join('')}
 </urlset>`;
+};
 
-    // Save to the public folder
-    if (!fs.existsSync('./public')) {
-      fs.mkdirSync('./public');
+const writeSitemap = (xml) => {
+  if (!fs.existsSync('./public')) {
+    fs.mkdirSync('./public', { recursive: true });
+  }
+  fs.writeFileSync(SITEMAP_PATH, xml);
+  console.log(`✅ Sitemap generated (${(xml.match(/<url>/g) || []).length} URLs)`);
+};
+
+async function generateSitemap() {
+  // If Firebase credentials are missing, do not fall over silently;
+  // keep the last generated sitemap if it exists, else emit static-only.
+  if (!firebaseConfig.apiKey) {
+    console.warn("⚠️ Firebase API Key is missing.");
+    if (fs.existsSync(SITEMAP_PATH)) {
+      console.log("Keeping existing sitemap.xml (cached).");
+      return;
     }
+    console.log("No cached sitemap; writing static-only sitemap.");
+    writeSitemap(buildSitemapXml([]));
+    return;
+  }
 
-    fs.writeFileSync('./public/sitemap.xml', sitemap);
-    console.log(`✅ Success! Sitemap generated with ${articles.length} articles.`);
-    process.exit(0);
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Fetch articles from Firestore
+    const querySnapshot = await getDocs(collection(db, "articles"));
+    const articles = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+
+      const dateSource = data.updatedAt || data.createdAt || { seconds: Date.now() / 1000 };
+      const formattedDate = new Date(dateSource.seconds * 1000).toISOString().split('T')[0];
+
+      if (data.slug) {
+        articles.push({ slug: data.slug.trim(), lastMod: formattedDate });
+      }
+    });
+
+    writeSitemap(buildSitemapXml(articles));
+
+    // Cache a local copy so future builds survive Firebase outages
+    try {
+      fs.mkdirSync(path.resolve('./data'), { recursive: true });
+      fs.writeFileSync(CACHE_PATH, JSON.stringify(articles, null, 2));
+    } catch (err) {
+      console.warn('⚠️ Could not write articles cache:', err.message);
+    }
   } catch (error) {
-    console.error('❌ Error:', error);
-    process.exit(1);
+    console.error('❌ Firebase fetch failed:', error.message);
+    if (fs.existsSync(SITEMAP_PATH)) {
+      console.log("Falling back to cached sitemap.xml — build continues.");
+      return;
+    }
+    if (fs.existsSync(CACHE_PATH)) {
+      try {
+        const cached = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf-8'));
+        writeSitemap(buildSitemapXml(cached));
+        return;
+      } catch (e) {
+        console.warn('⚠️ Cached articles invalid:', e.message);
+      }
+    }
+    console.log("No cached sitemap; writing static-only sitemap.");
+    writeSitemap(buildSitemapXml([]));
   }
 }
 
