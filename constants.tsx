@@ -48,7 +48,7 @@ export const TRANSLATIONS: Translations = {
       [Category.TECH]: { rw: 'Ikoranabuhanga', en: 'Technology', sw: 'Teknolojia', fr: 'Technologie' },
       [Category.SOCIETY]: { rw: 'Umuryango', en: 'Society', sw: 'Jamii', fr: 'Société' },
       [Category.HOPE]: { rw: 'Ibyiringiro', en: 'Hope', sw: 'Tumaini', fr: 'Espoir' },
-      [Category.HEALTH]: { rw: 'Ubuzima', en: 'Health', sw: 'Afya', fr: 'Santé' },
+      [Category.HEALTH]: { rw: 'Amagara mazima', en: 'Health', sw: 'Afya', fr: 'Santé' },
       [Category.HISTORY]: { rw: 'Amateka', en: 'History', sw: 'Historia', fr: 'Histoire' },
       [Category.TESTIMONY]: { rw: 'Ubuhamya', en: 'Testimony', sw: 'Ushahidi', fr: 'Témoignage' },
    },
@@ -60,7 +60,7 @@ export const TRANSLATIONS: Translations = {
       verseOfDay: { rw: "Ijambo ry'umunsi", en: 'Verse of the Day', sw: 'Neno la Leo', fr: 'Verset du Jour' },
       journal: { rw: 'Urwibutso', en: 'My Journal', sw: 'Daftari Langu', fr: 'Mon Journal' },
       account: { rw: 'Konti', en: 'Account', sw: 'Akaunti', fr: 'Compte' },
-      health: { rw: 'Ubuzima', en: 'Health', sw: 'Afya', fr: 'Santé' },
+      health: { rw: 'Amagara mazima', en: 'Health', sw: 'Afya', fr: 'Santé' },
       donate: { rw: 'Dushyigikire', en: 'Donate', sw: 'Changia', fr: 'Faire un don' },
       admin: { rw: 'Ubuyobozi', en: 'Admin', sw: 'Msimamizi', fr: 'Administration' },
       language: { rw: 'Ururimi', en: 'Language', sw: 'Lugha', fr: 'Langue' },
@@ -208,9 +208,9 @@ export const TRANSLATIONS: Translations = {
       mediaCat_testimony: { rw: 'Ubuhamya', en: 'Testimony', sw: 'Ushuhuda', fr: 'Témoignage' },
       mediaCat_worship: { rw: 'Kuramya', en: 'Worship', sw: 'Ibada', fr: 'Louange' },
       mediaCat_prayer: { rw: 'Isengesho', en: 'Prayer', sw: 'Maombi', fr: 'Prière' },
-      mediaCat_health: { rw: 'Ubuzima', en: 'Health', sw: 'Afya', fr: 'Santé' },
+      mediaCat_health: { rw: 'Amagara mazima', en: 'Health', sw: 'Afya', fr: 'Santé' },
       mediaCat_family: { rw: 'Umuryango', en: 'Family', sw: 'Familia', fr: 'Famille' },
-      mediaCat_money: { rw: 'Amafaranga', en: 'Money & work', sw: 'Pesa na kazi', fr: 'Argent et travail' },
+      mediaCat_money: { rw: 'Amafaranga', en: 'Stewardship', sw: 'Pesa na kazi', fr: 'Argent et travail' },
       mediaCat_youth: { rw: 'Urubyiruko', en: 'Youth', sw: 'Vijana', fr: 'Jeunesse' },
       mediaCat_conference: { rw: 'Inama', en: 'Conference', sw: 'Kongamano', fr: 'Conférence' },
       mediaCat_other: { rw: 'Ibindi', en: 'Other', sw: 'Nyingine', fr: 'Autre' },
@@ -564,16 +564,13 @@ Welcome! By accessing and using this platform you agree to these Terms of Servic
    - Health and wellness information is for education only
    - It is not a substitute for professional medical advice, diagnosis or treatment
    - Always consult a qualified healthcare professional
-   - We are not liable for health decisions made based on our content
 
 6. Spiritual Content
    - Our content reflects Christian biblical perspectives
-   - We respect diverse beliefs while remaining committed to our editorial stance
 
 7. Donations
    - Donations support the operation of this digital ministry
-   - All donations are non-refundable
-   - Donations do not guarantee specific content or services
+
 
 8. Accounts
    - You are responsible for keeping your password secure
@@ -626,19 +623,16 @@ Murakaza neza! Mukoresha uru rubuga, mwemera kubahiriza aya mategeko.
    - Utangaje ibirimo rusange, uduha uruhushya rwo kubigaragaza
 
 5. Ibyerekeye Ubuzima
-   - Amakuru y'ubuzima ni ay'uburezi gusa
-   - Ntasimbura inama y'umuganga, gusuzuma cyangwa ubuvuzi
+   
+   - Amakuru y'ubuzima ntasimbura inama y'umuganga, gusuzuma cyangwa ubuvuzi
    - Baza umuganga w'inzobere buri gihe
-   - Ntitwabazwa n'ibyemezo by'ubuzima byakozwe hakurikijwe ibyacu
+  
 
 6. Iby'Ubwizigirwa
    - Ibirimo byacu bishingiye ku myumvire ya Bibiliya ya gikristo
-   - Twubaha imyemerere itandukanye ariko tugaharanira umwimerere wacu
 
 7. Inkunga
-   - Inkunga ishyigikira umurimo wacu wa digito
-   - Inkunga ntisubizwa
-   - Inkunga ntiyemeza kubona ibirimo cyangwa serivisi runaka
+   - Inkunga ishyigikira umurimo wacu wwikoranabuhanga
 
 8. Konti
    - Ushinzwe kurinda ijambo ry'ibanga ryawe
