@@ -129,6 +129,7 @@ export const TRANSLATIONS: Translations = {
       subscribeFailed: { rw: 'Kwiyandikisha byanze. Ongera ugerageze.', en: 'Subscription failed. Please try again.', sw: 'Usajili umeshindikana. Tafadhali jaribu tena.', fr: "L'abonnement a échoué. Veuillez réessayer." },
       mediaHighlights: { rw: 'Amashusho n\'amajwi', en: 'Media highlights', sw: 'Vyakombo maalum', fr: 'Médias à la une' },
       exploreMedia: { rw: 'Reba icyigisho byose', en: 'Explore all media', sw: 'Vinjari vyombo vyote', fr: 'Explorer tous les médias' },
+      trendingArticles: { rw: 'Inkuru zasomwe cyane', en: 'Trending articles', sw: 'Makala zinazosomwa sana', fr: 'Articles les plus lus' },
 
       /* ---------- Article reading ---------- */
       publishedOn: { rw: 'Byasohotse', en: 'Published', sw: 'Ilichapishwa', fr: 'Publié' },

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { ArrowRight, BookOpen, Eye } from 'lucide-react';
 import { getAllPublishedArticles, getDailyVerses, getMediaItems } from '../services/firebaseService';
 import type { Article, DailyVerse, MediaItem } from '../types';
 import { Category } from '../types';
@@ -54,6 +54,13 @@ const Home = () => {
     [articles, featured]
   );
   const sidebarArticles = useMemo(() => list.slice(0, 3), [list]);
+  const trending = useMemo(
+    () =>
+      [...articles]
+        .sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0))
+        .slice(0, 4),
+    [articles]
+  );
 
   const categories = useMemo(() => Object.values(Category), []);
   const counts = useMemo(() => {
@@ -258,6 +265,54 @@ const Home = () => {
                     </span>
                   </div>
                 </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {!loading && trending.length > 0 && (
+          <section className="mt-16 pt-12 border-t border-black/10">
+            <div className="mb-8">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-300 mb-2">
+                {t('trending')}
+              </h4>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">
+                {t('trendingArticles')}
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+              {trending.map((article) => {
+                const title =
+                  article.title?.[lang] || article.title?.en || article.title?.rw || 'Untitled';
+                return (
+                  <Link
+                    key={article.id}
+                    to={`/${lang}/articles/${article.slug || article.id}`}
+                    className="group relative aspect-square overflow-hidden bg-[#1a1a1a]"
+                  >
+                    {article.image ? (
+                      <img
+                        src={article.image}
+                        alt={title}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : null}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/10 transition-colors duration-300 group-hover:from-black" />
+                    <span className="absolute left-3 top-3 bg-red-600 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white">
+                      {categoryName(article.category)}
+                    </span>
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-white/70">
+                      <Eye size={11} />
+                      {(Number(article.views) || 0).toLocaleString()}
+                    </span>
+                    <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                      <h3 className="font-serif text-base sm:text-xl font-bold leading-tight text-white line-clamp-3 group-hover:underline">
+                        {title}
+                      </h3>
+                    </div>
+                  </Link>
                 );
               })}
             </div>
