@@ -285,30 +285,31 @@ const Home = () => {
               {trending.map((article) => {
                 const title =
                   article.title?.[lang] || article.title?.en || article.title?.rw || 'Untitled';
+                const image =
+                  article.image || article.featuredImage || article.gallery?.[0] || '';
                 return (
                   <Link
                     key={article.id}
                     to={`/${lang}/articles/${article.slug || article.id}`}
                     className="group relative aspect-square overflow-hidden bg-[#1a1a1a]"
                   >
-                    {article.image ? (
+                    {image ? (
                       <img
-                        src={article.image}
+                        src={image}
                         alt={title}
                         loading="lazy"
                         className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : null}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/10 transition-colors duration-300 group-hover:from-black" />
                     <span className="absolute left-3 top-3 bg-red-600 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white">
                       {categoryName(article.category)}
                     </span>
-                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-white/70">
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 bg-black/60 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/80">
                       <Eye size={11} />
                       {(Number(article.views) || 0).toLocaleString()}
                     </span>
-                    <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                      <h3 className="font-serif text-base sm:text-xl font-bold leading-tight text-white line-clamp-3 group-hover:underline">
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent px-4 pb-4 pt-12 sm:px-5 sm:pb-5 sm:pt-16">
+                      <h3 className="font-serif text-base font-bold leading-tight text-white line-clamp-3 group-hover:underline sm:text-xl">
                         {title}
                       </h3>
                     </div>
