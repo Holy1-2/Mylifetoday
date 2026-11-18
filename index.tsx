@@ -1,8 +1,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { Toaster } from 'react-hot-toast';
 import App from './App';
 import './index.css';
 
@@ -57,9 +58,19 @@ root.render(
     <BrowserRouter>
       <HelmetProvider>
         <ErrorBoundary>
-          <Routes>
-            <Route path="/*" element={<App />} />
-          </Routes>
+          <App />
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 3200,
+              style: {
+                borderRadius: '12px',
+                background: '#1c1917',
+                color: '#fafaf9',
+                fontSize: '13px',
+              },
+            }}
+          />
         </ErrorBoundary>
       </HelmetProvider>
     </BrowserRouter>

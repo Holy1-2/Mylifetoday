@@ -51,13 +51,25 @@ const sanitize = (dirty: string): string => {
   const scripts = doc.querySelectorAll('script, style, [onclick], [onerror], [onload], form, input, meta, link');
   scripts.forEach((el) => el.remove());
 
+  iframes.forEach((iframe) => {
+    if (!iframe.parentNode) return;
+    const src = iframe.getAttribute('src') || '';
+    const isAudio = /spotify\.com|soundcloud\.com/i.test(src);
+    const frame = doc.createElement('div');
+    frame.className = isAudio ? 'embed-frame embed-audio' : 'embed-frame';
+    iframe.removeAttribute('width');
+    iframe.removeAttribute('height');
+    iframe.parentNode.replaceChild(frame, iframe);
+    frame.appendChild(iframe);
+  });
+
   return doc.body.innerHTML;
 };
 
 const SafeHTMLRenderer: React.FC<SafeHTMLRendererProps> = ({ html, className = '' }) => {
   return (
     <div
-      className={`prose prose-lg max-w-none ${className}`}
+      className={`article-body max-w-none ${className}`}
       dangerouslySetInnerHTML={{ __html: sanitize(html) }}
     />
   );

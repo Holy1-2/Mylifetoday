@@ -1,25 +1,92 @@
 import { db, auth } from '../config/firebaseConfig';
-import { collection, query, where, limit, getDocs, doc, updateDoc, startAfter } from 'firebase/firestore';
-import { addDoc, serverTimestamp, getDoc, deleteDoc, increment, orderBy } from 'firebase/firestore';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  collection,
+  query,
+  where,
+  limit,
+  getDocs,
+  doc,
+  updateDoc,
+  addDoc,
+  serverTimestamp,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  increment,
+  orderBy,
+} from 'firebase/firestore';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  sendPasswordResetEmail,
+  onAuthStateChanged,
+} from 'firebase/auth';
 
-// Articles Collection
 export const articlesCollection = collection(db, 'articles');
 export const categoriesCollection = collection(db, 'categories');
 export const subscriptionsCollection = collection(db, 'subscriptions');
 export const commentsCollection = collection(db, 'comments');
 export const usersCollection = collection(db, 'users');
+export const mediaCollection = collection(db, 'media');
 
-const PAGE_SIZE_DEFAULT = 20;
+const PAGE_SIZE_DEFAULT = 24;
 
-// Cap for the in-memory published scan. This works without configuring
-// composite Firestore indexes and also returns documents that lack the
-// `createdAt` field (which a plain ORDER BY query would silently drop).
-const ARTICLE_FETCH_LIMIT = 1000;
+// Bounded scan: avoids composite-index requirements and still returns legacy
+// documents that have no `status`/`createdAt` fields.
+const ARTICLE_FETCH_LIMIT = 1200;
 
-// Human/firestore-safe sort key used when we sort published articles in memory.
-const articleSortTime = (article) => {
-  const raw = article?.createdAt || article?.publishDate || article?.date || article?.updatedAt;
+// Older admin saves inserted "This content is being prepared in X." placeholders
+// instead of leaving a locale empty. Treat them as empty so the UI falls back to
+// a real language and never prints the placeholder on the public site.
+const PLACEHOLDER_RE =
+  /^(this content is being prepared in\b.*|article coming soon(\s*\(.*\))?|content coming soon|coming soon)$/i;
+
+const plainForCheck = (text) =>
+  String(text)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const isPlaceholderText = (text) =>
+  typeof text === 'string' && PLACEHOLDER_RE.test(plainForCheck(text));
+
+const LOCALIZED_ARTICLE_FIELDS = [
+  'title',
+  'situation',
+  'verse',
+  'teaching',
+  'practice',
+  'prayer',
+  'closure',
+];
+
+const stripPlaceholderLocalized = (record) => {
+  if (!record || typeof record !== 'object') return record;
+  return Object.fromEntries(
+    Object.entries(record).map(([code, text]) => [
+      code,
+      isPlaceholderText(text) ? '' : text,
+    ])
+  );
+};
+
+export const slugify = (text = '') =>
+  String(text)
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 120);
+
+export const articleSortTime = (article) => {
+  const raw =
+    article?.createdAt || article?.publishDate || article?.date || article?.updatedAt;
   if (!raw) return 0;
   try {
     if (typeof raw === 'number') {
@@ -29,7 +96,7 @@ const articleSortTime = (article) => {
     if (typeof raw === 'object' && typeof raw.seconds === 'number') {
       return raw.seconds * 1000;
     }
-    if (typeof raw.toDate === 'function') {
+    if (typeof raw?.toDate === 'function') {
       const d = raw.toDate();
       return d instanceof Date && !isNaN(d.getTime()) ? d.getTime() : 0;
     }
@@ -40,167 +107,143 @@ const articleSortTime = (article) => {
   }
 };
 
-const isIndexError = (err) =>
-  !!err && (err.code === 'failed-precondition' || /requires an index/i.test(err?.message || ''));
+export const isPublished = (article) =>
+  !article?.status || article.status === 'published';
 
-/**
- * Fetch articles, newest first. By default only published articles are returned.
- *
- * To avoid Firestore composite-index requirements (and documents missing
- * `createdAt` being silently excluded from ORDER BY results), we fetch with a
- * simple single-field predicate (automatic index) and sort in memory.
- *
- * @param {string|null} category
- * @param {object|null} lastDoc
- * @param {number|null} itemsPerPage
- * @param {boolean} includeNonPublished
- * @returns {Promise<{articles: Array<import('../types').Article>, lastDoc: object|null, hasMore: boolean}>}
- */
-export const getArticles = async (category = null, lastDoc = null, itemsPerPage = null, includeNonPublished = false) => {
-  const pageSize = (typeof itemsPerPage === 'number' && itemsPerPage > 0) ? itemsPerPage : PAGE_SIZE_DEFAULT;
-  const constraints = [];
-
-  if (!includeNonPublished) {
-    constraints.push(where('status', '==', 'published'));
-  }
-
-  if (category) {
-    constraints.push(where('category', '==', category));
-  }
-
-  constraints.push(limit(ARTICLE_FETCH_LIMIT));
-
-  let snapshot;
-  try {
-    snapshot = await getDocs(query(articlesCollection, ...constraints));
-  } catch (err) {
-    if (isIndexError(err) && category) {
-      // Combined equality filters (status + category) need their own composite
-      // index; fall back to fetching published articles and filtering by category.
-      const q = query(articlesCollection, where('status', '==', 'published'), limit(ARTICLE_FETCH_LIMIT));
-      snapshot = await getDocs(q);
-    } else {
-      throw err;
-    }
-  }
-
-  const all = snapshot.docs
-    .map(doc => ({ id: doc.id, ...doc.data() }))
-    .filter(a => a && a.id)
-    .sort((a, b) => articleSortTime(b) - articleSortTime(a));
-
-  const paged = category ? all.filter(a => a.category === category) : all;
-  const results = paged.slice(0, pageSize);
-
+/** Adds a slug fallback (doc id) so every article always has a usable URL. */
+export const normalizeArticle = (docSnap) => {
+  const data = docSnap.data() || {};
   return {
-    articles: results,
-    lastDoc: null,
-    hasMore: paged.length > pageSize,
+    ...data,
+    id: docSnap.id,
+    slug: data.slug || docSnap.id,
+    ...LOCALIZED_ARTICLE_FIELDS.reduce((clean, field) => {
+      clean[field] = stripPlaceholderLocalized(data[field]);
+      return clean;
+    }, {}),
   };
 };
 
-export const getArticleById = async (id) => {
-  const docRef = doc(db, 'articles', id);
-  const snapshot = await getDoc(docRef);
-  return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
+export const getArticles = async (
+  category = null,
+  _lastDoc = null,
+  itemsPerPage = null,
+  includeNonPublished = false
+) => {
+  const pageSize =
+    typeof itemsPerPage === 'number' && itemsPerPage > 0
+      ? itemsPerPage
+      : PAGE_SIZE_DEFAULT;
+
+  const snapshot = await getDocs(query(articlesCollection, limit(ARTICLE_FETCH_LIMIT)));
+  let all = snapshot.docs
+    .map(normalizeArticle)
+    .filter((a) => (includeNonPublished ? true : isPublished(a)))
+    .sort((a, b) => articleSortTime(b) - articleSortTime(a));
+
+  if (category) all = all.filter((a) => a.category === category);
+
+  return {
+    articles: all.slice(0, pageSize),
+    all,
+    hasMore: all.length > pageSize,
+  };
 };
+
+/** Every published article — used by the home page, search and related lists. */
+export const getAllPublishedArticles = async () => {
+  const { all } = await getArticles(null, null, ARTICLE_FETCH_LIMIT, false);
+  return all;
+};
+
+export const getArticleById = async (id) => {
+  if (!id) return null;
+  const snapshot = await getDoc(doc(db, 'articles', id));
+  return snapshot.exists() ? normalizeArticle(snapshot) : null;
+};
+
 export const getArticleBySlug = async (slug) => {
   if (!slug) return null;
-  const q = query(articlesCollection, where('slug', '==', slug), limit(1));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) return null;
-  const docSnap = snapshot.docs[0];
-  return { id: docSnap.id, ...docSnap.data() };
+  try {
+    const q = query(articlesCollection, where('slug', '==', slug), limit(1));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) return normalizeArticle(snapshot.docs[0]);
+  } catch (err) {
+    console.warn('Slug query failed:', err?.message);
+  }
+  // Legacy articles may not have a slug yet — fall back to the document id.
+  return getArticleById(slug);
 };
 
-// Server-filtered search that avoids pulling the entire collection.
-// Firestore cannot do full-text search, so we do a bounded range query on the
-// requested language's title. For production-scale full-text search,
-// connect an external index (Algolia / Meilisearch / Typesense).
-export const searchArticles = async (searchTerm, lang = 'en', maxResults = 30) => {
-  const term = String(searchTerm || '').trim();
+/** Accepts a slug or a document id. */
+export const getArticleBySlugOrId = getArticleBySlug;
+
+const scoreArticle = (article, term, lang) => {
+  const langs = [lang, 'en', 'rw', 'sw', 'fr'];
+  const titles = langs.map((l) => article.title?.[l] || '').join(' ');
+  const situations = langs.map((l) => article.situation?.[l] || '').join(' ');
+  const teachings = langs.map((l) => article.teaching?.[l] || '').join(' ');
+  const tags = Array.isArray(article.tags) ? article.tags.join(' ') : '';
+
+  const t = titles.toLowerCase();
+  const s = situations.toLowerCase();
+  const teach = teachings.toLowerCase();
+  const tg = tags.toLowerCase();
+
+  let score = 0;
+  if (t.includes(term)) score += 12;
+  if (tg.includes(term)) score += 8;
+  if (s.includes(term)) score += 4;
+  if (teach.includes(term)) score += 2;
+  return score;
+};
+
+/**
+ * Search over the loaded catalogue. Never throws because of a missing index,
+ * missing language field or a malformed query.
+ */
+export const searchArticles = async (searchTerm, lang = 'rw', maxResults = 60) => {
+  const term = String(searchTerm || '').trim().toLowerCase();
   if (!term) return [];
 
-  const termLower = term.toLowerCase();
-  const results = [];
-  const fields = [`title.${lang}`, `situation.${lang}`];
-  for (const field of fields) {
-    if (results.length >= maxResults) break;
-    try {
-      const q = query(
-        articlesCollection,
-        where('status', '==', 'published'),
-        where(field, '>=', termLower),
-        where(field, '<=', termLower + '\uf8ff'),
-        orderBy(field),
-        limit(maxResults - results.length)
-      );
-      const snapshot = await getDocs(q);
-      snapshot.docs.forEach(docSnap => {
-        const doc = { id: docSnap.id, ...docSnap.data() };
-        if (!results.some(r => r.id === doc.id)) results.push(doc);
-      });
-    } catch (e) {
-      // Composite index may be required on title{lang}/status — fall back to a bounded page scan
-      console.warn('Field search failed, falling back to title scan:', e.message);
-    }
+  let articles = [];
+  try {
+    articles = await getAllPublishedArticles();
+  } catch (err) {
+    console.warn('Search catalogue load failed:', err?.message);
+    return [];
   }
 
-  // Fallback: bounded scan of recent published articles. Uses only the
-  // automatic single-field index on `status`, so it works before composite
-  // indexes are created in the console.
-  if (results.length === 0) {
-    try {
-      const q = query(
-        articlesCollection,
-        where('status', '==', 'published'),
-        limit(500)
+  const words = term.split(/\s+/).filter(Boolean);
+  return articles
+    .map((article) => {
+      const base = scoreArticle(article, term, lang);
+      const wordsScore = words.reduce(
+        (sum, w) => sum + (scoreArticle(article, w, lang) > 0 ? 1 : 0),
+        0
       );
-      const snapshot = await getDocs(q);
-      snapshot.docs.forEach(docSnap => {
-        const article = { id: docSnap.id, ...docSnap.data() };
-        const searchableText = [
-          article.title?.[lang] || '', article.title?.en || '',
-          article.situation?.[lang] || '', article.situation?.en || '',
-          article.tags ? article.tags.join(' ') : ''
-        ].join(' ').toLowerCase();
-        if (searchableText.includes(termLower) && results.length < maxResults) {
-          results.push(article);
-        }
-      });
-    } catch (e) {
-      console.warn('Search fallback scan failed:', e.message);
-    }
-  }
-
-  return results;
+      return { article, score: base + wordsScore };
+    })
+    .filter((r) => r.score > 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score || articleSortTime(b.article) - articleSortTime(a.article)
+    )
+    .slice(0, maxResults)
+    .map((r) => r.article);
 };
 
-const slugify = (text = '') => {
-  return text
-    .toString()
-    .normalize('NFKD') // remove diacritics
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-') // replace non-alnum with hyphen
-    .replace(/^-+|-+$/g, '') // trim hyphens
-    .substring(0, 120);
-};
 export const ensureUniqueSlugAndSave = async (articleId, titleOrCandidate) => {
   if (!articleId) return null;
-  const base = slugify(String(titleOrCandidate || articleId));
-  let candidate = base || articleId;
+  const base = slugify(String(titleOrCandidate || articleId)) || articleId;
+  let candidate = base;
   let counter = 0;
-  // loop until unique or safety limit
   while (counter < 50) {
     const q = query(articlesCollection, where('slug', '==', candidate), limit(1));
     const snap = await getDocs(q);
-    // if no document OR the found doc is the same articleId we can use candidate
-    if (snap.empty || (snap.docs[0].id === articleId)) {
+    if (snap.empty || snap.docs[0].id === articleId) {
       try {
-        const docRef = doc(db, 'articles', articleId);
-        await updateDoc(docRef, { slug: candidate });
+        await updateDoc(doc(db, 'articles', articleId), { slug: candidate });
       } catch (err) {
         console.error('Failed to persist slug:', err);
       }
@@ -209,10 +252,6 @@ export const ensureUniqueSlugAndSave = async (articleId, titleOrCandidate) => {
     counter += 1;
     candidate = `${base}-${counter}`;
   }
-  try {
-    const docRef = doc(db, 'articles', articleId);
-    await updateDoc(docRef, { slug: articleId });
-  } catch (err) { /* ignore */ }
   return articleId;
 };
 
@@ -223,33 +262,38 @@ export const addArticle = async (articleData) => {
     updatedAt: serverTimestamp(),
     views: 0,
     likes: 0,
-    shares: 0
+    shares: 0,
   });
-  // Generate and set slug after adding
-  const slug = await ensureUniqueSlugAndSave(docRef.id, articleData.title?.rw || articleData.title?.en || docRef.id);
-  return docRef;
+  const slug = await ensureUniqueSlugAndSave(
+    docRef.id,
+    articleData.title?.rw || articleData.title?.en || docRef.id
+  );
+  return { id: docRef.id, slug };
 };
 
 export const updateArticle = async (id, updates) => {
-  const docRef = doc(db, 'articles', id);
-  return await updateDoc(docRef, {
+  return updateDoc(doc(db, 'articles', id), {
     ...updates,
-    updatedAt: serverTimestamp()
+    updatedAt: serverTimestamp(),
   });
 };
 
-// Increment views (atomic) and track per-day breakdown for accurate "today's views"
 export const incrementArticleViews = async (id) => {
-  const docRef = doc(db, 'articles', id);
+  if (!id) return;
   const todayKey = new Date().toISOString().split('T')[0];
-  return await updateDoc(docRef, {
-    views: increment(1),
-    [`viewsByDay.${todayKey}`]: increment(1),
-    lastViewedAt: serverTimestamp()
-  });
+  try {
+    await updateDoc(doc(db, 'articles', id), {
+      views: increment(1),
+      [`viewsByDay.${todayKey}`]: increment(1),
+      lastViewedAt: serverTimestamp(),
+    });
+  } catch (err) {
+    console.warn('View increment failed:', err?.message);
+  }
 };
 
-// Comments
+/* ------------------------------ Comments ------------------------------ */
+
 export const addComment = async (articleId, comment) => {
   const text = String(comment?.text || '').trim();
   const author = String(comment?.author || 'Guest').trim().slice(0, 80);
@@ -259,91 +303,325 @@ export const addComment = async (articleId, comment) => {
   if (text.length > 1000) throw new Error('Comment must be at most 1000 characters');
   if (/https?:\/\/|www\./i.test(text)) throw new Error('Links are not allowed in comments');
 
-  return await addDoc(commentsCollection, {
+  return addDoc(commentsCollection, {
     ...comment,
     author: author || 'Guest',
     text,
     articleId,
-    status: 'pending',
-    createdAt: serverTimestamp()
+    status: 'approved',
+    createdAt: serverTimestamp(),
   });
 };
 
 export const getCommentsByArticle = async (articleId) => {
-  const q = query(
-    commentsCollection,
-    where('articleId', '==', articleId),
-    orderBy('createdAt', 'desc'),
-    limit(100)
-  );
-  const snapshot = await getDocs(q);
-  // Legacy comments have no status -> still visible. Only exclude blocked/moderated ones.
-  return snapshot.docs
-    .map(doc => ({ id: doc.id, ...doc.data() }))
-    .filter(c => !c.status || c.status === 'approved' || c.status === 'visible');
+  try {
+    const q = query(
+      commentsCollection,
+      where('articleId', '==', articleId),
+      orderBy('createdAt', 'desc'),
+      limit(100)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((c) => !c.status || ['approved', 'visible'].includes(c.status));
+  } catch (err) {
+    try {
+      const snapshot = await getDocs(
+        query(commentsCollection, where('articleId', '==', articleId), limit(100))
+      );
+      return snapshot.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter((c) => !c.status || ['approved', 'visible'].includes(c.status))
+        .sort((a, b) => articleSortTime(b) - articleSortTime(a));
+    } catch (fallbackErr) {
+      console.warn('Comments load failed:', fallbackErr?.message);
+      return [];
+    }
+  }
 };
 
 export const getCategories = async () => {
-  const snapshot = await getDocs(categoriesCollection);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  try {
+    const snapshot = await getDocs(categoriesCollection);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch {
+    return [];
+  }
 };
 
-export const getArticlesByCategory = async (category, lastDoc = null, itemsPerPage = null) => {
-  return getArticles(category, lastDoc, itemsPerPage, false);
-};
+export const getArticlesByCategory = (category, lastDoc = null, itemsPerPage = null) =>
+  getArticles(category, lastDoc, itemsPerPage, false);
 
-export const deleteArticle = async (id) => {
-  const docRef = doc(db, 'articles', id);
-  return await deleteDoc(docRef);
-};
+export const deleteArticle = async (id) => deleteDoc(doc(db, 'articles', id));
 
-// Subscription Operations
+/* ---------------------------- Subscriptions --------------------------- */
+
 export const addSubscription = async (email, name = '') => {
   const cleanEmail = String(email || '').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
     throw new Error('Please enter a valid email address');
   }
-  if (cleanEmail.length > 254) {
-    throw new Error('Email address is too long');
-  }
+  if (cleanEmail.length > 254) throw new Error('Email address is too long');
 
-  // Reject duplicates so the same email only appears once.
-  const existingQuery = query(subscriptionsCollection, where('email', '==', cleanEmail), limit(1));
-  const existing = await getDocs(existingQuery);
-  if (!existing.empty) {
-    throw new Error('This email is already subscribed');
-  }
+  const existing = await getDocs(
+    query(subscriptionsCollection, where('email', '==', cleanEmail), limit(1))
+  );
+  if (!existing.empty) throw new Error('This email is already subscribed');
 
-  return await addDoc(subscriptionsCollection, {
+  return addDoc(subscriptionsCollection, {
     email: cleanEmail,
     name: String(name || '').trim().slice(0, 120),
     subscribedAt: serverTimestamp(),
     status: 'active',
-    type: 'free'
+    type: 'free',
   });
 };
 
-// Authentication
-export const loginUser = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  } catch (error) {
-    console.error("Login error:", error.message);
-    throw error;
-  }
-};
-
-export const logoutUser = async () => {
-  try {
-    await signOut(auth);
-  } catch (error) {
-    console.error("Logout error:", error);
-    throw error;
-  }
-};
-
 export const getSubscriptions = async () => {
-  const snapshot = await getDocs(limit(query(subscriptionsCollection, orderBy('subscribedAt', 'desc')), 1000));
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const snapshot = await getDocs(
+    query(subscriptionsCollection, orderBy('subscribedAt', 'desc'), limit(1000))
+  );
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+};
+
+/* ------------------------------- Auth -------------------------------- */
+
+export const loginUser = async (email, password) => {
+  const credential = await signInWithEmailAndPassword(
+    auth,
+    String(email || '').trim(),
+    password
+  );
+  return credential.user;
+};
+
+export const registerUser = async (email, password, displayName = '') => {
+  const credential = await createUserWithEmailAndPassword(
+    auth,
+    String(email || '').trim(),
+    password
+  );
+  const user = credential.user;
+  const name = String(displayName || '').trim().slice(0, 80);
+  if (name) {
+    try {
+      await updateProfile(user, { displayName: name });
+    } catch (err) {
+      console.warn('Profile name update failed:', err?.message);
+    }
+  }
+  try {
+    await setDoc(
+      doc(usersCollection, user.uid),
+      {
+        email: user.email,
+        displayName: name,
+        role: 'user',
+        createdAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  } catch (err) {
+    console.warn('User profile write failed:', err?.message);
+  }
+  return user;
+};
+
+export const logoutUser = () => signOut(auth);
+
+export const resetUserPassword = (email) =>
+  sendPasswordResetEmail(auth, String(email || '').trim());
+
+export const observeAuth = (callback) => onAuthStateChanged(auth, callback);
+
+/* -------------------------- Journal (private) ------------------------- */
+
+const journalCollection = (uid) => collection(db, 'users', uid, 'journal');
+const savedArticlesCollection = (uid) => collection(db, 'users', uid, 'savedArticles');
+const savedVersesCollection = (uid) => collection(db, 'users', uid, 'savedVerses');
+
+const mapDocs = (snapshot) => snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+export const getJournalEntries = async (uid, type = null) => {
+  if (!uid) return [];
+  try {
+    const snap = await getDocs(query(journalCollection(uid), limit(500)));
+    const entries = mapDocs(snap).sort(
+      (a, b) => articleSortTime(b) - articleSortTime(a)
+    );
+    return type ? entries.filter((e) => e.type === type) : entries;
+  } catch (err) {
+    console.warn('Journal load failed:', err?.message);
+    return [];
+  }
+};
+
+export const addJournalEntry = async (uid, entry) => {
+  if (!uid) throw new Error('Please sign in first');
+  const text = String(entry?.text || '').trim();
+  if (text.length < 2) throw new Error('Please write something first');
+  if (text.length > 5000) throw new Error('Entry is too long (5000 characters max)');
+
+  const docRef = await addDoc(journalCollection(uid), {
+    type: entry.type || 'reflection',
+    title: String(entry.title || '').trim().slice(0, 160),
+    text,
+    reference: String(entry.reference || '').trim().slice(0, 120),
+    answered: !!entry.answered,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return docRef.id;
+};
+
+export const updateJournalEntry = async (uid, entryId, updates) => {
+  if (!uid || !entryId) throw new Error('Missing entry');
+  const clean = { updatedAt: serverTimestamp() };
+  if (updates.title !== undefined) clean.title = String(updates.title).slice(0, 160);
+  if (updates.text !== undefined) clean.text = String(updates.text).slice(0, 5000);
+  if (updates.reference !== undefined) clean.reference = String(updates.reference).slice(0, 120);
+  if (updates.answered !== undefined) clean.answered = !!updates.answered;
+  return updateDoc(doc(db, 'users', uid, 'journal', entryId), clean);
+};
+
+export const deleteJournalEntry = async (uid, entryId) => {
+  if (!uid || !entryId) return;
+  return deleteDoc(doc(db, 'users', uid, 'journal', entryId));
+};
+
+/* --------------------------- Saved articles -------------------------- */
+
+export const getSavedArticles = async (uid) => {
+  if (!uid) return [];
+  try {
+    const snap = await getDocs(query(savedArticlesCollection(uid), limit(300)));
+    return mapDocs(snap).sort((a, b) => articleSortTime(b) - articleSortTime(a));
+  } catch (err) {
+    console.warn('Saved articles load failed:', err?.message);
+    return [];
+  }
+};
+
+export const saveArticleForUser = async (uid, article, lang = 'rw') => {
+  if (!uid) throw new Error('Please sign in first');
+  if (!article?.id) throw new Error('Missing article');
+  await setDoc(doc(db, 'users', uid, 'savedArticles', article.id), {
+    articleId: article.id,
+    slug: article.slug || article.id,
+    title: article.title?.[lang] || article.title?.en || '',
+    situation: article.situation?.[lang] || '',
+    image: article.image || '',
+    category: article.category || '',
+    savedAt: serverTimestamp(),
+  });
+};
+
+export const removeSavedArticle = async (uid, articleId) => {
+  if (!uid || !articleId) return;
+  return deleteDoc(doc(db, 'users', uid, 'savedArticles', articleId));
+};
+
+/* ---------------------------- Saved verses -------------------------- */
+
+export const getSavedVerses = async (uid) => {
+  if (!uid) return [];
+  try {
+    const snap = await getDocs(query(savedVersesCollection(uid), limit(300)));
+    return mapDocs(snap).sort((a, b) => articleSortTime(b) - articleSortTime(a));
+  } catch (err) {
+    console.warn('Saved verses load failed:', err?.message);
+    return [];
+  }
+};
+
+export const saveVerseForUser = async (uid, verse) => {
+  if (!uid) throw new Error('Please sign in first');
+  if (!verse?.reference) throw new Error('Missing verse');
+  const key = slugify(
+    `${verse.reference.en || verse.reference.rw || 'verse'}-${verse.id || ''}`
+  );
+  await setDoc(doc(db, 'users', uid, 'savedVerses', key || verse.id || 'verse'), {
+    verseId: verse.id || '',
+    reference: verse.reference,
+    text: verse.text,
+    savedAt: serverTimestamp(),
+  });
+};
+
+export const removeSavedVerse = async (uid, verseKey) => {
+  if (!uid || !verseKey) return;
+  return deleteDoc(doc(db, 'users', uid, 'savedVerses', verseKey));
+};
+
+/* ------------------------------- Media ------------------------------- */
+
+export const getMediaItems = async (includeNonPublished = false) => {
+  try {
+    const snap = await getDocs(query(mediaCollection, limit(500)));
+    return snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((m) => includeNonPublished || !m.status || m.status === 'published')
+      .sort((a, b) => articleSortTime(b) - articleSortTime(a));
+  } catch (err) {
+    console.warn('Media load failed:', err?.message);
+    return [];
+  }
+};
+
+export const addMediaItem = async (item) =>
+  addDoc(mediaCollection, {
+    ...item,
+    createdAt: serverTimestamp(),
+  });
+
+export const deleteMediaItem = async (id) => deleteDoc(doc(db, 'media', id));
+
+/* --------------------------- Verse of the day --------------------------- */
+
+export const dailyVersesCollection = collection(db, 'dailyVerses');
+
+const asLocalized = (value) =>
+  typeof value === 'string'
+    ? { rw: value, en: value, sw: value, fr: value }
+    : value || { rw: '', en: '', sw: '', fr: '' };
+
+const normalizeDailyVerse = (docSnap) => {
+  const data = docSnap.data() || {};
+  return {
+    ...data,
+    id: docSnap.id,
+    text: asLocalized(data.text),
+    reference: asLocalized(data.reference),
+  };
+};
+
+/** Published daily verses, newest first. Bounded scan avoids index requirements. */
+export const getDailyVerses = async (max = 60) => {
+  try {
+    const snap = await getDocs(query(dailyVersesCollection, limit(max)));
+    return snap.docs
+      .map(normalizeDailyVerse)
+      .filter((v) => !v.status || v.status === 'published')
+      .sort(
+        (a, b) =>
+          String(b.date || '').localeCompare(String(a.date || '')) ||
+          articleSortTime(b) - articleSortTime(a)
+      );
+  } catch (err) {
+    console.warn('Daily verses load failed:', err?.message);
+    return [];
+  }
+};
+
+const siteSettingsDoc = doc(db, 'settings', 'site');
+
+export const getSiteSettings = async () => {
+  try {
+    const snap = await getDoc(siteSettingsDoc);
+    return snap.exists() ? snap.data() : null;
+  } catch (err) {
+    console.warn('Site settings load failed:', err?.message);
+    return null;
+  }
 };

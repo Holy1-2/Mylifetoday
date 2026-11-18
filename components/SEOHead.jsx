@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
-const SEOHead = ({ title, description, keywords, article, lang = "rw", url }) => {
+const SEOHead = ({ title = "", description = "", keywords = "", article = null, lang = "rw", url }) => {
   const siteName = "Kubana n'Imana Buri Munsi";
   const siteUrl = "https://kubananimanaburimunsi.vercel.app";
 

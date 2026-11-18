@@ -1,12 +1,21 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/((?!.*\\.).*)",
-      "destination": "/"
-    },
+      "source": "/((?!.*\\.[a-zA-Z0-9]+$).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
     {
-      "source": "/(.*)/",
-      "destination": "/"
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

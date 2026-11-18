@@ -6,21 +6,39 @@
   color: #1a1a1a;
 }
 
-html,
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Raleway", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   margin: 0;
   min-height: 100vh;
   background: #ffffff;
   color: #1a1a1a;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1,
 h2,
 h3,
 h4,
-.serif {
-  font-family: "Lora", serif;
+.serif,
+.font-serif {
+  font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -32,25 +50,284 @@ h4,
   scrollbar-width: none;
 }
 
-.line-clamp-2 {
+.line-clamp-1,
+.line-clamp-2,
+.line-clamp-3,
+.line-clamp-4 {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.line-clamp-1 { -webkit-line-clamp: 1; }
+.line-clamp-2 { -webkit-line-clamp: 2; }
+.line-clamp-3 { -webkit-line-clamp: 3; }
+.line-clamp-4 { -webkit-line-clamp: 4; }
+
+/* Search inputs: hide the native clear affordance (we render our own). */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-/* Pop-in / fade-in animations used across the app */
+/* ------------------------------------------------------------------
+   Article reading surface
+   Safe wrapping: `overflow-wrap: break-word` keeps long words inside the
+   container without ever slicing ordinary words mid-way (the previous
+   `word-break: break-word` did that).
+   ------------------------------------------------------------------ */
+.article-body {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: #333333;
+  letter-spacing: 0.002em;
+}
+
+.article-body.on-dark,
+.article-body.on-dark p,
+.article-body.on-dark li {
+  color: #f5f5f5;
+}
+
+.article-body.on-dark strong,
+.article-body.on-dark b {
+  color: #ffffff;
+}
+
+.article-body.on-dark a {
+  color: #ef4444;
+}
+
+.article-body > * + * {
+  margin-top: 1.15em;
+}
+
+.article-body p {
+  margin: 0;
+}
+
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  color: #1a1a1a;
+  font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.article-body h2 {
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.article-body h3 {
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  font-size: 1.3rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.article-body h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.4em;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.article-body strong,
+.article-body b {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.article-body em,
+.article-body i {
+  font-style: italic;
+}
+
+.article-body a {
+  color: #dc2626;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.article-body a:hover {
+  color: #991b1b;
+}
+
+.article-body ul,
+.article-body ol {
+  padding-left: 1.4em;
+  margin: 1em 0;
+}
+
+.article-body ul {
+  list-style: disc;
+}
+
+.article-body ol {
+  list-style: decimal;
+}
+
+.article-body li + li {
+  margin-top: 0.45em;
+}
+
+.article-body li > ul,
+.article-body li > ol {
+  margin-top: 0.45em;
+}
+
+.article-body blockquote {
+  margin: 1.6em 0;
+  border-left: 3px solid #1a1a1a;
+  padding: 0.25em 0 0.25em 1.1em;
+  color: #555555;
+  font-style: italic;
+}
+
+.article-body img,
+.article-body video,
+.article-body canvas,
+.article-body svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+.article-body figure {
+  margin: 1.6em 0;
+}
+
+/* Hero image sits on a black card, so it keeps the rounded corners. */
+.article-body .hero-media img {
+  border-radius: 0.75rem;
+}
+
+.article-body figcaption {
+  margin-top: 0.6em;
+  font-size: 0.85rem;
+  color: #777777;
+}
+
+.article-body iframe,
+.article-body embed,
+.article-body object {
+  max-width: 100%;
+  border-radius: 0;
+  border: 0;
+}
+
+/* Embeds injected through article HTML are wrapped for a stable 16:9 box. */
+.embed-frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  margin: 1.4em 0;
+  overflow: hidden;
+  background: #000000;
+}
+
+.embed-frame > iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.embed-frame.embed-audio {
+  padding-top: 0;
+  height: 166px;
+}
+
+.article-body hr {
+  margin: 2.2em 0;
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.article-body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid #e5e5e5;
+  padding: 0.6em 0.8em;
+  text-align: left;
+}
+
+.article-body th {
+  background: #f5f5f5;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.article-body pre {
+  max-width: 100%;
+  overflow-x: auto;
+  background: #1a1a1a;
+  color: #e5e5e5;
+  padding: 1rem 1.1rem;
+  border-radius: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.article-body pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  white-space: pre;
+}
+
+.article-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: #f4f4f4;
+  color: #1a1a1a;
+  padding: 0.15em 0.35em;
+  border-radius: 0;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+.article-body > :first-child {
+  margin-top: 0;
+}
+
+/* Card previews never widen their column. */
+.article-preview {
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .article-body {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+  }
+}
+
 @keyframes anim-pop-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -70,7 +347,7 @@ h4,
 @keyframes anim-slide-in-top {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-14px);
   }
   to {
     opacity: 1;
@@ -83,61 +360,41 @@ h4,
 }
 
 .animate-in.fade-in {
-  animation: anim-fade-in 0.5s ease-out both;
+  animation: anim-fade-in 0.4s ease-out both;
 }
 
 .animate-in.slide-in-from-top {
-  animation: anim-slide-in-top 0.3s ease-out both;
+  animation: anim-slide-in-top 0.25s ease-out both;
 }
 
-.duration-600 {
-  transition-duration: 600ms;
+
+/* Raleway set in a light/regular voice across the site. */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500;
 }
 
-/* Article reading body — prevents horizontal overflow from long words,
-   unbroken URLs, wide images, tables and embeds. */
-.article-body {
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-break: break-word;
+.font-black,
+.font-extrabold {
+  font-weight: 600;
 }
 
-.article-body img,
-.article-body video,
-.article-body canvas,
-.article-body svg {
-  max-width: 100%;
-  height: auto;
+.font-bold,
+.font-semibold {
+  font-weight: 500;
 }
 
-.article-body iframe,
-.article-body embed,
-.article-body object {
-  max-width: 100%;
-}
-
-.article-body table {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.article-body pre,
-.article-body code {
-  max-width: 100%;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.article-body a {
-  overflow-wrap: anywhere;
-}
-
-/* Reusable wrapper for card previews so long text never widens the layout */
-.article-preview {
-  overflow-wrap: break-word;
-  word-break: break-word;
-  max-width: 100%;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,410 +1,1324 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/donate</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/donate</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/donate</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/terms</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/terms</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/terms</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/privacy</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/privacy</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/privacy</loc>
-      <lastmod>2026-09-15</lastmod>
-      <changefreq>weekly</changefreq>
-    </url>
-  
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya</loc>
-      <lastmod>2026-04-04</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/kwiga-kugendera-mu-kibaya</loc>
-      <lastmod>2026-04-04</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/kwiga-kugendera-mu-kibaya</loc>
-      <lastmod>2026-04-04</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/yesu-azaza-ryari</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/yesu-azaza-ryari</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/abacamanza-7-17</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/abacamanza-7-17</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
-      <lastmod>2026-05-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
-      <lastmod>2026-05-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
-      <lastmod>2026-05-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
-      <lastmod>2026-02-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
-      <lastmod>2026-02-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
-      <lastmod>2026-02-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize</loc>
-      <lastmod>2026-08-21</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/uzaba-wizize</loc>
-      <lastmod>2026-08-21</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/uzaba-wizize</loc>
-      <lastmod>2026-08-21</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
-      <lastmod>2026-05-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
-      <lastmod>2026-05-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
-      <lastmod>2026-05-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ezekiyeli-18-4</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ezekiyeli-18-4</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5</loc>
-      <lastmod>2026-02-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/yakobo-3-5</loc>
-      <lastmod>2026-02-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/yakobo-3-5</loc>
-      <lastmod>2026-02-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11</loc>
-      <lastmod>2026-02-09</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/zaburi-84-11</loc>
-      <lastmod>2026-02-09</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/zaburi-84-11</loc>
-      <lastmod>2026-02-09</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
-      <lastmod>2026-04-23</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
-      <lastmod>2026-04-23</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
-      <lastmod>2026-04-23</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
-      <lastmod>2026-05-01</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
-      <lastmod>2026-05-01</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
-      <lastmod>2026-05-01</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe</loc>
-      <lastmod>2026-04-23</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/imana-iba-irihe</loc>
-      <lastmod>2026-04-23</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/imana-iba-irihe</loc>
-      <lastmod>2026-04-23</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki</loc>
-      <lastmod>2026-05-30</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/intsinzi-ni-iki</loc>
-      <lastmod>2026-05-30</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/intsinzi-ni-iki</loc>
-      <lastmod>2026-05-30</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20</loc>
-      <lastmod>2026-02-09</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/yesaya-5-20</loc>
-      <lastmod>2026-02-09</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/yesaya-5-20</loc>
-      <lastmod>2026-02-09</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
-      <lastmod>2026-04-02</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
-      <lastmod>2026-04-02</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
-      <lastmod>2026-04-02</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru</loc>
-      <lastmod>2026-03-24</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/urupfu-isi-si-ijuru</loc>
-      <lastmod>2026-03-24</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/urupfu-isi-si-ijuru</loc>
-      <lastmod>2026-03-24</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
-      <lastmod>2026-03-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
-      <lastmod>2026-03-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
-      <lastmod>2026-03-13</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/nemerewe-gukundana-gihe-ki</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/nemerewe-gukundana-gihe-ki</loc>
-      <lastmod>2026-03-11</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya</loc>
-      <lastmod>2026-03-15</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/en/articles/oya-jya-wiga-kuvuga-oya</loc>
-      <lastmod>2026-03-15</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
-    <url>
-      <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/oya-jya-wiga-kuvuga-oya</loc>
-      <lastmod>2026-03-15</lastmod>
-      <changefreq>monthly</changefreq>
-    </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/media</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/media" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/media" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/media" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/media</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/media" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/media" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/media" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/media</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/media" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/media" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/media" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/media</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/media" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/media" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/media" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/media" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/verse</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/verse" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/verse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/verse" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/verse</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/verse" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/verse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/verse" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/verse</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/verse" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/verse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/verse" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/verse</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/verse" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/verse" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/verse" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/verse" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/donate</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/donate" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/donate" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/donate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/donate</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/donate" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/donate" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/donate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/donate</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/donate" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/donate" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/donate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/donate</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/donate" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/donate" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/donate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/donate" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/privacy</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/privacy</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/privacy</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/privacy</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/privacy" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/privacy" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/terms</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/terms" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/terms</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/terms" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/terms</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/terms" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/terms</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/terms" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/terms" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/terms" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/zirikana-ibi-udatungurwa</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/zirikana-ibi-udatungurwa</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/zirikana-ibi-udatungurwa</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zirikana-ibi-udatungurwa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zirikana-ibi-udatungurwa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/oya-jya-wiga-kuvuga-oya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/oya-jya-wiga-kuvuga-oya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/oya-jya-wiga-kuvuga-oya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/oya-jya-wiga-kuvuga-oya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/oya-jya-wiga-kuvuga-oya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/nemerewe-gukundana-gihe-ki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/nemerewe-gukundana-gihe-ki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/nemerewe-gukundana-gihe-ki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/nemerewe-gukundana-gihe-ki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/nemerewe-gukundana-gihe-ki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/niba-ubyujuje-nawe-uri-mwiza-dore-ibintu-3-biranga-umukobwa-mwiza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/urupfu-isi-si-ijuru</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/urupfu-isi-si-ijuru</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/urupfu-isi-si-ijuru</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/urupfu-isi-si-ijuru" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/urupfu-isi-si-ijuru" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/yesaya-5-20</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/yesaya-5-20</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/yesaya-5-20</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesaya-5-20" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesaya-5-20" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/intsinzi-ni-iki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/intsinzi-ni-iki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/intsinzi-ni-iki</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/intsinzi-ni-iki" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/intsinzi-ni-iki" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-3-buri-musore-wese-akwiriye-kwibaza" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/imana-iba-irihe</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/imana-iba-irihe</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/imana-iba-irihe</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/imana-iba-irihe" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/imana-iba-irihe" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-5-byaguhindurira-ubuzima</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ibibazo-5-byaguhindurira-ubuzima" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ibibazo-5-byaguhindurira-ubuzima" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/bibiliya-ivuga-iki-kubyerekeye-betting</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/bibiliya-ivuga-iki-kubyerekeye-betting" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/reka-kwiyica-dore-ibintu-3-ukora-ubyutse-biri-kukwica-bucece" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/zaburi-84-11</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/zaburi-84-11</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/zaburi-84-11</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/zaburi-84-11" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/zaburi-84-11" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/yakobo-3-5</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/yakobo-3-5</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/yakobo-3-5</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yakobo-3-5" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yakobo-3-5" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ezekiyeli-18-4</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/ezekiyeli-18-4</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ezekiyeli-18-4</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ezekiyeli-18-4" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ezekiyeli-18-4" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-yo-kudapostinga-ibyawe-byose</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-yo-kudapostinga-ibyawe-byose" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/uzaba-wizize</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/uzaba-wizize</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/uzaba-wizize</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/uzaba-wizize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/uzaba-wizize" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/ese-phone-yawe-urayikoresha-cyangwa-iragukoresha" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/impamvu-pawulo-yakoresheje-impuzankano-gisirikare-abefeso" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/abacamanza-7-17</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/abacamanza-7-17</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/abacamanza-7-17</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/abacamanza-7-17" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/abacamanza-7-17" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/yesu-azaza-ryari</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/yesu-azaza-ryari</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/yesu-azaza-ryari</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/yesu-azaza-ryari" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/yesu-azaza-ryari" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/umuntu-nta-tungwa-n-umutsima-gusa</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/umuntu-nta-tungwa-n-umutsima-gusa" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/kwiga-kugendera-mu-kibaya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/kwiga-kugendera-mu-kibaya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/kwiga-kugendera-mu-kibaya</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/kwiga-kugendera-mu-kibaya" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/kwiga-kugendera-mu-kibaya" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/en/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/sw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+  </url>
+  <url>
+    <loc>https://kubananimanaburimunsi.vercel.app/fr/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="rw" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kubananimanaburimunsi.vercel.app/en/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="sw" href="https://kubananimanaburimunsi.vercel.app/sw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://kubananimanaburimunsi.vercel.app/fr/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kubananimanaburimunsi.vercel.app/rw/articles/raporo-y-ubuzima-bwange-ese-imana-izanyurwa-nayo" />
+  </url>
 </urlset>
