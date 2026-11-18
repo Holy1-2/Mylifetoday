@@ -68,6 +68,8 @@ export interface MediaItem {
   text?: string;
   author?: string;
   thumbnail?: string;
+  category?: string;
+  likes?: number;
   language?: Language;
   status?: 'draft' | 'published';
   createdAt?: any;

@@ -145,7 +145,7 @@ const JournalPage = () => {
   if (!user) {
     return (
       <>
-        <SEOHead lang={lang} title={`${t('journalTitle')} | ${BRAND.name}`} url={`${BRAND.siteUrl}/${lang}/journal`} />
+        <SEOHead lang={lang} title={`${t('journalTitle')} | ${BRAND.name}`} url={`${BRAND.siteUrl}/${lang}/journal`} robots="noindex, follow" />
         <div className="mx-auto max-w-xl px-4 py-20 text-center">
           <span className="mx-auto grid h-14 w-14 place-items-center bg-[#1a1a1a] text-white">
             <Lock size={24} />
@@ -175,7 +175,7 @@ const JournalPage = () => {
 
   return (
     <>
-      <SEOHead lang={lang} title={`${t('journalTitle')} | ${BRAND.name}`} url={`${BRAND.siteUrl}/${lang}/journal`} />
+      <SEOHead lang={lang} title={`${t('journalTitle')} | ${BRAND.name}`} url={`${BRAND.siteUrl}/${lang}/journal`} robots="noindex, follow" />
 
       <div className="mx-auto max-w-7xl px-4 pt-12 pb-8">
         <div className="flex flex-wrap items-end justify-between gap-4">

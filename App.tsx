@@ -5,10 +5,12 @@ import { LanguageProvider, isLanguage, useLanguage } from './contexts/LanguageCo
 import { AuthProvider } from './contexts/AuthContext';
 import { JournalProvider } from './contexts/JournalContext';
 import Layout from './components/Layout';
+import SEOHead from './components/SEOHead';
 import Home from './pages/Home';
 import ArticlePage from './pages/ArticlePage';
 import SearchPage from './pages/SearchPage';
 import MediaPage from './pages/MediaPage';
+import MediaDetailPage from './pages/MediaDetailPage';
 import VersePage from './pages/VersePage';
 import JournalPage from './pages/JournalPage';
 import AuthPage from './pages/AuthPage';
@@ -36,19 +38,27 @@ const LanguageGate = () => {
 const NotFound = () => {
   const { lang, t } = useLanguage();
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
-      <p className="text-[64px] font-black leading-none tracking-tighter text-gray-200">404</p>
-      <h1 className="mt-3 font-serif text-3xl font-bold text-black">
-        {t('pageNotFound')}
-      </h1>
-      <Link
-        to={`/${lang}`}
-        className="mt-6 inline-flex items-center gap-2 bg-black px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-red-600"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t('goHome')}
-      </Link>
-    </div>
+    <>
+      <SEOHead
+        lang={lang}
+        title={`404 — ${t('pageNotFound')}`}
+        description={t('pageNotFound')}
+        robots="noindex, follow"
+      />
+      <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
+        <p className="text-[64px] font-black leading-none tracking-tighter text-gray-200">404</p>
+        <h1 className="mt-3 font-serif text-3xl font-bold text-black">
+          {t('pageNotFound')}
+        </h1>
+        <Link
+          to={`/${lang}`}
+          className="mt-6 inline-flex items-center gap-2 bg-black px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-red-600"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t('goHome')}
+        </Link>
+      </div>
+    </>
   );
 };
 
@@ -62,6 +72,7 @@ const AppRoutes = () => (
         <Route path="articles/:slug" element={<ArticlePage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="media" element={<MediaPage />} />
+        <Route path="media/:id" element={<MediaDetailPage />} />
         <Route path="verse" element={<VersePage />} />
         <Route path="journal" element={<JournalPage />} />
         <Route path="account" element={<AccountPage />} />

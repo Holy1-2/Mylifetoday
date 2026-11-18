@@ -1,6 +1,18 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/rw",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/rw",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/((?!.*\\.[a-zA-Z0-9]+$).*)",

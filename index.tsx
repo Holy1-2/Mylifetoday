@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast';
 import App from './App';
 import './index.css';
@@ -56,23 +55,21 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <HelmetProvider>
-        <ErrorBoundary>
-          <App />
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              duration: 3200,
-              style: {
-                borderRadius: '12px',
-                background: '#1c1917',
-                color: '#fafaf9',
-                fontSize: '13px',
-              },
-            }}
-          />
-        </ErrorBoundary>
-      </HelmetProvider>
+      <ErrorBoundary>
+        <App />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 3200,
+            style: {
+              borderRadius: '12px',
+              background: '#1c1917',
+              color: '#fafaf9',
+              fontSize: '13px',
+            },
+          }}
+        />
+      </ErrorBoundary>
     </BrowserRouter>
   </React.StrictMode>
 );

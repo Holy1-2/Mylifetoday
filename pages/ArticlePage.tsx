@@ -146,33 +146,44 @@ const ArticlePage = () => {
 
   if (loadError) {
     return (
-      <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
-        <h1 className="text-3xl font-black uppercase tracking-tighter">{t('error')}</h1>
-        <p className="mt-3 text-gray-600">{t('searchEmptyHint')}</p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="mt-6 inline-flex items-center gap-2 bg-[#1a1a1a] px-5 py-3 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-red-600"
-        >
-          {t('retry')}
-        </button>
-      </div>
+      <>
+        <SEOHead lang={lang} title={`${t('error')} | ${BRAND.name}`} robots="noindex, follow" />
+        <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
+          <h1 className="text-3xl font-black uppercase tracking-tighter">{t('error')}</h1>
+          <p className="mt-3 text-gray-600">{t('searchEmptyHint')}</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-6 inline-flex items-center gap-2 bg-[#1a1a1a] px-5 py-3 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-red-600"
+          >
+            {t('retry')}
+          </button>
+        </div>
+      </>
     );
   }
 
   if (notFound || !article) {
     return (
-      <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
-        <h1 className="text-3xl font-black uppercase tracking-tighter">{t('pageNotFound')}</h1>
-        <p className="mt-3 text-gray-600">{t('searchEmptyHint')}</p>
-        <Link
-          to={`/${lang}`}
-          className="mt-6 inline-flex items-center gap-2 bg-[#1a1a1a] px-5 py-3 text-[11px] font-black uppercase tracking-widest text-white"
-        >
-          <ArrowLeft size={14} />
-          {t('goHome')}
-        </Link>
-      </div>
+      <>
+        <SEOHead
+          lang={lang}
+          title={`404 — ${t('pageNotFound')} | ${BRAND.name}`}
+          description={t('searchEmptyHint')}
+          robots="noindex, follow"
+        />
+        <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
+          <h1 className="text-3xl font-black uppercase tracking-tighter">{t('pageNotFound')}</h1>
+          <p className="mt-3 text-gray-600">{t('searchEmptyHint')}</p>
+          <Link
+            to={`/${lang}`}
+            className="mt-6 inline-flex items-center gap-2 bg-[#1a1a1a] px-5 py-3 text-[11px] font-black uppercase tracking-widest text-white"
+          >
+            <ArrowLeft size={14} />
+            {t('goHome')}
+          </Link>
+        </div>
+      </>
     );
   }
 

@@ -3,7 +3,7 @@ import { Bookmark, Heart, LogOut, NotebookPen, ShieldCheck, Sparkles } from 'luc
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useJournal } from '../contexts/JournalContext';
-import { initials } from '../utils/text';
+import UserAvatar from '../components/UserAvatar';
 import SEOHead from '../components/SEOHead';
 import { BRAND } from '../constants';
 
@@ -48,7 +48,7 @@ const AccountPage = () => {
 
   return (
     <>
-      <SEOHead lang={lang} title={`${t('accountTitle')} | ${BRAND.name}`} url={`${BRAND.siteUrl}/${lang}/account`} />
+      <SEOHead lang={lang} title={`${t('accountTitle')} | ${BRAND.name}`} url={`${BRAND.siteUrl}/${lang}/account`} robots="noindex, follow" />
 
       <div className="mx-auto max-w-4xl px-4 py-12 md:py-16">
         <h1 className="text-4xl font-black uppercase tracking-tighter">{t('accountTitle')}</h1>
@@ -56,9 +56,10 @@ const AccountPage = () => {
 
         <div className="mt-8 border border-black/10 bg-white p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-4">
-            <span className="grid h-16 w-16 place-items-center bg-[#1a1a1a] text-xl font-black text-white">
-              {initials(user.displayName || user.email)}
-            </span>
+            <UserAvatar
+              user={user}
+              className="h-20 w-20 shrink-0 rounded-full border border-black/10"
+            />
             <div className="min-w-0">
               <p className="truncate text-xl font-black uppercase tracking-tight">
                 {user.displayName || t('accountTitle')}

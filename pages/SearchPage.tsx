@@ -121,6 +121,7 @@ const SearchPage = () => {
         title={`${t('searchTitle')} | ${BRAND.name}`}
         description={t('searchSubtitle')}
         url={`${BRAND.siteUrl}/${lang}/search`}
+        robots="noindex, follow"
       />
 
       <div className="mx-auto max-w-7xl px-4 pt-12 pb-10">

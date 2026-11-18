@@ -81,7 +81,7 @@ export const TRANSLATIONS: Translations = {
       all: { rw: 'Byose', en: 'All', sw: 'Zote', fr: 'Tout' },
       optional: { rw: 'bidakwiye', en: 'optional', sw: 'hiari', fr: 'facultatif' },
       copy: { rw: 'Koporora', en: 'Copy', sw: 'Nakili', fr: 'Copier' },
-      copied: { rw: 'Byakopywe', en: 'Copied', sw: 'Imenakiliwa', fr: 'Copié' },
+      copied: { rw: 'Byakoporowe', en: 'Copied', sw: 'Imenakiliwa', fr: 'Copié' },
       share: { rw: 'Sangiza', en: 'Share', sw: 'Shiriki', fr: 'Partager' },
       copyLink: { rw: 'Koporora umurongo', en: 'Copy link', sw: 'Nakili kiungo', fr: 'Copier le lien' },
       linkCopied: { rw: 'Umurongo wakopywe', en: 'Link copied', sw: 'Kiungo kimenakiliwa', fr: 'Lien copié' },
@@ -112,7 +112,7 @@ export const TRANSLATIONS: Translations = {
       minRead: { rw: 'iminota yo gusoma', en: 'min read', sw: 'dakika za kusoma', fr: 'min de lecture' },
       byLabel: { rw: 'Na', en: 'By', sw: 'Na', fr: 'Par' },
       editorialDesk: { rw: 'Ibiro by\'ubwanditsi', en: 'Editorial Desk', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
-      newsletterTitle: { rw: 'Akira ijambo buri cyumweru', en: 'Get a word every week', sw: 'Pokea neno kila wiki', fr: 'Recevez une parole chaque semaine' },
+      newsletterTitle: { rw: 'Akira imirongo ya bibiliya buri cyumweru', en: 'Get a word every week', sw: 'Pokea neno kila wiki', fr: 'Recevez une parole chaque semaine' },
       newsletterSubtitle: {
          rw: 'Inyigisho nshya, amasengesho n\'ibitekerezo by\'ubuzima mu imeri yawe.',
          en: 'New teachings, prayers and wellbeing notes in your inbox.',
@@ -123,12 +123,12 @@ export const TRANSLATIONS: Translations = {
       emailPlaceholder: { rw: 'Imeyili yawe', en: 'Your email', sw: 'Barua pepe yako', fr: 'Votre e-mail' },
       namePlaceholder: { rw: 'Amazina yawe', en: 'Your name', sw: 'Jina lako', fr: 'Votre nom' },
       emailRequired: { rw: 'Nyamuneka andika imeyili yawe.', en: 'Please enter your email.', sw: 'Tafadhali ingiza barua pepe yako.', fr: 'Veuillez saisir votre e-mail.' },
-      emailInvalid: { rw: 'Imeyili ntari yo.', en: 'Please enter a valid email.', sw: 'Tafadhali ingiza barua pepe sahihi.', fr: 'Veuillez saisir un e-mail valide.' },
+      emailInvalid: { rw: 'Banza wandike imeyili.', en: 'Please enter a valid email.', sw: 'Tafadhali ingiza barua pepe sahihi.', fr: 'Veuillez saisir un e-mail valide.' },
       subscribeSuccess: { rw: 'Murakoze kwiyandikisha!', en: 'Thank you for subscribing!', sw: 'Asante kwa kujiandikisha!', fr: 'Merci pour votre abonnement !' },
       subscribeAlready: { rw: 'Iyi imeyili yari yiyandikishije.', en: 'This email is already subscribed.', sw: 'Barua pepe hii tayari imesajiliwa.', fr: 'Cet e-mail est déjà abonné.' },
       subscribeFailed: { rw: 'Kwiyandikisha byanze. Ongera ugerageze.', en: 'Subscription failed. Please try again.', sw: 'Usajili umeshindikana. Tafadhali jaribu tena.', fr: "L'abonnement a échoué. Veuillez réessayer." },
       mediaHighlights: { rw: 'Amashusho n\'amajwi', en: 'Media highlights', sw: 'Vyakombo maalum', fr: 'Médias à la une' },
-      exploreMedia: { rw: 'Reba ibyigisho byose', en: 'Explore all media', sw: 'Vinjari vyombo vyote', fr: 'Explorer tous les médias' },
+      exploreMedia: { rw: 'Reba icyigisho byose', en: 'Explore all media', sw: 'Vinjari vyombo vyote', fr: 'Explorer tous les médias' },
 
       /* ---------- Article reading ---------- */
       publishedOn: { rw: 'Byasohotse', en: 'Published', sw: 'Ilichapishwa', fr: 'Publié' },
@@ -184,7 +184,7 @@ export const TRANSLATIONS: Translations = {
       /* ---------- Media ---------- */
       mediaTitle: { rw: 'Ibyigisho', en: 'Our media library', sw: 'Maktaba yetu ya vyombo', fr: 'Notre médiathèque' },
       mediaSubtitle: {
-         rw: 'Videwo, amajwi, amafoto n\'amagambo y\'ubwenge — byose ahantu hamwe.',
+         rw: 'Videwo, amajwi, amafoto n\'amagambo y\'ubwenge — byose hamwe.',
          en: 'Videos, audio, images and quote cards — all in one place.',
          sw: 'Video, sauti, picha na kadi za maneno — mahali pamoja.',
          fr: 'Vidéos, audio, images et citations — au même endroit.',
@@ -202,11 +202,41 @@ export const TRANSLATIONS: Translations = {
       quote: { rw: 'Amagambo', en: 'Quote', sw: 'Neno', fr: 'Citation' },
       image: { rw: 'Ifoto', en: 'Image', sw: 'Picha', fr: 'Image' },
       youtube: { rw: 'YouTube', en: 'YouTube', sw: 'YouTube', fr: 'YouTube' },
+      mediaCategories: { rw: 'Ibyiciro', en: 'Categories', sw: 'Kategoria', fr: 'Catégories' },
+      mediaCat_teaching: { rw: 'Inyigisho', en: 'Teaching', sw: 'Mafundisho', fr: 'Enseignement' },
+      mediaCat_testimony: { rw: 'Ubuhamya', en: 'Testimony', sw: 'Ushuhuda', fr: 'Témoignage' },
+      mediaCat_worship: { rw: 'Kuramya', en: 'Worship', sw: 'Ibada', fr: 'Louange' },
+      mediaCat_prayer: { rw: 'Isengesho', en: 'Prayer', sw: 'Maombi', fr: 'Prière' },
+      mediaCat_health: { rw: 'Ubuzima', en: 'Health', sw: 'Afya', fr: 'Santé' },
+      mediaCat_family: { rw: 'Umuryango', en: 'Family', sw: 'Familia', fr: 'Famille' },
+      mediaCat_money: { rw: 'Amafaranga', en: 'Money & work', sw: 'Pesa na kazi', fr: 'Argent et travail' },
+      mediaCat_youth: { rw: 'Urubyiruko', en: 'Youth', sw: 'Vijana', fr: 'Jeunesse' },
+      mediaCat_conference: { rw: 'Inama', en: 'Conference', sw: 'Kongamano', fr: 'Conférence' },
+      mediaCat_other: { rw: 'Ibindi', en: 'Other', sw: 'Nyingine', fr: 'Autre' },
+      mediaLike: { rw: 'Kunda', en: 'Like', sw: 'Penda', fr: "J'aime" },
+      mediaLiked: { rw: 'Wakunze', en: 'Liked', sw: 'Umependa', fr: 'Aimé' },
+      mediaLikesLabel: { rw: 'abakunzi', en: 'likes', sw: 'wapendwa', fr: "mentions J'aime" },
+      backToMedia: { rw: 'Subira ku byigisho', en: 'Back to media', sw: 'Rudi kwa vyombo', fr: 'Retour aux médias' },
+      mediaNotFound: { rw: 'Iki kintu nticyabonetse', en: 'This media item was not found', sw: 'Kipengee hiki hakipatikani', fr: 'Ce média est introuvable' },
+      mediaNotFoundHint: {
+         rw: 'Wenda cyakuweho cyangwa nticyasohotse. Reba ibindi byigisho.',
+         en: 'It may have been removed or not published yet. Browse the rest of the library.',
+         sw: 'Huenda kimeondolewa au hakijachapishwa. Vinjari vyombo vingine.',
+         fr: "Il a peut-être été retiré ou n'est pas encore publié. Parcourez le reste de la médiathèque.",
+      },
+      mediaDateLabel: { rw: 'Byashyizweho', en: 'Added', sw: 'Imeongezwa', fr: 'Ajouté' },
+      mediaShare: { rw: 'Sangiza', en: 'Share', sw: 'Shiriki', fr: 'Partager' },
+      mediaLinkCopied: { rw: 'Link yakoporowe', en: 'Link copied', sw: 'Kiungo kimenakiliwa', fr: 'Lien copié' },
+      mediaReelHint: { rw: 'Kanda urebe, kunyereza ukurikire ibindi', en: 'Tap to play, swipe for more', sw: 'Gusa kutazama, telezesha kwa zaidi', fr: 'Touchez pour lire, balayez pour la suite' },
+      mediaReelPrev: { rw: 'Ibibanza', en: 'Previous', sw: 'Iliyotangulia', fr: 'Précédent' },
+      mediaReelNext: { rw: 'Ikurikira', en: 'Next', sw: 'Inayofuata', fr: 'Suivant' },
+      scrollToTop: { rw: 'Subira hejuru', en: 'Back to top', sw: 'Rudi juu', fr: 'Haut de page' },
+      scrollToBottom: { rw: 'Manuka hasi', en: 'Jump to bottom', sw: 'Shuka chini', fr: 'Bas de page' },
 
       /* ---------- Verse of the day ---------- */
       verseTitle: { rw: "Ijambo ry'umunsi", en: 'Verse of the Day', sw: 'Neno la Leo', fr: 'Verset du Jour' },
       verseSubtitle: {
-         rw: 'Aya magambo yatoranyijwe kuri uyu munsi. Abike, asangize cyangwa ayakoporore.',
+         rw: 'Aya masomo ya bibiliya yatoranyirijwe  uyu munsi. Wayasangiza  abandi cyangwa ukayabika mu rwibutso rwawe.',
          en: 'A verse chosen for today. Save it, share it, or copy it.',
          sw: 'Neno lililochaguliwa leo. Hifadhi, shiriki au nakili.',
          fr: "Un verset choisi pour aujourd'hui. Enregistrez, partagez ou copiez.",
@@ -227,7 +257,7 @@ export const TRANSLATIONS: Translations = {
       },
 
       /* ---------- Journal ---------- */
-      journalTitle: { rw: 'Urupapuro rw\'umwuka', en: 'My Spiritual Journal', sw: 'Daftari Langu la Kiroho', fr: 'Mon Journal Spirituel' },
+      journalTitle: { rw: 'Urwibutso rw\'umwuka', en: 'My Spiritual Journal', sw: 'Daftari Langu la Kiroho', fr: 'Mon Journal Spirituel' },
       journalSubtitle: {
          rw: 'Bika amagambo ya Bibiliya, andika ibitekerezo, kwibuka amasengesho yasubijwe n\'ibintu by\'ibanga.',
          en: 'Save Bible verses, write reflections, record answered prayers and keep private notes.',
@@ -249,7 +279,7 @@ export const TRANSLATIONS: Translations = {
       markAnswered: { rw: 'Yasubijwe', en: 'Mark answered', sw: 'Weka kama imejibiwa', fr: 'Marquer exaucée' },
       answeredBadge: { rw: 'Yasubijwe', en: 'Answered', sw: 'Imejibiwa', fr: 'Exaucée' },
       deleteEntry: { rw: 'Siba iyi nyandiko?', en: 'Delete this entry?', sw: 'Futa kumbukumbu hii?', fr: 'Supprimer cette entrée ?' },
-      emptyJournal: { rw: 'Nta nyandiko ufite. Tangira ubanze.', en: 'No entries yet. Start writing.', sw: 'Hakuna kumbukumbu. Anza kuandika.', fr: 'Aucune entrée. Commencez à écrire.' },
+      emptyJournal: { rw: 'Nta nyandiko ufite. Tangira wandike.', en: 'No entries yet. Start writing.', sw: 'Hakuna kumbukumbu. Anza kuandika.', fr: 'Aucune entrée. Commencez à écrire.' },
       emptySaved: { rw: 'Nta kintu wabika.', en: 'Nothing saved yet.', sw: 'Hakuna kilichohifadhiwa.', fr: 'Rien enregistré pour le moment.' },
       journalSignIn: { rw: 'Injira kugira ngo ukoreshe urwibutso rwawe', en: 'Sign in to open your journal', sw: 'Ingia kufungua daftari lako', fr: 'Connectez-vous pour ouvrir votre journal' },
       journalSignInText: {
@@ -304,7 +334,7 @@ export const TRANSLATIONS: Translations = {
       mobileMoneyLabel: { rw: 'Mobile Money (MoMo)', en: 'Mobile Money (MoMo)', sw: 'Mobile Money (MoMo)', fr: 'Mobile Money (MoMo)' },
       bankTransferLabel: { rw: 'Kohereza kuri banki', en: 'Bank transfer', sw: 'Uhamisho wa benki', fr: 'Virement bancaire' },
       donationPurposeLabel: { rw: 'Intego', en: 'Purpose', sw: 'Madhumuni', fr: 'Objet' },
-      quickLinks: { rw: 'Amahuza yihuse', en: 'Quick links', sw: 'Viungo vya haraka', fr: 'Liens rapides' },
+      quickLinks: { rw: 'Link zihuse', en: 'Quick links', sw: 'Viungo vya haraka', fr: 'Liens rapides' },
       categories: { rw: 'Ibyiciro', en: 'Categories', sw: 'Kategoria', fr: 'Catégories' },
       network: { rw: 'Umuyoboro', en: 'Network', sw: 'Mtandao', fr: 'Réseau' },
       privacyTitle: { rw: 'Politiki y\'ibanga', en: 'Privacy Policy', sw: 'Sera ya Faragha', fr: 'Politique de confidentialité' },
@@ -591,7 +621,7 @@ Murakaza neza! Mukoresha uru rubuga, mwemera kubahiriza aya mategeko.
 
 4. Uburenganzira bw'Ibirimo
    - Ibirimo byose by'ubwanditsi ni ibya ${BRAND.name}
-   - Abakoresha bafite uburenganzira ku bitekerezo byabo n'inyandiko z'urupapuro rwabo
+   - Abakoresha bafite uburenganzira ku bitekerezo byabo n'inyandiko z'urwibutso rwabo
    - Utangaje ibirimo rusange, uduha uruhushya rwo kubigaragaza
 
 5. Ibyerekeye Ubuzima

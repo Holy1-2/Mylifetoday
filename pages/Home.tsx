@@ -6,6 +6,7 @@ import type { Article, DailyVerse, MediaItem } from '../types';
 import { Category } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { pickLiveVerse } from '../utils/verseOfDay';
+import { mediaPreviewImage } from '../utils/media';
 import ArticleCard from '../components/ArticleCard';
 import NewsletterForm from '../components/NewsletterForm';
 import SEOHead from '../components/SEOHead';
@@ -218,16 +219,18 @@ const Home = () => {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-              {media.map((item) => (
+              {media.map((item) => {
+                const preview = mediaPreviewImage(item);
+                return (
                 <Link
                   key={item.id}
-                  to={`/${lang}/media`}
+                  to={`/${lang}/media/${item.id}`}
                   className="group flex gap-4 border-b border-black/10 pb-5"
                 >
                   <div className="w-24 h-24 shrink-0 overflow-hidden bg-black grid place-items-center text-center">
-                    {item.type === 'image' || item.thumbnail ? (
+                    {preview ? (
                       <img
-                        src={item.thumbnail || item.url}
+                        src={preview}
                         alt={item.title}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -255,7 +258,8 @@ const Home = () => {
                     </span>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </section>
         )}

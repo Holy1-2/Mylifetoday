@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { BRAND } from '../constants';
+import SEOHead from '../components/SEOHead';
 
 interface AuthPageProps {
   mode: 'signin' | 'signup';
@@ -83,7 +84,14 @@ const AuthPage = ({ mode }: AuthPageProps) => {
     'w-full border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm outline-none focus:border-black transition-colors';
 
   return (
-    <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 lg:grid-cols-2 lg:items-center lg:py-20">
+    <>
+      <SEOHead
+        lang={lang}
+        title={`${isSignup ? t('signUpTitle') : t('signInTitle')} | ${BRAND.name}`}
+        url={`${BRAND.siteUrl}/${lang}/${isSignup ? 'signup' : 'signin'}`}
+        robots="noindex, follow"
+      />
+      <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 lg:grid-cols-2 lg:items-center lg:py-20">
       <div className="hidden lg:block">
         <div className="relative overflow-hidden bg-[#1a1a1a] p-10 text-white">
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500">
@@ -218,7 +226,8 @@ const AuthPage = ({ mode }: AuthPageProps) => {
           {t('privateBadge')} · {BRAND.name}
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -86,7 +86,7 @@ const VersePage = () => {
         reference,
         text,
         brand: BRAND.name,
-        siteUrl: 'kubananimanaburimunsi.vercel.app',
+        siteUrl: 'kubananimanaburimunsi.rw',
       });
     } catch (error) {
       console.error(error);

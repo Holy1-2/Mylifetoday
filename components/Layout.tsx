@@ -21,8 +21,9 @@ import { Category } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getSiteSettings } from '../services/firebaseService';
-import { initials } from '../utils/text';
+import UserAvatar from './UserAvatar';
 import NewsletterForm from './NewsletterForm';
+import ScrollButtons from './ScrollButtons';
 
 const navItems = [
   { key: 'home', to: '' },
@@ -58,8 +59,13 @@ const Layout = () => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMenuOpen(false);
     };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
   }, [menuOpen]);
 
   const siteName = TRANSLATIONS.siteName[lang];
@@ -86,7 +92,7 @@ const Layout = () => {
         </div>
       )}
 
-      <nav className="sticky top-0 z-50 border-b border-black/[0.07] bg-white/90 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-black/[0.07] bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-[72px] sm:px-6">
           <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
             <button
@@ -109,7 +115,7 @@ const Layout = () => {
           </div>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-            <div className="hidden items-center gap-0.5 rounded-full bg-[#1a1a1a] p-1 sm:flex">
+            <div className="hidden items-center gap-0.5 rounded-full border border-black/10 bg-white p-1 sm:flex">
               {LANGUAGES.map((l) => {
                 const active = lang === l.code;
                 return (
@@ -119,8 +125,8 @@ const Layout = () => {
                     onClick={() => setLang(l.code)}
                     className={`flex h-8 items-center gap-1.5 rounded-full px-2 text-[9px] font-semibold uppercase tracking-[0.08em] transition-all ${
                       active
-                        ? 'bg-white text-[#1a1a1a] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.5)]'
-                        : 'text-white/65 hover:bg-white/10 hover:text-white'
+                        ? 'bg-[#f1f1f3] text-[#1a1a1a] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]'
+                        : 'text-gray-500 hover:bg-black/[0.04] hover:text-[#1a1a1a]'
                     }`}
                     aria-label={`Switch to ${l.label}`}
                   >
@@ -143,9 +149,9 @@ const Layout = () => {
               <Link
                 to={`/${lang}/account`}
                 aria-label={t('account')}
-                className="grid h-10 w-10 place-items-center rounded-full bg-[#1a1a1a] text-[10px] font-semibold text-white ring-2 ring-white transition hover:bg-black"
+                className="h-10 w-10 overflow-hidden rounded-full bg-[#f4f4f5] ring-2 ring-white transition hover:ring-black/20"
               >
-                {initials(user.displayName || user.email)}
+                <UserAvatar user={user} className="h-full w-full" />
               </Link>
             ) : (
               <Link
@@ -161,9 +167,28 @@ const Layout = () => {
         </div>
 
         {menuOpen && (
-          <div className="absolute left-0 right-0 top-full px-3 pt-2 sm:px-4">
-            <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_35px_70px_-30px_rgba(0,0,0,0.45)] animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="max-h-[calc(100vh-5.5rem)] overflow-y-auto p-4 sm:p-6">
+          <div className="fixed inset-0 z-[70] flex flex-col bg-white sm:absolute sm:inset-auto sm:left-0 sm:right-0 sm:top-full sm:z-50 sm:block sm:bg-transparent sm:px-4 sm:pt-2">
+            <div className="flex items-center justify-between border-b border-black/[0.07] px-4 py-3 sm:hidden">
+              <Link to={`/${lang}`} className="min-w-0" onClick={() => setMenuOpen(false)}>
+                <p className="truncate text-base font-semibold uppercase leading-none tracking-tight">
+                  {siteName}
+                </p>
+                <p className="mt-1 truncate text-[8px] font-medium uppercase tracking-[0.24em] text-gray-400">
+                  {tagline}
+                </p>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                aria-label={t('close')}
+                className="grid h-10 w-10 place-items-center rounded-full text-gray-700 transition hover:bg-black/[0.06]"
+              >
+                <X size={22} />
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain sm:flex-none sm:overflow-visible">
+            <div className="mx-auto max-w-7xl sm:overflow-hidden sm:rounded-2xl sm:border sm:border-black/[0.08] sm:bg-white sm:shadow-[0_35px_70px_-30px_rgba(0,0,0,0.45)] sm:animate-in sm:fade-in sm:slide-in-from-top-2 sm:duration-200">
+              <div className="p-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:max-h-[calc(100dvh-7rem)] sm:overflow-y-auto sm:p-6">
                 <Link
                   to={`/${lang}/search`}
                   className="flex items-center gap-3 rounded-full bg-[#f5f5f6] px-5 py-3 text-sm text-gray-500 transition hover:bg-[#ececee] hover:text-[#1a1a1a]"
@@ -248,6 +273,7 @@ const Layout = () => {
                   </Link>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}
@@ -379,6 +405,8 @@ const Layout = () => {
           </div>
         </div>
       </footer>
+
+      <ScrollButtons />
     </div>
   );
 };

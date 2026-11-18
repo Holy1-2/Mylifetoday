@@ -14,6 +14,7 @@ import {
   deleteDoc,
   increment,
   orderBy,
+  getCountFromServer,
 } from 'firebase/firestore';
 import {
   signInWithEmailAndPassword,
@@ -576,6 +577,58 @@ export const addMediaItem = async (item) =>
   });
 
 export const deleteMediaItem = async (id) => deleteDoc(doc(db, 'media', id));
+
+export const getMediaItemById = async (id) => {
+  if (!id) return null;
+  try {
+    const snap = await getDoc(doc(db, 'media', id));
+    if (!snap.exists()) return null;
+    const item = { id: snap.id, ...snap.data() };
+    if (item.status && item.status !== 'published') return null;
+    return item;
+  } catch (err) {
+    console.warn('Media item load failed:', err?.message);
+    return null;
+  }
+};
+
+const mediaLikesCollection = collection(db, 'mediaLikes');
+
+export const getMediaLikeCount = async (mediaId) => {
+  if (!mediaId) return 0;
+  try {
+    const snap = await getCountFromServer(
+      query(mediaLikesCollection, where('mediaId', '==', mediaId))
+    );
+    return snap.data().count;
+  } catch {
+    return 0;
+  }
+};
+
+export const getMediaLiked = async (mediaId, uid) => {
+  if (!mediaId || !uid) return false;
+  try {
+    const snap = await getDoc(doc(db, 'mediaLikes', `${mediaId}_${uid}`));
+    return snap.exists();
+  } catch {
+    return false;
+  }
+};
+
+export const setMediaLiked = async (mediaId, uid, liked) => {
+  if (!mediaId || !uid) return;
+  const likeId = `${mediaId}_${uid}`;
+  if (liked) {
+    await setDoc(doc(db, 'mediaLikes', likeId), {
+      mediaId,
+      uid,
+      createdAt: serverTimestamp(),
+    });
+  } else {
+    await deleteDoc(doc(db, 'mediaLikes', likeId));
+  }
+};
 
 /* --------------------------- Verse of the day --------------------------- */
 

@@ -1,11 +1,76 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
 
-const SEOHead = ({ title = "", description = "", keywords = "", article = null, lang = "rw", url }) => {
-  const siteName = "Kubana n'Imana Buri Munsi";
-  const siteUrl = "https://kubananimanaburimunsi.vercel.app";
+const SITE_NAME = "Kubanan'Imana";
+const SITE_URL = "https://kubananimanaburimunsi.vercel.app";
+const LOCALES = ["rw", "en", "sw", "fr"];
+const OG_LOCALES = { rw: "rw_RW", en: "en_US", fr: "fr_FR", sw: "sw_KE" };
 
-  const defaultTitle = "Kubana n'Imana Buri Munsi";
+const plainText = (value) =>
+  String(value || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const toIso = (value) => {
+  if (!value) return undefined;
+  const date =
+    typeof value?.toDate === "function"
+      ? value.toDate()
+      : typeof value?.seconds === "number"
+        ? new Date(value.seconds * 1000)
+        : new Date(value);
+  return isNaN(date.getTime()) ? undefined : date.toISOString();
+};
+
+const upsertMeta = (attribute, key, content) => {
+  const existing = document.head.querySelector(`meta[${attribute}="${key}"]`);
+  if (content === undefined || content === null || content === "") {
+    if (existing?.getAttribute("data-seo") === "true") existing.remove();
+    return;
+  }
+  if (existing) {
+    existing.setAttribute("content", content);
+    return;
+  }
+  const meta = document.createElement("meta");
+  meta.setAttribute(attribute, key);
+  meta.setAttribute("content", content);
+  meta.setAttribute("data-seo", "true");
+  document.head.appendChild(meta);
+};
+
+const upsertLink = (rel, href, hreflang = "") => {
+  const selector = hreflang
+    ? `link[rel="${rel}"][hreflang="${hreflang}"]`
+    : `link[rel="${rel}"]`;
+  let link = document.head.querySelector(selector);
+  if (!link) {
+    link = document.createElement("link");
+    link.setAttribute("rel", rel);
+    if (hreflang) link.setAttribute("hreflang", hreflang);
+    link.setAttribute("data-seo", "true");
+    document.head.appendChild(link);
+  }
+  link.setAttribute("href", href);
+};
+
+const upsertJsonLd = (data) => {
+  let script = document.head.querySelector('script[type="application/ld+json"]');
+  if (!script) {
+    script = document.createElement("script");
+    script.setAttribute("type", "application/ld+json");
+    script.setAttribute("data-seo", "true");
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(data);
+};
+
+const SEOHead = ({ title = "", description = "", keywords = "", article = null, lang = "rw", url = "", image = "", robots = "index, follow" }) => {
+  const defaultTitle = "Kubanan'Imana — Muri Kristo Honyine";
   const defaultDesc =
     "Inyigisho n'ubuyobozi bushingiye ku Ijambo ry'Imana ku buzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y'umutima, n'iterambere mu by'umwuka.";
   const defaultKeywords =
@@ -13,12 +78,12 @@ const SEOHead = ({ title = "", description = "", keywords = "", article = null, 
 
   const pageTitle =
     typeof article?.title?.[lang] === "string" && article.title[lang]
-      ? `${article.title[lang]} | ${siteName}`
+      ? `${article.title[lang]} | ${SITE_NAME}`
       : title || defaultTitle;
 
   const pageDesc =
     typeof article?.situation?.[lang] === "string" && article.situation[lang]
-      ? article.situation[lang].replace(/<[^>]+>/g, "").slice(0, 300)
+      ? plainText(article.situation[lang]).slice(0, 300)
       : description || defaultDesc;
 
   const pageKeywords = article?.metaDescription?.keywords || keywords || defaultKeywords;
@@ -26,105 +91,86 @@ const SEOHead = ({ title = "", description = "", keywords = "", article = null, 
     (typeof article?.featuredImage === "string" && article.featuredImage) ||
     (typeof article?.image === "string" && article.image) ||
     "";
-  const pageImage = articleImage
-    ? /^https?:\/\//.test(articleImage)
-      ? articleImage
-      : `${siteUrl}${articleImage.startsWith("/") ? "" : "/"}${articleImage}`
-    : `${siteUrl}/og.png`;
+  const rawImage = image || articleImage;
+  const pageImage = rawImage
+    ? /^https?:\/\//.test(rawImage)
+      ? rawImage
+      : `${SITE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`
+    : `${SITE_URL}/og.png`;
 
-  const slug = typeof article?.slug === "string" && article.slug ? article.slug : "";
-  const pageUrl = url || (slug ? `${siteUrl}/${lang}/articles/${slug}` : siteUrl);
+  const browserPath = typeof window !== "undefined" ? window.location.pathname : "";
+  // Same article/media/verse path in every language (never per-document ids).
+  const pathSuffix = browserPath.replace(/^\/(rw|en|sw|fr)(?=\/|$)/, "");
+  const pageUrl = url || `${SITE_URL}/${lang}${pathSuffix}`;
 
-  const ogLocaleMap = {
-    rw: "rw_RW",
-    en: "en_US",
-    fr: "fr_FR",
-    sw: "sw_KE",
-  };
-  const ogLocale = ogLocaleMap[lang] || "en_US";
+  const ogLocale = OG_LOCALES[lang] || "en_US";
 
   const isoDate =
-    (article?.publishDate && new Date(article.publishDate).toISOString()) ||
-    (article?.createdAt?.seconds && new Date(article.createdAt.seconds * 1000).toISOString()) ||
-    (typeof article?.date === "string" ? new Date(article.date).toISOString() : undefined);
+    toIso(article?.publishDate) ||
+    toIso(article?.createdAt) ||
+    (typeof article?.date === "string" ? toIso(article.date) : undefined);
 
   const metadata = article?.metaDescription || {};
+  const author = metadata.author || SITE_NAME;
 
-  return (
-    <Helmet>
-      <html lang={lang} />
-      <title>{pageTitle}</title>
+  useEffect(() => {
+    if (typeof document === "undefined") return;
 
-      {/* Basic SEO */}
-      <meta name="description" content={pageDesc} />
-      <meta name="keywords" content={pageKeywords} />
-      <meta name="robots" content="index, follow" />
-      <meta name="author" content={metadata.author || "Topray"} />
-      <link rel="canonical" href={pageUrl} />
+    document.title = pageTitle;
+    document.documentElement.lang = lang;
 
-      {/* Open Graph */}
-      <meta property="og:title" content={pageTitle} />
-      <meta property="og:description" content={pageDesc} />
-      <meta property="og:image" content={pageImage} />
-      <meta property="og:url" content={pageUrl} />
-      <meta property="og:type" content={article ? "article" : "website"} />
-      <meta property="og:site_name" content={siteName} />
-      <meta property="og:locale" content={ogLocale} />
-      {article && (
-        <meta property="article:published_time" content={isoDate} />
-      )}
+    upsertMeta("name", "description", pageDesc);
+    upsertMeta("name", "keywords", pageKeywords);
+    upsertMeta("name", "robots", robots);
+    upsertMeta("name", "author", author);
 
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={pageTitle} />
-      <meta name="twitter:description" content={pageDesc} />
-      <meta name="twitter:image" content={pageImage} />
+    upsertMeta("property", "og:title", pageTitle);
+    upsertMeta("property", "og:description", pageDesc);
+    upsertMeta("property", "og:image", pageImage);
+    upsertMeta("property", "og:url", pageUrl);
+    upsertMeta("property", "og:type", article ? "article" : "website");
+    upsertMeta("property", "og:site_name", SITE_NAME);
+    upsertMeta("property", "og:locale", ogLocale);
 
-      {/* Hreflang for multilingual SEO - uses slugs, not document IDs */}
-      {article && slug && (
-        <>
-          <link rel="alternate" hreflang="rw" href={`${siteUrl}/rw/articles/${slug}`} />
-          <link rel="alternate" hreflang="en" href={`${siteUrl}/en/articles/${slug}`} />
-          <link rel="alternate" hreflang="fr" href={`${siteUrl}/fr/articles/${slug}`} />
-          <link rel="alternate" hreflang="sw" href={`${siteUrl}/sw/articles/${slug}`} />
-          <link rel="alternate" hreflang="x-default" href={`${siteUrl}/rw/articles/${slug}`} />
-        </>
-      )}
+    document.head.querySelector('meta[property="article:published_time"]')?.remove();
+    if (article && isoDate) {
+      upsertMeta("property", "article:published_time", isoDate);
+    }
 
-      {/* Structured Data (Schema.org) */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": article ? "NewsArticle" : "WebSite",
-          "name": siteName,
-          "headline": pageTitle,
-          "description": pageDesc,
-          "image": pageImage,
-          "url": pageUrl,
-          "author": {
-            "@type": "Person",
-            "name": metadata.author || "Topray",
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": siteName,
-            "logo": {
-              "@type": "ImageObject",
-              "url": `${siteUrl}/logo.png`,
-            },
-          },
-          "datePublished": isoDate,
-          "dateModified": isoDate,
-          "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": pageUrl,
-          },
-          "inLanguage": lang,
-          "keywords": typeof pageKeywords === "string" ? pageKeywords.split(",") : [],
-        })}
-      </script>
-    </Helmet>
-  );
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", pageTitle);
+    upsertMeta("name", "twitter:description", pageDesc);
+    upsertMeta("name", "twitter:image", pageImage);
+
+    upsertLink("canonical", pageUrl);
+    for (const code of LOCALES) {
+      upsertLink("alternate", `${SITE_URL}/${code}${pathSuffix}`, code);
+    }
+    upsertLink("alternate", `${SITE_URL}/rw${pathSuffix}`, "x-default");
+
+    upsertJsonLd({
+      "@context": "https://schema.org",
+      "@type": article ? "NewsArticle" : "WebSite",
+      name: SITE_NAME,
+      headline: pageTitle,
+      description: pageDesc,
+      image: pageImage,
+      url: pageUrl,
+      author: { "@type": "Person", name: author },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+      },
+      datePublished: isoDate,
+      dateModified: isoDate,
+      mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+      inLanguage: lang,
+      keywords: typeof pageKeywords === "string" ? pageKeywords.split(",") : [],
+    });
+  });
+
+  return null;
 };
 
 export default SEOHead;

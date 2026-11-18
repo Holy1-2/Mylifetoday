@@ -27,6 +27,7 @@ const SITEMAP_PATHS = [
   path.resolve('./dist/sitemap.xml'),
 ];
 const CACHE_PATH = path.resolve('./data/articles-cache.json');
+const MEDIA_CACHE_PATH = path.resolve('./data/media-cache.json');
 const DIST_DIR = path.resolve('./dist');
 
 const STATIC_ROUTES = [
@@ -121,7 +122,7 @@ const pick = (record, lang) => {
   return record[lang] || record.en || record.rw || '';
 };
 
-const buildSitemapXml = (articles) => {
+const buildSitemapXml = (articles, media = []) => {
   const today = isoDay(new Date());
 
   const staticUrls = STATIC_ROUTES.flatMap((route) =>
@@ -158,10 +159,27 @@ ${alternates}
     })
   );
 
+  const mediaUrls = media.flatMap((item) =>
+    LOCALES.map((locale) => {
+      const alternates = LOCALES.map(
+        (alt) =>
+          `    <xhtml:link rel="alternate" hreflang="${alt}" href="${BASE_URL}/${alt}/media/${encodeURIComponent(item.id)}" />`
+      ).join('\n');
+      return `  <url>
+    <loc>${BASE_URL}/${locale}/media/${encodeURIComponent(item.id)}</loc>
+    <lastmod>${item.lastMod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+${alternates}
+    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/${DEFAULT_LOCALE}/media/${encodeURIComponent(item.id)}" />
+  </url>`;
+    })
+  );
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${[...staticUrls, ...articleUrls].join('\n')}
+${[...staticUrls, ...articleUrls, ...mediaUrls].join('\n')}
 </urlset>`;
 };
 
@@ -176,7 +194,7 @@ const writeSitemap = (xml) => {
 
 /* ------------------------------ prerender ------------------------------ */
 
-const buildHead = ({ title, description, url, alternates, image, type, article }) => {
+const buildHead = ({ title, description, url, alternates, image, type, article, media, robots = 'index, follow' }) => {
   const links = alternates
     .map((alt) => `<link rel="alternate" hreflang="${alt.lang}" href="${alt.href}" />`)
     .join('\n    ');
@@ -199,16 +217,36 @@ const buildHead = ({ title, description, url, alternates, image, type, article }
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': url },
       }
-    : {
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        name: SITE_NAME,
-        url: BASE_URL,
-        inLanguage: 'rw',
-      };
+    : media
+      ? {
+          '@context': 'https://schema.org',
+          '@type': media.schemaType,
+          name: title,
+          description,
+          url,
+          ...(image ? { thumbnailUrl: image } : {}),
+          ...(media.contentUrl ? { contentUrl: media.contentUrl } : {}),
+          ...(media.embedUrl ? { embedUrl: media.embedUrl } : {}),
+          ...(media.uploadDate ? { uploadDate: media.uploadDate } : {}),
+          ...(media.author ? { author: { '@type': 'Person', name: media.author } } : {}),
+          publisher: {
+            '@type': 'Organization',
+            name: SITE_NAME,
+            logo: { '@type': 'ImageObject', url: `${BASE_URL}/logo.png` },
+          },
+          mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+        }
+      : {
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: SITE_NAME,
+          url: BASE_URL,
+          inLanguage: 'rw',
+        };
 
   return `    <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}" />
+    <meta name="robots" content="${escapeHtml(robots)}" />
     <link rel="canonical" href="${escapeHtml(url)}" />
     ${links}
     <link rel="alternate" hreflang="x-default" href="${escapeHtml(
@@ -237,15 +275,47 @@ const SSR_STYLES = `<style>
   #root .ssr-page blockquote{margin:20px 0;padding:16px 20px;background:#1c1917;color:#fafaf9;border-radius:16px;font-family:Raleway,system-ui,sans-serif}
   #root .ssr-page a{color:#b45309}
   #root .ssr-page .ssr-nav{padding:16px 20px;border-bottom:1px solid #e7e5e4;font-size:14px}
+  #root .ssr-page .ssr-list{padding-left:20px;margin:0 0 18px}
+  #root .ssr-page .ssr-list li{margin:0 0 8px}
 </style>`;
 
-const articleHtml = (article, lang) => {
+const HOME_LABELS = {
+  rw: { home: 'Ahabanza', latest: 'Inyigisho nshya', media: 'Media', verse: "Ijambo ry'umunsi", related: 'Ingingo zihuye' },
+  en: { home: 'Home', latest: 'Latest articles', media: 'Media', verse: 'Verse of the Day', related: 'Related articles' },
+  sw: { home: 'Nyumbani', latest: 'Makala mpya', media: 'Media', verse: 'Neno la Leo', related: 'Makala yanayohusiana' },
+  fr: { home: 'Accueil', latest: 'Derniers articles', media: 'Médias', verse: 'Verset du jour', related: 'Articles similaires' },
+};
+
+const labelsFor = (lang) => HOME_LABELS[lang] || HOME_LABELS.en;
+
+const articleUrl = (lang, slug) => `${BASE_URL}/${lang}/articles/${encodeURI(slug)}`;
+
+const articleLink = (lang, article) =>
+  `<a href="${articleUrl(lang, article.slug)}">${escapeHtml(pick(article.title, lang) || article.slug)}</a>`;
+
+const siteNav = (lang, active = '') => {
+  const labels = labelsFor(lang);
+  const items = [
+    { path: '', label: labels.home },
+    { path: '/media', label: labels.media },
+    { path: '/verse', label: labels.verse },
+  ];
+  return `<div class="ssr-nav">${items
+    .map((item) =>
+      item.path === active
+        ? `<strong>${escapeHtml(item.label)}</strong>`
+        : `<a href="${BASE_URL}/${lang}${item.path}">${escapeHtml(item.label)}</a>`
+    )
+    .join(' · ')}</div>`;
+};
+
+const articleHtml = (article, lang, related = []) => {
   const labels = {
-    rw: { teaching: 'Inyigisho', read: 'Soma iyi ngingo' },
-    en: { teaching: 'Teaching', read: 'Read this article' },
-    sw: { teaching: 'Mafundisho', read: 'Soma makala hii' },
-    fr: { teaching: 'Enseignement', read: 'Lire cet article' },
-  }[lang] || { teaching: 'Teaching', read: 'Read this article' };
+    rw: { teaching: 'Inyigisho' },
+    en: { teaching: 'Teaching' },
+    sw: { teaching: 'Mafundisho' },
+    fr: { teaching: 'Enseignement' },
+  }[lang] || { teaching: 'Teaching' };
 
   const title = pick(article.title, lang);
   const situation = stripHtml(pick(article.situation, lang));
@@ -253,7 +323,7 @@ const articleHtml = (article, lang) => {
   const verse = stripHtml(pick(article.verse, lang));
 
   return `<div class="ssr-page">
-  <div class="ssr-nav"><strong>${escapeHtml(SITE_NAME)}</strong></div>
+  ${siteNav(lang)}
   <article>
     <p class="ssr-kicker">${escapeHtml(article.category || '')}</p>
     <h1>${escapeHtml(title)}</h1>
@@ -262,15 +332,120 @@ const articleHtml = (article, lang) => {
     ${verse ? `<blockquote>${escapeHtml(verse)}</blockquote>` : ''}
     <h2>${escapeHtml(labels.teaching)}</h2>
     <p>${escapeHtml(stripHtml(teaching))}</p>
-    <p><a href="${BASE_URL}/${lang}/articles/${encodeURI(article.slug)}">${escapeHtml(labels.read)}</a></p>
+    <p><a href="${BASE_URL}/${lang}">${escapeHtml(labelsFor(lang).home)}</a></p>
+  </article>
+  ${
+    related.length
+      ? `<section>
+    <h2>${escapeHtml(labelsFor(lang).related)}</h2>
+    <ul class="ssr-list">
+      ${related.map((item) => `<li>${articleLink(lang, item)}</li>`).join('\n      ')}
+    </ul>
+  </section>`
+      : ''
+  }
+</div>`;
+};
+
+const youtubeId = (url) => {
+  if (!url) return '';
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, '');
+    if (host === 'youtu.be') return parsed.pathname.split('/').filter(Boolean)[0] || '';
+    if (host.endsWith('youtube.com') || host === 'youtube-nocookie.com') {
+      if (parsed.pathname === '/watch') return parsed.searchParams.get('v') || '';
+      const parts = parsed.pathname.split('/').filter(Boolean);
+      if (['embed', 'shorts', 'live', 'v'].includes(parts[0])) return parts[1] || '';
+    }
+    return '';
+  } catch {
+    const match = url.match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{6,})/);
+    return match ? match[1] : '';
+  }
+};
+
+const MEDIA_SCHEMA = {
+  youtube: 'VideoObject',
+  video: 'VideoObject',
+  audio: 'AudioObject',
+  image: 'ImageObject',
+  quote: 'Article',
+};
+
+const mediaPreview = (item) => {
+  if (item.thumbnail) return item.thumbnail;
+  const id = youtubeId(item.url);
+  if (id) return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  if (item.type === 'image' || /\.(mp4|webm|ogv|mov)(\?.*)?$/i.test(item.url || '')) return item.url || '';
+  return '';
+};
+
+const mediaHtml = (item, lang) => {
+  const labels = labelsFor(lang);
+  const title = item.title;
+  const preview = mediaPreview(item);
+  const ytId = youtubeId(item.url);
+
+  let embed = '';
+  if (item.type === 'quote') {
+    embed = item.text ? `<blockquote>${escapeHtml(item.text)}</blockquote>` : '';
+  } else if (item.type === 'image' && preview) {
+    embed = `<p><img src="${escapeHtml(preview)}" alt="${escapeHtml(title)}" /></p>`;
+  } else if (ytId) {
+    embed = `<p><iframe width="100%" height="380" src="https://www.youtube-nocookie.com/embed/${escapeHtml(
+      ytId
+    )}" title="${escapeHtml(title)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>`;
+  } else if (item.type === 'video' && item.url) {
+    embed = `<p><video controls preload="metadata" playsinline src="${escapeHtml(item.url)}"${
+      preview ? ` poster="${escapeHtml(preview)}"` : ''
+    }></video></p>`;
+  } else if (item.url) {
+    embed = `<p><audio controls preload="metadata" src="${escapeHtml(item.url)}"></audio></p>`;
+  }
+
+  return `<div class="ssr-page">
+  ${siteNav(lang, '/media')}
+  <article>
+    <p class="ssr-kicker">${escapeHtml(item.category || item.type)}</p>
+    <h1>${escapeHtml(title)}</h1>
+    ${item.author ? `<p><strong>${escapeHtml(item.author)}</strong></p>` : ''}
+    ${embed}
+    ${item.type !== 'quote' && item.text ? `<p>${escapeHtml(item.text)}</p>` : ''}
+    <p><a href="${BASE_URL}/${lang}/media">${escapeHtml(labels.media)}</a></p>
   </article>
 </div>`;
 };
 
-const staticHtml = (lang, title, description) => `<div class="ssr-page">
-  <div class="ssr-nav"><strong>${escapeHtml(SITE_NAME)}</strong></div>
+const normalizeMedia = (id, data) => {
+  const created = toDate(data.createdAt) || toDate(data.updatedAt) || new Date();
+  const updated = toDate(data.updatedAt) || created;
+  return {
+    id,
+    type: data.type || 'quote',
+    title: String(data.title || '').trim() || 'Media',
+    url: data.url || '',
+    text: String(data.text || '').trim(),
+    author: data.author || '',
+    thumbnail: data.thumbnail || '',
+    category: data.category || '',
+    createdAt: isoDay(created),
+    lastMod: isoDay(updated),
+  };
+};
+
+const staticHtml = (lang, title, description, latest = [], active = '') => `<div class="ssr-page">
+  ${siteNav(lang, active)}
   <h1>${escapeHtml(title)}</h1>
   <p>${escapeHtml(description)}</p>
+  ${
+    latest.length
+      ? `<h2>${escapeHtml(labelsFor(lang).latest)}</h2>
+  <ul class="ssr-list">
+    ${latest.map((article) => `<li>${articleLink(lang, article)}</li>`).join('\n    ')}
+  </ul>`
+      : ''
+  }
   <p><a href="${BASE_URL}/${lang}">${escapeHtml(SITE_NAME)}</a></p>
 </div>`;
 
@@ -279,6 +454,7 @@ const injectPage = (template, head, body, lang = DEFAULT_LOCALE) =>
     .replace(/<html\s+lang="[^"]*"/i, `<html lang="${lang}"`)
     .replace(/<title>[\s\S]*?<\/title>/i, '')
     .replace(/<meta\s+name="description"[^>]*>/gi, '')
+    .replace(/<meta\s+name="robots"[^>]*>/gi, '')
     .replace(/<link\s+rel="canonical"[^>]*>/gi, '')
     .replace(/<link\s+rel="alternate"[^>]*>/gi, '')
     .replace(/<meta\s+property="og:[^"]*"[^>]*>/gi, '')
@@ -300,16 +476,16 @@ const absoluteImage = (image) => {
     : `${BASE_URL}${image.startsWith('/') ? '' : '/'}${image}`;
 };
 
-const prerender = (template, articles) => {
+const prerender = (template, articles, media = []) => {
   let pages = 0;
   const today = new Date().toISOString();
 
-  const renderStatic = (route, title, description) => {
+  const renderStatic = (route, title, description, latest = []) => {
     for (const lang of LOCALES) {
       const url = `${BASE_URL}/${lang}${route}`;
       const alternates = LOCALES.map((alt) => ({ lang: alt, href: `${BASE_URL}/${alt}${route}` }));
       const head = buildHead({
-        title: `${title} | ${SITE_NAME}`,
+        title: title === SITE_NAME ? `${SITE_NAME} — Muri Kristo Honyine` : `${title} | ${SITE_NAME}`,
         description,
         url,
         alternates,
@@ -317,7 +493,7 @@ const prerender = (template, articles) => {
       });
       writePage(
         path.join(lang, route ? `${route.slice(1)}.html` : 'index.html'),
-        injectPage(template, head, staticHtml(lang, title, description), lang)
+        injectPage(template, head, staticHtml(lang, title, description, latest, route), lang)
       );
       pages += 1;
     }
@@ -326,7 +502,8 @@ const prerender = (template, articles) => {
   renderStatic(
     '',
     SITE_NAME,
-    "Inyigisho n'ubuyobozi bushingiye ku Ijambo ry'Imana ku buzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y'umutima n'iterambere mu by'umwuka."
+    "Inyigisho n'ubuyobozi bushingiye ku Ijambo ry'Imana ku buzima bwa buri munsi: umubano, amafaranga, akazi, amahoro y'umutima n'iterambere mu by'umwuka.",
+    articles.slice(0, 12)
   );
   renderStatic('/media', 'Media library', "Videos, audio, images and quote cards from Kubanan'Imana.");
   renderStatic('/verse', 'Verse of the Day', 'A Bible verse chosen for today, shareable as a branded image.');
@@ -341,6 +518,7 @@ const prerender = (template, articles) => {
         description: "Kubanan'Imana — Muri Kristo Honyine",
         url: `${BASE_URL}/${lang}${route}`,
         alternates: LOCALES.map((alt) => ({ lang: alt, href: `${BASE_URL}/${alt}${route}` })),
+        robots: 'noindex, follow',
       });
       writePage(path.join(lang, `${route.slice(1)}.html`), injectPage(template, head, '', lang));
       pages += 1;
@@ -372,10 +550,54 @@ const prerender = (template, articles) => {
           author: article.authorName || article.editor,
         },
       });
+      const sameCategory = articles.filter(
+        (candidate) =>
+          candidate.slug !== article.slug &&
+          article.category &&
+          candidate.category === article.category
+      );
+      const others = articles.filter(
+        (candidate) => candidate.slug !== article.slug && !sameCategory.includes(candidate)
+      );
+      const related = [...sameCategory, ...others].slice(0, 6);
       const safeSlug = String(article.slug).replace(/[\\/:*?"<>|#%]/g, '-');
       writePage(
         path.join(lang, 'articles', `${safeSlug}.html`),
-        injectPage(template, head, articleHtml(article, lang), lang)
+        injectPage(template, head, articleHtml(article, lang, related), lang)
+      );
+      pages += 1;
+    }
+  }
+
+  for (const item of media) {
+    const description =
+      (item.type === 'quote' ? truncate(item.text, 220) : '') ||
+      `${item.title} — ${item.category || item.type} · ${SITE_NAME}`;
+    const preview = absoluteImage(mediaPreview(item)) || `${BASE_URL}/og.png`;
+    const ytId = youtubeId(item.url);
+    for (const lang of LOCALES) {
+      const url = `${BASE_URL}/${lang}/media/${encodeURIComponent(item.id)}`;
+      const head = buildHead({
+        title: `${item.title} | ${SITE_NAME}`,
+        description,
+        url,
+        alternates: LOCALES.map((alt) => ({
+          lang: alt,
+          href: `${BASE_URL}/${alt}/media/${encodeURIComponent(item.id)}`,
+        })),
+        image: preview,
+        type: 'article',
+        media: {
+          schemaType: MEDIA_SCHEMA[item.type] || 'CreativeWork',
+          contentUrl: /^https?:\/\//.test(item.url) ? item.url : '',
+          embedUrl: ytId ? `https://www.youtube-nocookie.com/embed/${ytId}` : '',
+          uploadDate: item.createdAt ? `${item.createdAt}T00:00:00.000Z` : '',
+          author: item.author,
+        },
+      });
+      writePage(
+        path.join(lang, 'media', `${String(item.id).replace(/[\\/:*?"<>|#%]/g, '-')}.html`),
+        injectPage(template, head, mediaHtml(item, lang), lang)
       );
       pages += 1;
     }
@@ -425,25 +647,59 @@ const normalizeArticle = (id, data) => {
   };
 };
 
+const readJsonCache = (file) => {
+  if (!fs.existsSync(file)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf-8'));
+  } catch (error) {
+    console.warn(`⚠️ Cached data invalid (${path.basename(file)}):`, error.message);
+    return null;
+  }
+};
+
+const loadCachedArticles = () => {
+  const cached = readJsonCache(CACHE_PATH);
+  if (!Array.isArray(cached)) return null;
+  return cached.map((entry, index) => normalizeArticle(entry.id || entry.slug || `cached-${index}`, entry));
+};
+
+const loadCachedMedia = () => {
+  const cached = readJsonCache(MEDIA_CACHE_PATH);
+  if (!Array.isArray(cached)) return [];
+  return cached.map((entry, index) => normalizeMedia(entry.id || `cached-media-${index}`, entry));
+};
+
+const mediaForCache = (item) => ({
+  id: item.id,
+  type: item.type,
+  title: item.title,
+  url: item.url,
+  text: item.text,
+  author: item.author,
+  thumbnail: item.thumbnail,
+  category: item.category,
+  createdAt: item.createdAt,
+  lastMod: item.lastMod,
+});
+
 async function generate() {
   const templatePath = path.join(DIST_DIR, 'index.html');
   const template = fs.existsSync(templatePath) ? fs.readFileSync(templatePath, 'utf-8') : null;
 
+  const finish = (articles, media) => {
+    writeSitemap(buildSitemapXml(articles, media));
+    if (template) prerender(template, articles, media);
+    else console.warn('⚠️ dist/index.html not found — run vite build before this script to prerender.');
+  };
+
   if (!firebaseConfig.apiKey) {
     console.warn('⚠️ Firebase API Key is missing.');
-    if (fs.existsSync(CACHE_PATH)) {
-      try {
-        const cached = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf-8'));
-        const articles = cached.map((entry, index) => normalizeArticle(entry.id || entry.slug || `cached-${index}`, entry));
-        writeSitemap(buildSitemapXml(articles));
-        if (template) prerender(template, articles);
-        return;
-      } catch (error) {
-        console.warn('⚠️ Cached articles invalid:', error.message);
-      }
+    const cachedArticles = loadCachedArticles();
+    if (cachedArticles) {
+      finish(cachedArticles, loadCachedMedia());
+      return;
     }
-    writeSitemap(buildSitemapXml([]));
-    if (template) prerender(template, []);
+    finish([], []);
     return;
   }
 
@@ -480,7 +736,26 @@ async function generate() {
     articles.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
 
     console.log(`📚 Found ${articles.length} published articles (${snapshot.size} total).`);
-    writeSitemap(buildSitemapXml(articles));
+
+    let media = [];
+    try {
+      const mediaSnapshot = await getDocs(collection(db, 'media'));
+      mediaSnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (!isPublished(data)) return;
+        media.push(normalizeMedia(docSnap.id, data));
+      });
+      console.log(`🎬 Found ${media.length} published media items (${mediaSnapshot.size} total).`);
+      try {
+        fs.mkdirSync(path.resolve('./data'), { recursive: true });
+        fs.writeFileSync(MEDIA_CACHE_PATH, JSON.stringify(media.map(mediaForCache), null, 2));
+      } catch (error) {
+        console.warn('⚠️ Could not write media cache:', error.message);
+      }
+    } catch (mediaError) {
+      console.warn('⚠️ Media fetch failed:', mediaError.message);
+      media = loadCachedMedia();
+    }
 
     try {
       fs.mkdirSync(path.resolve('./data'), { recursive: true });
@@ -489,24 +764,16 @@ async function generate() {
       console.warn('⚠️ Could not write articles cache:', error.message);
     }
 
-    if (template) prerender(template, articles);
-    else console.warn('⚠️ dist/index.html not found — run vite build before this script to prerender.');
+    finish(articles, media);
   } catch (error) {
     console.error('❌ Firebase fetch failed:', error.message);
-    if (fs.existsSync(CACHE_PATH)) {
-      try {
-        const cached = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf-8'));
-        const articles = cached.map((entry, index) => normalizeArticle(entry.id || entry.slug || `cached-${index}`, entry));
-        writeSitemap(buildSitemapXml(articles));
-        if (template) prerender(template, articles);
-        console.log('✅ Falling back to cached article data.');
-        return;
-      } catch (cacheError) {
-        console.warn('⚠️ Cached articles invalid:', cacheError.message);
-      }
+    const cachedArticles = loadCachedArticles();
+    if (cachedArticles) {
+      finish(cachedArticles, loadCachedMedia());
+      console.log('✅ Falling back to cached article data.');
+      return;
     }
-    writeSitemap(buildSitemapXml([]));
-    if (template) prerender(template, []);
+    finish([], []);
   }
 }
 
