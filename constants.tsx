@@ -612,7 +612,7 @@ Murakaza neza! Mukoresha uru rubuga, mwemera kubahiriza aya mategeko.
 
 3. Inshingano z'Umukoresha
    - Koresha urubuga mu nzira zemewe n'amategeko gusa
-   - Heshima uburenganzira bw'ibihangano
+   - Genzura uburenganzira bw'ibihangano
    - Ntutange ibitekerezo bibi, biteye akaga cyangwa bisebanya
    - Koresha imvugo nziza mu bitekerezo
    - Ntugerageze kwangiza umutekano w'urubuga
