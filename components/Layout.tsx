@@ -79,22 +79,64 @@ const Layout = () => {
     />
   );
 
-  const roundButton =
-    'grid h-10 w-10 place-items-center rounded-full text-gray-700 transition-colors hover:bg-black/[0.06] hover:text-black';
+  const isArticleReading = /^\/[^/]+\/articles\//.test(location.pathname);
+
+  const roundButton = `grid h-10 w-10 place-items-center rounded-full transition-colors ${
+    isArticleReading
+      ? 'text-gray-600 hover:bg-black/[0.06] hover:text-black'
+      : 'text-white/80 hover:bg-white/10 hover:text-white'
+  }`;
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#1a1a1a]">
       {announcement && (
-        <div className="bg-[#0b0b0c] text-white">
+        <div className="border-b border-white/10 bg-[#0b0b0c] text-white">
           <div className="mx-auto max-w-7xl px-4 py-2 text-center text-[10px] font-medium uppercase tracking-[0.2em] sm:text-[11px]">
             {announcement}
           </div>
         </div>
       )}
 
-      <nav className="sticky top-0 z-50 border-b border-black/[0.07] bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-[72px] sm:px-6">
-          <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
+      <nav
+        className={`sticky top-0 z-50 border-b transition-colors ${
+          isArticleReading
+            ? 'border-black/[0.08] bg-white text-[#1a1a1a] shadow-[0_1px_0_rgba(0,0,0,0.03)]'
+            : 'border-white/10 bg-[#0b0b0c] text-white'
+        }`}
+      >
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 sm:h-[88px] sm:px-6">
+          <Link
+            to={`/${lang}`}
+            aria-label={siteName}
+            className="flex min-w-0 items-center transition hover:opacity-75"
+          >
+            <img
+              src="/logo.png"
+              alt={`${siteName} logo`}
+              className={`h-17 w-17 shrink-0 object-contain sm:h-[72px] sm:w-[72px] ${
+                isArticleReading ? 'brightness-0' : 'brightness-0 invert'
+              }`}
+            />
+          </Link>
+
+          <Link to={`/${lang}`} className="min-w-0 max-w-[34vw] text-center sm:max-w-none">
+            <h1
+              className={`truncate text-[14px] font-semibold uppercase leading-none tracking-tight sm:text-xl lg:text-2xl ${
+                isArticleReading ? 'text-[#1a1a1a]' : 'text-white'
+              }`}
+            >
+              {siteName}
+            </h1>
+            <p
+              className={`mt-1 hidden truncate text-[8px] font-medium uppercase tracking-[0.24em] sm:block sm:text-[9px] ${
+                isArticleReading ? 'text-gray-500' : 'text-white/45'
+              }`}
+            >
+              {tagline}
+            </p>
+          </Link>
+
+          <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
@@ -104,18 +146,14 @@ const Layout = () => {
             >
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
-            <Link to={`/${lang}`} className="min-w-0 py-2">
-              <h1 className="truncate text-lg font-semibold uppercase leading-none tracking-tight sm:text-xl lg:text-2xl">
-                {siteName}
-              </h1>
-              <p className="mt-1 truncate text-[9px] font-medium uppercase tracking-[0.26em] text-gray-400">
-                {tagline}
-              </p>
-            </Link>
-          </div>
 
-          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-            <div className="hidden items-center gap-0.5 rounded-full border border-black/10 bg-white p-1 sm:flex">
+            <div
+              className={`hidden items-center gap-0.5 rounded-full border p-1 sm:flex ${
+                isArticleReading
+                  ? 'border-black/10 bg-white'
+                  : 'border-white/15 bg-white/[0.06]'
+              }`}
+            >
               {LANGUAGES.map((l) => {
                 const active = lang === l.code;
                 return (
@@ -125,8 +163,12 @@ const Layout = () => {
                     onClick={() => setLang(l.code)}
                     className={`flex h-8 items-center gap-1.5 rounded-full px-2 text-[9px] font-semibold uppercase tracking-[0.08em] transition-all ${
                       active
-                        ? 'bg-[#f1f1f3] text-[#1a1a1a] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]'
-                        : 'text-gray-500 hover:bg-black/[0.04] hover:text-[#1a1a1a]'
+                        ? isArticleReading
+                          ? 'bg-[#f1f1f3] text-[#1a1a1a] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]'
+                          : 'bg-white text-[#0b0b0c] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]'
+                        : isArticleReading
+                          ? 'text-gray-500 hover:bg-black/[0.04] hover:text-[#1a1a1a]'
+                          : 'text-white/60 hover:bg-white/10 hover:text-white'
                     }`}
                     aria-label={`Switch to ${l.label}`}
                   >
@@ -139,7 +181,11 @@ const Layout = () => {
 
             <Link
               to={`/${lang}/search`}
-              className={`${roundButton} bg-[#f4f4f5] hover:bg-[#1a1a1a] hover:text-white`}
+              className={`${roundButton} ${
+                isArticleReading
+                  ? 'bg-[#f4f4f5] hover:bg-[#1a1a1a] hover:text-white'
+                  : 'bg-white/[0.08] hover:bg-white hover:text-[#0b0b0c]'
+              }`}
               aria-label={t('search')}
             >
               <Search size={19} />
@@ -149,7 +195,11 @@ const Layout = () => {
               <Link
                 to={`/${lang}/account`}
                 aria-label={t('account')}
-                className="h-10 w-10 overflow-hidden rounded-full bg-[#f4f4f5] ring-2 ring-white transition hover:ring-black/20"
+                className={`h-10 w-10 overflow-hidden rounded-full ring-2 transition ${
+                  isArticleReading
+                    ? 'bg-[#f4f4f5] ring-white hover:ring-black/20'
+                    : 'bg-white/10 ring-white/20 hover:ring-white/60'
+                }`}
               >
                 <UserAvatar user={user} className="h-full w-full" />
               </Link>
@@ -157,7 +207,11 @@ const Layout = () => {
               <Link
                 to={`/${lang}/signin`}
                 aria-label={t('signIn')}
-                className="hidden h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-black/40 sm:flex"
+                className={`hidden h-10 items-center gap-2 rounded-full border px-4 text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors sm:flex ${
+                  isArticleReading
+                    ? 'border-black/10 text-gray-700 hover:border-black/40 hover:text-black'
+                    : 'border-white/20 text-white/85 hover:border-white/60 hover:text-white'
+                }`}
               >
                 <UserRound size={14} />
                 {t('signIn')}
@@ -167,15 +221,22 @@ const Layout = () => {
         </div>
 
         {menuOpen && (
-          <div className="fixed inset-0 z-[70] flex flex-col bg-white sm:absolute sm:inset-auto sm:left-0 sm:right-0 sm:top-full sm:z-50 sm:block sm:bg-transparent sm:px-4 sm:pt-2">
+          <div className="fixed inset-0 z-[70] flex flex-col bg-white text-[#1a1a1a] sm:absolute sm:inset-auto sm:left-0 sm:right-0 sm:top-full sm:z-50 sm:block sm:bg-transparent sm:px-4 sm:pt-2">
             <div className="flex items-center justify-between border-b border-black/[0.07] px-4 py-3 sm:hidden">
-              <Link to={`/${lang}`} className="min-w-0" onClick={() => setMenuOpen(false)}>
-                <p className="truncate text-base font-semibold uppercase leading-none tracking-tight">
-                  {siteName}
-                </p>
-                <p className="mt-1 truncate text-[8px] font-medium uppercase tracking-[0.24em] text-gray-400">
-                  {tagline}
-                </p>
+              <Link to={`/${lang}`} className="flex min-w-0 items-center gap-2.5" onClick={() => setMenuOpen(false)}>
+                <img
+                  src="/logo-mark.png"
+                  alt={`${siteName} logo`}
+                  className="h-12 w-12 shrink-0 object-contain brightness-0"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-base font-semibold uppercase leading-none tracking-tight">
+                    {siteName}
+                  </p>
+                  <p className="mt-1 truncate text-[8px] font-medium uppercase tracking-[0.24em] text-gray-400">
+                    {tagline}
+                  </p>
+                </div>
               </Link>
               <button
                 type="button"
