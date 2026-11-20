@@ -133,6 +133,28 @@ export interface SiteSettings {
   defaultLang?: Language;
 }
 
+export interface QuizQuestion {
+  id: string;
+  text: string;
+  options: string[];
+  correctIndex: number;
+  reference?: string;
+  explanation?: string;
+  active?: boolean;
+  status?: string;
+  createdAt?: any;
+}
+
+export interface QuizAnswer {
+  id?: string;
+  questionId: string;
+  userName: string;
+  userId?: string | null;
+  answerIndex: number;
+  isCorrect?: boolean;
+  createdAt?: any;
+}
+
 export interface Translations {
   siteName: Record<Language, string>;
   tagline: Record<Language, string>;

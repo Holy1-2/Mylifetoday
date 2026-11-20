@@ -7,6 +7,7 @@ import {
   Home,
   Instagram,
   Facebook,
+  HelpCircle,
   Mail,
   Menu,
   MessageCircle,
@@ -24,6 +25,7 @@ import { getSiteSettings } from '../services/firebaseService';
 import UserAvatar from './UserAvatar';
 import NewsletterForm from './NewsletterForm';
 import ScrollButtons from './ScrollButtons';
+import QuizModal from './QuizModal';
 
 const navItems = [
   { key: 'home', to: '' },
@@ -268,6 +270,7 @@ const Layout = () => {
                       { to: `/${lang}/media`, label: t('media'), icon: MonitorPlay },
                       { to: `/${lang}/verse`, label: t('verseOfDay'), icon: Sparkles },
                       { to: `/${lang}/journal`, label: t('journal'), icon: Heart },
+                      { to: `/${lang}/quiz`, label: t('quiz'), icon: HelpCircle },
                       { to: `/${lang}/search`, label: t('search'), icon: Search },
                       { to: `/${lang}/donate`, label: t('donate'), icon: DollarSign },
                     ].map(({ to, label, icon: Icon, end }) => (
@@ -401,6 +404,7 @@ const Layout = () => {
                 { to: `/${lang}/media`, label: t('media') },
                 { to: `/${lang}/verse`, label: t('verseOfDay') },
                 { to: `/${lang}/journal`, label: t('journal') },
+                { to: `/${lang}/quiz`, label: t('quiz') },
                 { to: `/${lang}/search`, label: t('search') },
               ].map(({ to, label }) => (
                 <Link key={to} to={to} className="text-sm font-bold uppercase hover:text-red-500">
@@ -467,6 +471,7 @@ const Layout = () => {
         </div>
       </footer>
 
+      <QuizModal />
       <ScrollButtons />
     </div>
   );

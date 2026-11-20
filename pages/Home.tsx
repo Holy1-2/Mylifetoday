@@ -8,6 +8,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { pickLiveVerse } from '../utils/verseOfDay';
 import { mediaPreviewImage } from '../utils/media';
 import ArticleCard from '../components/ArticleCard';
+import CategoryCarousel from '../components/CategoryCarousel';
 import NewsletterForm from '../components/NewsletterForm';
 import SEOHead from '../components/SEOHead';
 
@@ -204,6 +205,10 @@ const Home = () => {
               </div>
             </aside>
           </div>
+        )}
+
+        {!loading && (
+          <CategoryCarousel counts={counts} />
         )}
 
         {!loading && media.length > 0 && (

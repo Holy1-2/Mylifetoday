@@ -379,6 +379,31 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 }
 
+@keyframes quiz-gradient-drift {
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 18% 6%;
+  }
+}
+
+/* Faint red glow that fades into the black quiz panel. */
+.quiz-gradient {
+  background:
+    radial-gradient(
+      120% 95% at 6% -8%,
+      rgba(220, 38, 38, 0.42) 0%,
+      rgba(153, 27, 27, 0.18) 32%,
+      rgba(24, 24, 27, 0.05) 52%,
+      rgba(11, 11, 12, 0) 70%
+    ),
+    linear-gradient(180deg, rgba(69, 10, 10, 0.38) 0%, rgba(11, 11, 12, 0.12) 45%, rgba(11, 11, 12, 0) 100%);
+  background-size: 130% 130%;
+  animation: quiz-gradient-drift 18s ease-in-out infinite;
+}
+
 .animate-in {
   animation: anim-pop-in 0.3s ease-out both;
 }

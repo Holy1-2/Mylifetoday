@@ -16,6 +16,7 @@ import JournalPage from './pages/JournalPage';
 import AuthPage from './pages/AuthPage';
 import AccountPage from './pages/AccountPage';
 import StaticPage from './pages/StaticPage';
+import QuizPage from './pages/QuizPage';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -75,6 +76,7 @@ const AppRoutes = () => (
         <Route path="media/:id" element={<MediaDetailPage />} />
         <Route path="verse" element={<VersePage />} />
         <Route path="journal" element={<JournalPage />} />
+        <Route path="quiz" element={<QuizPage />} />
         <Route path="account" element={<AccountPage />} />
         <Route path="signin" element={<AuthPage mode="signin" />} />
         <Route path="signup" element={<AuthPage mode="signup" />} />

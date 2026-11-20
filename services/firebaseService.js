@@ -356,6 +356,82 @@ export const getArticlesByCategory = (category, lastDoc = null, itemsPerPage = n
 
 export const deleteArticle = async (id) => deleteDoc(doc(db, 'articles', id));
 
+/* ------------------------------ Bible Quiz ----------------------------- */
+
+export const quizQuestionsCollection = collection(db, 'quizQuestions');
+export const quizAnswersCollection = collection(db, 'quizAnswers');
+
+const isActiveQuestion = (question) =>
+  question.active !== false &&
+  (!question.status || ['active', 'published'].includes(question.status));
+
+const withQuizTimeout = (promise, ms = 7000) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Quiz request timed out')), ms)
+    ),
+  ]);
+
+export const getQuizQuestions = async (max = 120) => {
+  try {
+    const snapshot = await withQuizTimeout(getDocs(query(quizQuestionsCollection, limit(max))));
+    return snapshot.docs
+      .map((d) => {
+        const data = d.data();
+        return {
+          ...data,
+          id: d.id,
+          text: String(data.text || ''),
+          options: Array.isArray(data.options) ? data.options.map((o) => String(o ?? '')) : [],
+          correctIndex: Number(data.correctIndex) || 0,
+        };
+      })
+      .filter((q) => isActiveQuestion(q) && q.text && q.options.length >= 2)
+      .sort((a, b) => articleSortTime(a) - articleSortTime(b));
+  } catch (err) {
+    console.warn('Quiz questions load failed:', err?.message);
+    return [];
+  }
+};
+
+export const getQuizAnswers = async (max = 500) => {
+  try {
+    const snapshot = await withQuizTimeout(getDocs(query(quizAnswersCollection, limit(max))));
+    return snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => articleSortTime(b) - articleSortTime(a));
+  } catch (err) {
+    console.warn('Quiz answers load failed:', err?.message);
+    return [];
+  }
+};
+
+export const submitQuizAnswer = async ({
+  questionId,
+  questionText = '',
+  userName,
+  userId = null,
+  answerIndex,
+  isCorrect,
+}) => {
+  if (!questionId) throw new Error('Missing question id');
+  const cleanName = String(userName || '').trim().slice(0, 80);
+  if (!cleanName) throw new Error('Name is required');
+  const index = Number(answerIndex);
+  if (!Number.isInteger(index) || index < 0) throw new Error('Invalid answer');
+
+  return addDoc(quizAnswersCollection, {
+    questionId,
+    questionText: String(questionText || '').slice(0, 300),
+    userName: cleanName,
+    userId,
+    answerIndex: index,
+    isCorrect: Boolean(isCorrect),
+    createdAt: serverTimestamp(),
+  });
+};
+
 /* ---------------------------- Subscriptions --------------------------- */
 
 export const addSubscription = async (email, name = '') => {
