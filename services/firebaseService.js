@@ -373,9 +373,26 @@ const withQuizTimeout = (promise, ms = 7000) =>
     ),
   ]);
 
+const loadQuizWithRetry = async (load, attempts = 2) => {
+  let lastError;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await withQuizTimeout(load());
+    } catch (err) {
+      lastError = err;
+      if (attempt < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 900));
+      }
+    }
+  }
+  throw lastError;
+};
+
 export const getQuizQuestions = async (max = 120) => {
   try {
-    const snapshot = await withQuizTimeout(getDocs(query(quizQuestionsCollection, limit(max))));
+    const snapshot = await loadQuizWithRetry(() =>
+      getDocs(query(quizQuestionsCollection, limit(max)))
+    );
     return snapshot.docs
       .map((d) => {
         const data = d.data();
@@ -397,7 +414,9 @@ export const getQuizQuestions = async (max = 120) => {
 
 export const getQuizAnswers = async (max = 500) => {
   try {
-    const snapshot = await withQuizTimeout(getDocs(query(quizAnswersCollection, limit(max))));
+    const snapshot = await loadQuizWithRetry(() =>
+      getDocs(query(quizAnswersCollection, limit(max)))
+    );
     return snapshot.docs
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => articleSortTime(b) - articleSortTime(a));

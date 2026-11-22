@@ -21,6 +21,9 @@ interface QuizQuestionCardProps {
   userName?: string;
   onUserNameChange?: (value: string) => void;
   onChecked?: (isCorrect: boolean) => void;
+  deferResult?: boolean;
+  actionLabel?: string;
+  onAnswered?: (payload: QuizSubmitPayload) => void;
 }
 
 const QuizQuestionCard = ({
@@ -32,6 +35,9 @@ const QuizQuestionCard = ({
   userName,
   onUserNameChange,
   onChecked,
+  deferResult = false,
+  actionLabel,
+  onAnswered,
 }: QuizQuestionCardProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -77,14 +83,17 @@ const QuizQuestionCard = ({
       }
     }
 
+    const payload = { answerIndex: selected, isCorrect, userName: cleanName.slice(0, 80) };
     try {
-      void Promise.resolve(
-        onSubmit({ answerIndex: selected, isCorrect, userName: cleanName.slice(0, 80) })
-      ).catch(() => {
+      void Promise.resolve(onSubmit(payload)).catch(() => {
         // The result is revealed even when the network write fails.
       });
     } catch {
       // Ignore a synchronous submit error and reveal the result anyway.
+    }
+    if (deferResult) {
+      onAnswered?.(payload);
+      return;
     }
     setChecked(true);
     onChecked?.(isCorrect);
@@ -297,7 +306,7 @@ const QuizQuestionCard = ({
                 : 'bg-[#1a1a1a] text-white hover:bg-black active:scale-[0.99]'
           }`}
         >
-          {t('quizCheck')}
+          {actionLabel || t('quizCheck')}
         </button>
       )}
 

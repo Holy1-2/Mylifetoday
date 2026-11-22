@@ -188,7 +188,7 @@ quizFirst: {
 },
 
 quizNameLabel: {
-  rw: 'Wifuza kwitwa nde?',
+  rw: 'Izina twakwita kuri uru rubuga',
   en: 'What should we call you?',
   sw: 'Tukuitaje?',
   fr: 'Comment souhaitez-vous être appelé ?'
@@ -269,6 +269,34 @@ quizContinuePage: {
   en: 'Explore all Bible challenges',
   sw: 'Angalia changamoto zote',
   fr: 'Découvrir tous les défis bibliques'
+},
+
+quizNextShort: {
+  rw: 'Ikibazo gikurikira',
+  en: 'Next question',
+  sw: 'Swali linalofuata',
+  fr: 'Question suivante'
+},
+
+quizFinish: {
+  rw: 'Rangiza quiz',
+  en: 'Finish quiz',
+  sw: 'Maliza jaribio',
+  fr: 'Terminer le quiz'
+},
+
+quizResultsTitle: {
+  rw: 'Ibisubizo byawe',
+  en: 'Your results',
+  sw: 'Matokeo yako',
+  fr: 'Vos résultats'
+},
+
+quizYourAnswer: {
+  rw: 'Igisubizo cyawe',
+  en: 'Your answer',
+  sw: 'Jibu lako',
+  fr: 'Votre réponse'
 },
 
 quizAllDone: {
