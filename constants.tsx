@@ -290,7 +290,7 @@ quizWrongShort: {
   en: 'Not quite!',
   sw: 'Bado!',
   fr: 'Pas tout à fait !'
-}
+},
       /* ---------- Home ---------- */
       heroBadge: { rw: 'Ijambo rimwe ku munsi', en: 'One word, every day', sw: 'Neno moja, kila siku', fr: 'Une parole, chaque jour' },
       heroTitle: { rw: "Kubanan'Imana — Muri Kristo Honyine", en: "Kubanan'Imana — Muri Kristo Honyine", sw: "Kubanan'Imana — Muri Kristo Honyine", fr: "Kubanan'Imana — Muri Kristo Honyine" },
