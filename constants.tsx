@@ -102,54 +102,195 @@ export const TRANSLATIONS: Translations = {
       goHome: { rw: 'Subira ahabanza', en: 'Go home', sw: 'Rudi nyumbani', fr: "Retour à l'accueil" },
 
       /* ---------- Bible Quiz ---------- */
-      quiz: { rw: 'Tyaza ubwenge', en: 'Bible Quiz', sw: 'Maswali ya Biblia', fr: 'Quiz Biblique' },
-      quizReadyTitle: { rw: 'Witeguye gutyaza ubwenge?', en: 'Ready to test your wisdom?', sw: 'Uko tayari kupima hekima yako?', fr: 'Prêt à tester votre sagesse ?' },
-      quizReadyBody: {
-         rw: "Subiza ibibazo bine bishingiye kuri bibiliya.",
-         en: 'Answer up to four Bible questions, check the answers and see who else answered.',
-         sw: 'Jibu maswali manne ya Biblia, angalia majibu na uone waliyojibu.',
-         fr: "Répondez à quatre questions bibliques, vérifiez les réponses et voyez qui d'autre a répondu.",
-      },
-      quizReady: { rw: 'Niteguye', en: 'Ready', sw: 'Tayari', fr: 'Je suis prêt' },
-      quizLater: { rw: 'Oya ubu', en: 'Not now', sw: 'Siyo sasa', fr: 'Pas maintenant' },
-      quizCheck: { rw: 'Reba igisubizo', en: 'Check answer', sw: 'Angalia jibu', fr: 'Vérifier la réponse' },
-      quizCorrect: { rw: 'Nicyo.', en: 'Correct! Well done.', sw: 'Sahihi! Umefanya vizuri.', fr: 'Correct ! Bien joué.' },
-      quizWrong: { rw: 'Ntabwo ari byo. Reba igisubizo cyiza.', en: 'Not quite. Here is the correct answer.', sw: 'Si sahihi. Hili ndilo jibu sahihi.', fr: 'Pas tout à fait. Voici la bonne réponse.' },
-      quizCorrectAnswer: { rw: 'Igisubizo cyiza', en: 'Correct answer', sw: 'Jibu sahihi', fr: 'Bonne réponse' },
-      quizExplanation: { rw: 'Ibisobanuro', en: 'Why', sw: 'Maelezo', fr: 'Explication' },
-      quizAnsweredBy: { rw: 'Abasubije', en: 'Answered by', sw: 'Waliyojibu', fr: 'Ont répondu' },
-      quizFirst: { rw: 'Nta muntu urasubiza. Ba uwa mbere!', en: 'No answers yet. Be the first!', sw: 'Hakuna majibu bado. Kuwa wa kwanza!', fr: 'Aucune réponse pour le moment. Soyez le premier !' },
-      quizNameLabel: { rw: 'Amazina yawe', en: 'Your name', sw: 'Jina lako', fr: 'Votre nom' },
-      quizNamePlaceholder: { rw: 'Andika amazina yawe', en: 'Enter your name', sw: 'Ingiza jina lako', fr: 'Entrez votre nom' },
-      quizNameRequired: { rw: 'Andika amazina yawe mbere yo kohereza.', en: 'Please enter your name before submitting.', sw: 'Tafadhali ingiza jina lako kabla ya kutuma.', fr: 'Veuillez saisir votre nom avant de valider.' },
-      quizAnother: { rw: 'Ikindi kibazo', en: 'Another question', sw: 'Swali lingine', fr: 'Une autre question' },
-      quizOpen: { rw: 'Fungura quiz yose', en: 'Open the full quiz', sw: 'Fungua maswali yote', fr: 'Ouvrir le quiz complet' },
-      quizPageSubtitle: {
-         rw: "Suzuma ubumenyi byawe bwa bibiliya. Usubiza ibibazo bikurikira",
-         en: 'Test your Bible knowledge. Every question has one correct answer.',
-         sw: 'Pima ujuzi wako wa Biblia. Kila swali lina jibu moja sahihi.',
-         fr: 'Testez vos connaissances bibliques. Chaque question a une seule bonne réponse.',
-      },
-      quizEmptyTitle: { rw: 'Nta bibazo birahari', en: 'No questions yet', sw: 'Hakuna maswali bado', fr: 'Aucune question pour le moment' },
-      quizEmptyBody: { rw: 'Ibibazo bishya bizaza vuba. ', en: 'New questions will appear soon. Check back later.', sw: 'Maswali mapya yataonekana hivi karibuni.', fr: 'De nouvelles questions arriveront bientôt.' },
-      quizScore: { rw: 'Amanota', en: 'Score', sw: 'Alama', fr: 'Score' },
-      quizAnswerCount: { rw: 'abasubije', en: 'answered', sw: 'wamejibu', fr: 'réponses' },
-      quizNext: { rw: 'Ikibazo gikurikira', en: 'Next question', sw: 'Swali linalofuata', fr: 'Question suivante' },
-      quizContinuePage: {
-         rw: 'Komeza ku rubuga rwa quiz',
-         en: 'Continue on the quiz page',
-         sw: 'Endelea kwenye ukurasa wa maswali',
-         fr: 'Continuer sur la page du quiz',
-      },
-      quizAllDone: {
-         rw: 'Warangije ibibazo byose. Urakoze!',
-         en: "You've answered every question. Well done!",
-         sw: 'Umejibu maswali yote. Hongera!',
-         fr: 'Vous avez répondu à toutes les questions. Bravo !',
-      },
-      quizCorrectShort: { rw: 'Byiza', en: 'Correct', sw: 'Sahihi', fr: 'Correct' },
-      quizWrongShort: { rw: 'Si byo', en: 'Wrong', sw: 'Sio sahihi', fr: 'Faux' },
+      
+quiz: {
+  rw: 'Isuzuma ry’Ubumenyi bwa Bibiliya',
+  en: 'Bible Challenge',
+  sw: 'Changamoto ya Biblia',
+  fr: 'Défi Biblique'
+},
 
+quizReadyTitle: {
+  rw: 'Usoma Bibiliya?',
+  en: 'How well do you really know the Bible?',
+  sw: 'Je, unaijua Biblia kwa undani kweli?',
+  fr: 'Connaissez-vous vraiment bien la Bible ?'
+},
+
+quizReadyBody: {
+  rw: 'Gerageza gusubiza ibibazo bigoye bishingiye ku byo abantu bavuze, ibyabaye n’inyigisho zo muri Bibiliya.',
+  en: 'You may have read the Bible many times, but how much do you actually remember? Test yourself with challenging questions about who said what, surprising events and hidden details. Can you get them all right?',
+  sw: 'Huenda umesoma Biblia mara nyingi, lakini unakumbuka kiasi gani? Jipime kwa maswali magumu kuhusu nani alisema nini, matukio ya kushangaza na mambo ambayo wengi huyapuuza.',
+  fr: 'Vous avez peut-être lu la Bible plusieurs fois, mais que retenez-vous vraiment ? Relevez le défi avec des questions difficiles sur les paroles, les événements surprenants et les détails souvent oubliés.'
+},
+
+quizReady: {
+  rw: 'Reka mbigerageze!',
+  en: 'Challenge me!',
+  sw: 'Niko tayari kwa changamoto!',
+  fr: 'Je relève le défi !'
+},
+
+quizLater: {
+  rw: 'Nzagaruka nyuma',
+  en: 'Maybe later',
+  sw: 'Labda baadaye',
+  fr: 'Peut-être plus tard'
+},
+
+quizCheck: {
+  rw: 'Reba niba ari byo',
+  en: 'Reveal my answer',
+  sw: 'Angalia kama jibu ni sahihi',
+  fr: 'Vérifier ma réponse'
+},
+
+quizCorrect: {
+  rw: 'Wabikoze neza! ',
+  en: 'Brilliant! You know your Scripture.',
+  sw: 'Hongera! Unaifahamu Biblia vizuri.',
+  fr: 'Excellent ! Vous connaissez bien les Écritures.'
+},
+
+quizWrong: {
+  rw: 'Wegereje, ariko si cyo. Dore igisubizo nyacyo kandi umenye n’impamvu.',
+  en: 'Not this time! Discover the correct answer and learn something new.',
+  sw: 'Si sahihi wakati huu! Jifunze jibu sahihi na sababu yake.',
+  fr: 'Pas cette fois ! Découvrez la bonne réponse et apprenez quelque chose de nouveau.'
+},
+
+quizCorrectAnswer: {
+  rw: 'Igisubizo nyacyo',
+  en: 'The right answer',
+  sw: 'Jibu sahihi',
+  fr: 'La bonne réponse'
+},
+
+quizExplanation: {
+  rw: 'Menya impamvu n’aho byanditse',
+  en: 'Discover the biblical explanation',
+  sw: 'Jifunze maelezo ya kibiblia',
+  fr: 'Comprendre l’explication biblique'
+},
+
+quizAnsweredBy: {
+  rw: 'Abamaze kugerageza',
+  en: 'People who took the challenge',
+  sw: 'Walioshiriki changamoto',
+  fr: 'Participants au défi'
+},
+
+quizFirst: {
+  rw: 'Nta muntu uragerageza iki kibazo. Witeguye kugisubiza?',
+  en: 'Nobody has dared to answer this one yet. Will you be the first?',
+  sw: 'Bado hakuna aliyejaribu swali hili. Je, utakuwa wa kwanza?',
+  fr: 'Personne n’a encore osé répondre. Serez-vous le premier ?'
+},
+
+quizNameLabel: {
+  rw: 'Wifuza kwitwa nde?',
+  en: 'What should we call you?',
+  sw: 'Tukuitaje?',
+  fr: 'Comment souhaitez-vous être appelé ?'
+},
+
+quizNamePlaceholder: {
+  rw: 'Andika izina uzagaragaraho',
+  en: 'Enter your display name',
+  sw: 'Andika jina lako',
+  fr: 'Entrez votre nom affiché'
+},
+
+quizNameRequired: {
+  rw: 'Andika izina kugira ngo dusangize abandi igisubizo cyawe.',
+  en: 'Enter your name to share your answer.',
+  sw: 'Tafadhali andika jina lako ili kushiriki jibu lako.',
+  fr: 'Veuillez saisir votre nom pour partager votre réponse.'
+},
+
+quizAnother: {
+  rw: 'Mpa ikindi kibazo!',
+  en: 'Give me another challenge!',
+  sw: 'Nipe changamoto nyingine!',
+  fr: 'Proposez-moi un autre défi !'
+},
+
+quizOpen: {
+  rw: 'Gerageza ibindi bibazo',
+  en: 'Take more challenges',
+  sw: 'Jaribu changamoto zaidi',
+  fr: 'Relever d’autres défis'
+},
+
+quizPageSubtitle: {
+  rw: 'Soma witonze, tekereza neza, maze ugerageze ubumenyi bwawe. Ibibazo bimwe bizagusaba gusubira muri Bibiliya kugira ngo ubone igisubizo.',
+  en: 'Think carefully, recall the Scriptures and test your knowledge. Some questions may send you back to your Bible to find the answer.',
+  sw: 'Fikiri kwa makini, kumbuka Maandiko na ujaribu maarifa yako. Baadhi ya maswali yatakufanya urudi kwenye Biblia kutafuta majibu.',
+  fr: 'Réfléchissez attentivement, souvenez-vous des Écritures et testez vos connaissances. Certaines questions vous inviteront à rouvrir votre Bible.'
+},
+
+quizEmptyTitle: {
+  rw: 'Ibibazo bishya biri gutegurwa!',
+  en: 'New challenges are on the way!',
+  sw: 'Changamoto mpya zinakuja!',
+  fr: 'De nouveaux défis arrivent !'
+},
+
+quizEmptyBody: {
+  rw: 'Turi gutegura ibibazo bizagufasha kongera gusoma no gusobanukirwa Bibiliya. Ongera uze vuba!',
+  en: 'We are preparing thought-provoking Bible challenges to help you explore Scripture more deeply. Come back soon!',
+  sw: 'Tunatayarisha maswali yatakayokusaidia kujifunza Biblia kwa undani zaidi. Rudi tena hivi karibuni!',
+  fr: 'Nous préparons des défis bibliques pour vous aider à explorer les Écritures plus profondément. Revenez bientôt !'
+},
+
+quizScore: {
+  rw: 'Amanota yawe',
+  en: 'Your challenge score',
+  sw: 'Alama zako',
+  fr: 'Votre résultat'
+},
+
+quizAnswerCount: {
+  rw: 'bamaze kugerageza',
+  en: 'have taken the challenge',
+  sw: 'wameshiriki',
+  fr: 'ont participé'
+},
+
+quizNext: {
+  rw: 'Komeza, ikindi kibazo kirategereje!',
+  en: 'Keep going! Next challenge',
+  sw: 'Endelea! Changamoto inayofuata',
+  fr: 'Continuez ! Défi suivant'
+},
+
+quizContinuePage: {
+  rw: 'Jya ku bibazo byose',
+  en: 'Explore all Bible challenges',
+  sw: 'Angalia changamoto zote',
+  fr: 'Découvrir tous les défis bibliques'
+},
+
+quizAllDone: {
+  rw: 'Urangije ibibazo byose! Ongera usome ibyo utabashije gusubiza neza, ukomeze gukura mu bumenyi bw’Ijambo ry’Imana.',
+  en: 'You have completed every challenge! Revisit the questions you missed and keep growing in your understanding of Scripture.',
+  sw: 'Umemaliza changamoto zote! Rudia maswali uliyokosea na uendelee kukua katika kulielewa Neno la Mungu.',
+  fr: 'Vous avez terminé tous les défis ! Revoyez les questions manquées et continuez à approfondir votre connaissance des Écritures.'
+},
+
+quizCorrectShort: {
+  rw: 'Wabimenye!',
+  en: 'You got it!',
+  sw: 'Umejibu vizuri!',
+  fr: 'Bonne réponse !'
+},
+
+quizWrongShort: {
+  rw: 'Ongera ugerageze',
+  en: 'Not quite!',
+  sw: 'Bado!',
+  fr: 'Pas tout à fait !'
+}
       /* ---------- Home ---------- */
       heroBadge: { rw: 'Ijambo rimwe ku munsi', en: 'One word, every day', sw: 'Neno moja, kila siku', fr: 'Une parole, chaque jour' },
       heroTitle: { rw: "Kubanan'Imana — Muri Kristo Honyine", en: "Kubanan'Imana — Muri Kristo Honyine", sw: "Kubanan'Imana — Muri Kristo Honyine", fr: "Kubanan'Imana — Muri Kristo Honyine" },
