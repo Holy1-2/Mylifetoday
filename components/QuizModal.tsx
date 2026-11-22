@@ -12,14 +12,6 @@ const SEEN_WINDOW_MS = 12 * 60 * 60 * 1000;
 const SET_SIZE = 4;
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-// TEMP-DEMO: local verification only, removed before hand-off.
-const DEMO_QUESTIONS: QuizQuestion[] = [
-  { id: 'demo-1', text: 'Ni nde wahanuye inyambo imbere y’Uwiteka?', options: ['Dawidi', 'Mose', 'Petro', 'Paulo'], correctIndex: 0, reference: '2 Samweli 6:20' },
-  { id: 'demo-2', text: 'Igitabo cya mbere mu Isezerano Rishya ni ikihe?', options: ['Matayo', 'Mariko', 'Ibyakozwe', 'Abaroma'], correctIndex: 0, reference: 'Matayo 1:1' },
-  { id: 'demo-3', text: 'Yesu yavutse ahe?', options: ['Nazareti', 'Bethelehemu', 'Yerusalemu', 'Kaperinawumu'], correctIndex: 1, reference: 'Luka 2:4-7' },
-  { id: 'demo-4', text: 'Ni iyihe nzuki yanditse ibyinshi mu Isezerano Rishya?', options: ['Yohana', 'Luka', 'Pawulo', 'Yakobo'], correctIndex: 2, reference: '2 Peter 3:15-16' },
-];
-
 
 type RunResult = { answerIndex: number; isCorrect: boolean };
 
@@ -74,13 +66,13 @@ const QuizModal = () => {
           getQuizQuestions(),
           getQuizAnswers(),
         ]);
-        if (!questionList.length && !DEMO_QUESTIONS.length) return; // TEMP-DEMO
+        if (!questionList.length) return;
         try {
           window.localStorage.setItem(SEEN_KEY, String(Date.now()));
         } catch {
           // Private browsing can block storage.
         }
-        setQueue(pickSet(questionList.length ? (questionList as QuizQuestion[]) : DEMO_QUESTIONS));
+        setQueue(pickSet(questionList as QuizQuestion[]));
         setAnswers(answerList as QuizAnswer[]);
         setPosition(0);
         setFinished(false);
@@ -119,7 +111,6 @@ const QuizModal = () => {
 
   const handleSubmit = async (payload: QuizSubmitPayload) => {
     if (!current) return;
-    if (current.id.startsWith('demo-')) return; // TEMP-DEMO
     const optimistic: QuizAnswer = {
       id: `local-${Date.now()}`,
       questionId: current.id,
