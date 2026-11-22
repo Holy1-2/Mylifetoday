@@ -7,13 +7,31 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import QuizQuestionCard, { type QuizSubmitPayload } from './QuizQuestion';
 
-const SEEN_KEY = 'mlt-quiz-modal-seen';
-const SEEN_WINDOW_MS = 12 * 60 * 60 * 1000;
+const SEEN_IDS_KEY = 'mlt-quiz-seen-ids';
 const SET_SIZE = 4;
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-
 type RunResult = { answerIndex: number; isCorrect: boolean };
+
+const readSeenIds = () => {
+  try {
+    const raw = window.localStorage.getItem(SEEN_IDS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return new Set<string>(
+      Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : []
+    );
+  } catch {
+    return new Set<string>();
+  }
+};
+
+const writeSeenIds = (ids: Set<string>) => {
+  try {
+    window.localStorage.setItem(SEEN_IDS_KEY, JSON.stringify([...ids]));
+  } catch {
+    // Private browsing can block storage.
+  }
+};
 
 const pickSet = (list: QuizQuestion[], size = SET_SIZE) => {
   const pool = [...list];
@@ -46,16 +64,7 @@ const QuizModal = () => {
     if (initialPath.includes('/articles/') || initialPath.includes('/quiz')) return undefined;
 
     const forceOpen = new URLSearchParams(window.location.search).get('quiz') === '1';
-    if (!forceOpen) {
-      let seen = 0;
-      try {
-        seen = Number(window.localStorage.getItem(SEEN_KEY) || 0);
-      } catch {
-        seen = 0;
-      }
-      if (seen && Date.now() - seen < SEEN_WINDOW_MS) return undefined;
-      if (Math.random() > 0.6) return undefined;
-    }
+    if (!forceOpen && Math.random() > 0.6) return undefined;
 
     const delay = forceOpen ? 500 : 5000 + Math.random() * 8000;
     const timer = window.setTimeout(async () => {
@@ -66,18 +75,21 @@ const QuizModal = () => {
           getQuizQuestions(),
           getQuizAnswers(),
         ]);
-        if (!questionList.length) return;
-        try {
-          window.localStorage.setItem(SEEN_KEY, String(Date.now()));
-        } catch {
-          // Private browsing can block storage.
-        }
-        setQueue(pickSet(questionList as QuizQuestion[]));
+        const allQuestions = questionList as QuizQuestion[];
+        if (!allQuestions.length) return;
+
+        const seenIds = readSeenIds();
+        const unseen = allQuestions.filter((question) => !seenIds.has(question.id));
+        const pool = forceOpen && !unseen.length ? allQuestions : unseen;
+        if (!pool.length) return;
+
+        setQueue(pickSet(pool));
         setAnswers(answerList as QuizAnswer[]);
         setPosition(0);
         setFinished(false);
         setResults({});
         setOpen(true);
+        writeSeenIds(new Set(allQuestions.map((question) => question.id)));
       } catch {
         // Stay quiet: the popup is optional and must never disturb the page.
       }
