@@ -462,17 +462,30 @@ const ArticlePage = () => {
         )}
 
         <section className="mt-16">
-          <h2 className="flex items-center gap-3 text-2xl font-black uppercase tracking-tighter mb-6">
-            <MessageCircle size={22} />
-            {t('comments')}
-            <span className="text-sm font-normal normal-case tracking-normal text-gray-400">
-              ({comments.length})
+          <div className="flex items-start gap-4 border-l-2 border-red-600 bg-[#fafafa] px-5 py-6 sm:px-7">
+            <span className="grid h-10 w-10 shrink-0 place-items-center bg-[#1a1a1a] text-white">
+              <MessageCircle size={18} />
             </span>
-          </h2>
+            <div>
+              <h2 className="flex flex-wrap items-baseline gap-2 text-xl font-black uppercase tracking-tighter sm:text-2xl">
+                {t('comments')}
+                <span className="text-sm font-normal normal-case tracking-normal text-gray-400">
+                  ({comments.length})
+                </span>
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
+                {t('commentsInvite')}
+              </p>
+            </div>
+          </div>
 
-          <div className="space-y-6">
+          <div className="mt-8 space-y-6">
             {comments.length === 0 ? (
-              <p className="text-sm text-gray-500">{t('noComments')}</p>
+              <div className="border border-dashed border-black/15 px-6 py-9 text-center">
+                <p className="mx-auto max-w-xl text-sm leading-relaxed text-gray-500">
+                  {t('noComments')}
+                </p>
+              </div>
             ) : (
               comments.map((comment) => (
                 <div key={comment.id} className="border-b border-gray-100 pb-5">
@@ -489,8 +502,8 @@ const ArticlePage = () => {
               ))
             )}
 
-            <form onSubmit={submitComment} className="bg-gray-50 p-6 sm:p-8">
-              <h3 className="text-xs font-black uppercase tracking-widest mb-4">
+            <form onSubmit={submitComment} className="border border-black/10 bg-white p-6 sm:p-8">
+              <h3 className="text-lg font-semibold leading-snug text-[#1a1a1a]">
                 {t('addYourThoughts')}
               </h3>
               <input
@@ -498,23 +511,32 @@ const ArticlePage = () => {
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
                 placeholder={`${t('namePlaceholder')} (${t('optional')})`}
-                className="w-full p-3 mb-3 border border-gray-200 bg-white text-sm outline-none focus:border-black transition-colors"
+                className="mt-5 w-full p-3 border border-gray-200 bg-white text-sm outline-none focus:border-black transition-colors"
               />
               <textarea
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                rows={4}
+                rows={5}
                 placeholder={t('commentPlaceholder')}
-                className="w-full p-3 border border-gray-200 bg-white text-sm outline-none focus:border-black transition-colors"
+                className="mt-3 w-full p-3 border border-gray-200 bg-white text-sm leading-relaxed outline-none focus:border-black transition-colors"
               />
-              <button
-                type="submit"
-                disabled={posting || commentText.trim().length < 2}
-                className="mt-4 inline-flex items-center gap-2 bg-[#1a1a1a] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black disabled:opacity-50 transition-colors"
-              >
-                <Send size={13} />
-                {posting ? t('saving') : t('postComment')}
-              </button>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <button
+                  type="submit"
+                  disabled={posting || commentText.trim().length < 2}
+                  className="inline-flex w-full items-center justify-center gap-2 bg-red-600 px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-red-500 disabled:opacity-50 sm:w-auto sm:shrink-0"
+                >
+                  <Send size={13} />
+                  {posting ? (
+                    t('saving')
+                  ) : (
+                    <>
+                      <span className="sm:hidden">{t('postCommentShort')}</span>
+                      <span className="hidden sm:inline">{t('postComment')}</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
           </div>
         </section>
