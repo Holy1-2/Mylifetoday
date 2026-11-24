@@ -78,7 +78,7 @@ const Home = () => {
         lang={lang}
         title={t('heroTitle')}
         description={t('heroSubtitle')}
-        url={`https://kubananimanaburimunsi.vercel.app/${lang}`}
+        url={`https://kubananimana.rw/${lang}`}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-10">

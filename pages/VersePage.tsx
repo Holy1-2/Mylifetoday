@@ -86,7 +86,7 @@ const VersePage = () => {
         reference,
         text,
         brand: BRAND.name,
-        siteUrl: 'kubananimanaburimunsi.rw',
+        siteUrl: BRAND.siteUrl.replace(/^https?:\/\//, ''),
       });
     } catch (error) {
       console.error(error);
@@ -160,7 +160,7 @@ const VersePage = () => {
                 {reference}
               </p>
               <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-4 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                <span>kubananimanaburimunsi.vercel.app</span>
+                <span>kubananimana.rw</span>
                 <span>{t('verseOfDay')}</span>
               </div>
             </div>

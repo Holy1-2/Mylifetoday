@@ -23,6 +23,7 @@ import { BRAND } from '../constants';
 import {
   isDirectAudioUrl,
   isDirectVideoUrl,
+  isHttpsUrl,
   mediaCategoryLabel,
   mediaCategorySlug,
   mediaPreviewImage,
@@ -51,11 +52,12 @@ const OVERLAY_PILL =
   'inline-flex items-center rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-white/85 backdrop-blur-sm';
 
 const canPlay = (item: MediaItem) =>
-  item.type === 'youtube' ||
-  item.type === 'video' ||
-  item.type === 'audio' ||
-  isDirectVideoUrl(item.url) ||
-  isDirectAudioUrl(item.url);
+  isHttpsUrl(item.url) &&
+  (item.type === 'youtube' ||
+    item.type === 'video' ||
+    item.type === 'audio' ||
+    isDirectVideoUrl(item.url) ||
+    isDirectAudioUrl(item.url));
 
 const ReelPlayer = ({ item }: { item: MediaItem }) => {
   const yt = youtubeId(item.url);
@@ -75,7 +77,7 @@ const ReelPlayer = ({ item }: { item: MediaItem }) => {
     return (
       <video
         src={item.url}
-        poster={item.thumbnail || undefined}
+        poster={item.thumbnail && isHttpsUrl(item.thumbnail) ? item.thumbnail : undefined}
         controls
         autoPlay
         playsInline
@@ -88,7 +90,7 @@ const ReelPlayer = ({ item }: { item: MediaItem }) => {
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#28211c] via-[#161311] to-black px-6">
       <Headphones size={46} className="text-white/70" />
       <p className="mt-4 max-w-[80%] text-center font-serif text-lg text-white/85">{item.title}</p>
-      <audio src={item.url} controls autoPlay className="mt-6 w-full max-w-sm" />
+      <audio src={item.url || undefined} controls autoPlay className="mt-6 w-full max-w-sm" />
     </div>
   );
 };

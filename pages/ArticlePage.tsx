@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -29,7 +29,7 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useJournal } from '../contexts/JournalContext';
-import { readingMinutes, truncate } from '../utils/text';
+import { readingMinutes, readingTimeLabel, truncate } from '../utils/text';
 import SafeHTMLRenderer from '../components/SafeHTMLRenderer';
 import MediaEmbed from '../components/MediaEmbed';
 import ArticleCard from '../components/ArticleCard';
@@ -55,14 +55,12 @@ const ArticlePage = () => {
   const [posting, setPosting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [lightbox, setLightbox] = useState<string | null>(null);
-  const viewCounted = useRef(false);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
     setNotFound(false);
     setLoadError(false);
-    viewCounted.current = false;
     (async () => {
       try {
         const found = await getArticleBySlugOrId(slug || '');
@@ -75,18 +73,7 @@ const ArticlePage = () => {
         setArticle(found);
         setLoading(false);
 
-        if (!viewCounted.current) {
-          const key = `viewed:${found.id}`;
-          try {
-            if (!sessionStorage.getItem(key)) {
-              sessionStorage.setItem(key, '1');
-              void incrementArticleViews(found.id);
-            }
-          } catch {
-            /* ignore storage failures */
-          }
-          viewCounted.current = true;
-        }
+        void incrementArticleViews(found.id);
 
         void getCommentsByArticle(found.id).then((list) => {
           if (active) setComments(list as Comment[]);
@@ -116,7 +103,7 @@ const ArticlePage = () => {
     if (user?.displayName) setAuthorName(user.displayName);
   }, [user]);
 
-  const pick = (field: 'title' | 'situation' | 'verse' | 'teaching' | 'practice' | 'prayer') => {
+  const pick = (field: 'title' | 'situation' | 'verse' | 'teaching' | 'practice' | 'prayer' | 'closure') => {
     if (!article) return '';
     const record = article[field];
     if (!record) return '';
@@ -124,9 +111,10 @@ const ArticlePage = () => {
   };
 
   const minutes = useMemo(
-    () => readingMinutes(pick('situation'), pick('teaching'), pick('practice')),
+    () => readingMinutes(pick('situation'), pick('teaching'), pick('verse'), pick('closure')),
     [article, lang]
   );
+  const readTime = readingTimeLabel(minutes, t);
 
   if (loading) {
     return (
@@ -191,6 +179,8 @@ const ArticlePage = () => {
   const pageUrl = `${BRAND.siteUrl}/${lang}/articles/${article.slug || article.id}`;
   const rawSituation = pick('situation');
   const rawTeaching = pick('teaching');
+  const rawVerse = pick('verse');
+  const rawClosure = pick('closure');
   const heroImage = article.image || article.featuredImage || '';
   const mediaList = [...(article.videos || []), ...(article.mediaEmbeds || [])].filter(Boolean);
   const gallery = (article.gallery || []).filter(Boolean);
@@ -313,7 +303,7 @@ const ArticlePage = () => {
                 {article.views || 0}
               </span>
               <span>
-                {minutes} {t('minRead')}
+                {readTime}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -371,6 +361,26 @@ const ArticlePage = () => {
           {rawTeaching && (
             <section className="py-10 border-t border-gray-200">
               <SafeHTMLRenderer html={rawTeaching} />
+            </section>
+          )}
+
+          {rawVerse && (
+            <section className="my-10 bg-[#1a1a1a] px-6 py-7 text-white sm:px-8">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-red-400">
+                {t('keyVerse')}
+              </p>
+              <div className="mt-3 font-serif text-xl italic leading-relaxed text-white sm:text-2xl">
+                <SafeHTMLRenderer html={rawVerse} className="on-dark" />
+              </div>
+            </section>
+          )}
+
+          {rawClosure && (
+            <section className="mt-10 border-t border-gray-200 py-10">
+              <h2 className="font-serif text-2xl font-bold">{t('closingThought')}</h2>
+              <div className="mt-4">
+                <SafeHTMLRenderer html={rawClosure} />
+              </div>
             </section>
           )}
         </div>

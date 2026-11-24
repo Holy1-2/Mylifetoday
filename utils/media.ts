@@ -1,20 +1,28 @@
 import type { MediaItem } from '../types';
 
-export const youtubeId = (url?: string): string => {
-  if (!url) return '';
+export const isHttpsUrl = (url?: string): boolean => {
+  if (!url) return false;
   try {
-    const parsed = new URL(url);
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+export const youtubeId = (url?: string): string => {
+  if (!isHttpsUrl(url)) return '';
+  try {
+    const parsed = new URL(url!);
     const host = parsed.hostname.replace(/^www\./, '');
     if (host === 'youtu.be') return parsed.pathname.split('/').filter(Boolean)[0] || '';
-    if (host.endsWith('youtube.com') || host === 'youtube-nocookie.com') {
+    if (host === 'youtube.com' || host.endsWith('.youtube.com') || host === 'youtube-nocookie.com') {
       if (parsed.pathname === '/watch') return parsed.searchParams.get('v') || '';
       const parts = parsed.pathname.split('/').filter(Boolean);
       if (['embed', 'shorts', 'live', 'v'].includes(parts[0])) return parts[1] || '';
     }
     return '';
   } catch {
-    const match = url.match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{6,})/);
-    return match ? match[1] : '';
+    return '';
   }
 };
 
@@ -24,15 +32,15 @@ export const youtubeThumb = (url?: string): string => {
 };
 
 export const isDirectVideoUrl = (url?: string) =>
-  !!url && /\.(mp4|webm|ogv|mov)(\?.*)?$/i.test(url);
+  isHttpsUrl(url) && /\.(mp4|webm|ogv|mov)(?:[?#].*)?$/i.test(url!);
 
 export const isDirectAudioUrl = (url?: string) =>
-  !!url && /\.(mp3|m4a|aac|wav|ogg|opus)(\?.*)?$/i.test(url);
+  isHttpsUrl(url) && /\.(mp3|m4a|aac|wav|ogg|opus)(?:[?#].*)?$/i.test(url!);
 
 type PreviewSource = Pick<MediaItem, 'type' | 'url' | 'thumbnail'>;
 
 export const mediaPreviewImage = (item: PreviewSource): string => {
-  if (item.thumbnail) return item.thumbnail;
+  if (item.thumbnail && isHttpsUrl(item.thumbnail)) return item.thumbnail;
   const fromVideo = youtubeThumb(item.url);
   if (fromVideo) return fromVideo;
   if (item.type === 'image' || isDirectVideoUrl(item.url)) return item.url || '';

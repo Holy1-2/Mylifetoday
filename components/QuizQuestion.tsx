@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, CheckCircle2, X, XCircle } from 'lucide-react';
-import type { QuizAnswer, QuizQuestion } from '../types';
+import type { QuizQuestion } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -14,13 +14,13 @@ export interface QuizSubmitPayload {
 
 interface QuizQuestionCardProps {
   question: QuizQuestion;
-  answers: QuizAnswer[];
   onSubmit: (payload: QuizSubmitPayload) => Promise<void> | void;
   compact?: boolean;
   dark?: boolean;
   userName?: string;
   onUserNameChange?: (value: string) => void;
-  onChecked?: (isCorrect: boolean) => void;
+  onChecked?: (isCorrect: boolean, answerIndex: number) => void;
+  initialAnswerIndex?: number | null;
   deferResult?: boolean;
   actionLabel?: string;
   onAnswered?: (payload: QuizSubmitPayload) => void;
@@ -28,13 +28,13 @@ interface QuizQuestionCardProps {
 
 const QuizQuestionCard = ({
   question,
-  answers,
   onSubmit,
   compact = false,
   dark = false,
   userName,
   onUserNameChange,
   onChecked,
+  initialAnswerIndex = null,
   deferResult = false,
   actionLabel,
   onAnswered,
@@ -44,23 +44,22 @@ const QuizQuestionCard = ({
   const controlled = typeof onUserNameChange === 'function';
   const [localName, setLocalName] = useState(() => {
     if (typeof window === 'undefined') return '';
-    return window.localStorage.getItem('mlt-quiz-name') || '';
+    try {
+      return window.localStorage.getItem('mlt-quiz-name') || '';
+    } catch {
+      return '';
+    }
   });
-  const [selected, setSelected] = useState<number | null>(null);
-  const [checked, setChecked] = useState(false);
+  const [selected, setSelected] = useState<number | null>(initialAnswerIndex);
+  const [checked, setChecked] = useState(initialAnswerIndex !== null);
   const [nameError, setNameError] = useState('');
   const nameRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    setSelected(null);
-    setChecked(false);
+    setSelected(initialAnswerIndex);
+    setChecked(initialAnswerIndex !== null);
     setNameError('');
-  }, [question.id]);
-
-  const questionAnswers = useMemo(
-    () => answers.filter((answer) => answer.questionId === question.id).slice(0, 40),
-    [answers, question.id]
-  );
+  }, [question.id, initialAnswerIndex]);
 
   const isCorrect = selected !== null && selected === question.correctIndex;
   const radius = dark ? 'rounded-none' : 'rounded-xl';
@@ -96,7 +95,7 @@ const QuizQuestionCard = ({
       return;
     }
     setChecked(true);
-    onChecked?.(isCorrect);
+    onChecked?.(isCorrect, selected);
   };
 
   const optionClass = (index: number) => {
@@ -189,67 +188,6 @@ const QuizQuestionCard = ({
             )}
           </button>
         ))}
-      </div>
-
-      <div className="mt-4">
-        <div className="flex items-center justify-between gap-2">
-          <p
-            className={`text-[10px] font-bold uppercase tracking-[0.18em] ${
-              dark ? 'text-white/40' : 'text-gray-400'
-            }`}
-          >
-            {t('quizAnsweredBy')}
-          </p>
-          {questionAnswers.length > 0 && (
-            <span className={`text-[11px] font-semibold ${dark ? 'text-white/40' : 'text-gray-400'}`}>
-              {questionAnswers.length} {t('quizAnswerCount')}
-            </span>
-          )}
-        </div>
-        {questionAnswers.length > 0 ? (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {questionAnswers.slice(0, 8).map((answer) => (
-              <span
-                key={answer.id || `${answer.userName}-${answer.answerIndex}-${answer.createdAt}`}
-                className={`inline-flex max-w-full items-center gap-1.5 border px-2.5 py-1 text-[11px] font-medium ${
-                  dark
-                    ? 'rounded-none border-white/10 bg-white/[0.06] text-white/70'
-                    : 'rounded-full border-black/[0.06] bg-[#f6f6f7] text-gray-600'
-                }`}
-              >
-                <span
-                  className={`grid h-4 w-4 shrink-0 place-items-center text-[8px] font-bold uppercase ${
-                    dark
-                      ? 'rounded-none bg-white/10 text-white/60'
-                      : 'rounded-full bg-white text-gray-500 ring-1 ring-black/[0.06]'
-                  }`}
-                >
-                  {answer.userName.charAt(0)}
-                </span>
-                <span className="truncate">{answer.userName}</span>
-                {checked &&
-                  (answer.isCorrect ? (
-                    <Check size={11} className="shrink-0 text-emerald-500" />
-                  ) : (
-                    <X size={11} className="shrink-0 text-red-400" />
-                  ))}
-              </span>
-            ))}
-            {questionAnswers.length > 8 && (
-              <span
-                className={`px-1 py-1 text-[11px] font-medium ${
-                  dark ? 'text-white/40' : 'text-gray-400'
-                }`}
-              >
-                +{questionAnswers.length - 8}
-              </span>
-            )}
-          </div>
-        ) : (
-          <p className={`mt-2 text-xs ${dark ? 'text-white/40' : 'text-gray-400'}`}>
-            {t('quizFirst')}
-          </p>
-        )}
       </div>
 
       {!user && !controlled && !checked && (

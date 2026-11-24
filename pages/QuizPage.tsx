@@ -2,36 +2,59 @@ import { useEffect, useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import SEOHead from '../components/SEOHead';
 import QuizQuestionCard, { type QuizSubmitPayload } from '../components/QuizQuestion';
-import { getQuizAnswers, getQuizQuestions, submitQuizAnswer } from '../services/firebaseService';
+import { getQuizQuestions, submitQuizAnswer } from '../services/firebaseService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-import type { QuizAnswer, QuizQuestion } from '../types';
+import type { QuizQuestion } from '../types';
+import { BRAND } from '../constants';
 
 const NAME_KEY = 'mlt-quiz-name';
+const ANSWERS_KEY = 'mlt-quiz-answers-v1';
+
+const readAnswers = (): Record<string, number> => {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(ANSWERS_KEY) || '{}');
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter(
+        ([id, index]) => typeof id === 'string' && Number.isInteger(index) && Number(index) >= 0
+      )
+    ) as Record<string, number>;
+  } catch {
+    return {};
+  }
+};
+
+const writeAnswers = (answers: Record<string, number>) => {
+  try {
+    window.localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+  } catch {
+    // Answers still remain available for the current page when storage is blocked.
+  }
+};
 
 const QuizPage = () => {
   const { lang, t } = useLanguage();
   const { user } = useAuth();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState(() => {
     if (typeof window === 'undefined') return '';
-    return window.localStorage.getItem(NAME_KEY) || '';
+    try {
+      return window.localStorage.getItem(NAME_KEY) || '';
+    } catch {
+      return '';
+    }
   });
-  const [results, setResults] = useState<Record<string, boolean>>({});
+  const [answers, setAnswers] = useState<Record<string, number>>(readAnswers);
 
   useEffect(() => {
     let active = true;
     (async () => {
       try {
-        const [questionList, answerList] = await Promise.all([
-          getQuizQuestions(),
-          getQuizAnswers(),
-        ]);
+        const questionList = await getQuizQuestions();
         if (!active) return;
         setQuestions(questionList as QuizQuestion[]);
-        setAnswers(answerList as QuizAnswer[]);
       } catch {
         // Leave the list empty; the page shows its empty state.
       } finally {
@@ -53,16 +76,6 @@ const QuizPage = () => {
   };
 
   const handleSubmit = async (question: QuizQuestion, payload: QuizSubmitPayload) => {
-    const optimistic: QuizAnswer = {
-      id: `local-${Date.now()}`,
-      questionId: question.id,
-      userName: payload.userName,
-      userId: user?.uid || null,
-      answerIndex: payload.answerIndex,
-      isCorrect: payload.isCorrect,
-      createdAt: Date.now(),
-    };
-    setAnswers((previous) => [optimistic, ...previous]);
     try {
       await submitQuizAnswer({
         questionId: question.id,
@@ -73,12 +86,16 @@ const QuizPage = () => {
         isCorrect: payload.isCorrect,
       });
     } catch {
-      // Keep the local answer when the network write fails.
+      // Quiz results remain available locally when the network is unavailable.
     }
   };
 
-  const answeredCount = Object.keys(results).length;
-  const score = Object.values(results).filter(Boolean).length;
+  const answerFor = (question: QuizQuestion) => {
+    const answer = answers[question.id];
+    return Number.isInteger(answer) && answer >= 0 && answer < question.options.length ? answer : null;
+  };
+  const answeredCount = questions.filter((question) => answerFor(question) !== null).length;
+  const score = questions.filter((question) => answerFor(question) === question.correctIndex).length;
   const allDone = !loading && questions.length > 0 && answeredCount === questions.length;
 
   return (
@@ -88,6 +105,7 @@ const QuizPage = () => {
         title={`${t('quiz')} — Bible Quiz`}
         description={t('quizPageSubtitle')}
         keywords="Bible quiz, Tyaza ubwenge, Bibiliya, quiz biblique"
+        url={`${BRAND.siteUrl}/${lang}/quiz`}
       />
 
       <div className="mx-auto w-full max-w-4xl px-4 pb-24 pt-6 sm:px-6 sm:pt-10">
@@ -202,7 +220,8 @@ const QuizPage = () => {
         ) : (
           <div className="mt-6 space-y-4">
             {questions.map((question, index) => {
-              const answered = results[question.id] !== undefined;
+              const answer = answerFor(question);
+              const answered = answer !== null;
               return (
                 <section
                   key={question.id}
@@ -218,10 +237,10 @@ const QuizPage = () => {
                     {answered && (
                       <span
                         className={`text-[10px] font-bold uppercase tracking-[0.14em] ${
-                          results[question.id] ? 'text-emerald-600' : 'text-red-500'
+                          answer === question.correctIndex ? 'text-emerald-600' : 'text-red-500'
                         }`}
                       >
-                        {t(results[question.id] ? 'quizCorrectShort' : 'quizWrongShort')}
+                        {t(answer === question.correctIndex ? 'quizCorrectShort' : 'quizWrongShort')}
                       </span>
                     )}
                   </div>
@@ -229,12 +248,16 @@ const QuizPage = () => {
                   <div className="mt-5">
                     <QuizQuestionCard
                       question={question}
-                      answers={answers}
                       userName={user?.displayName || name}
                       onUserNameChange={updateName}
+                      initialAnswerIndex={answer}
                       onSubmit={(payload) => handleSubmit(question, payload)}
-                      onChecked={(isCorrect) =>
-                        setResults((previous) => ({ ...previous, [question.id]: isCorrect }))
+                      onChecked={(_isCorrect, answerIndex) =>
+                        setAnswers((previous) => {
+                          const next = { ...previous, [question.id]: answerIndex };
+                          writeAnswers(next);
+                          return next;
+                        })
                       }
                     />
                   </div>

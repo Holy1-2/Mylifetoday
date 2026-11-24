@@ -34,8 +34,6 @@ export const mediaCollection = collection(db, 'media');
 
 const PAGE_SIZE_DEFAULT = 24;
 
-// Bounded scan: avoids composite-index requirements and still returns legacy
-// documents that have no `status`/`createdAt` fields.
 const ARTICLE_FETCH_LIMIT = 1200;
 
 // Older admin saves inserted "This content is being prepared in X." placeholders
@@ -117,7 +115,7 @@ export const normalizeArticle = (docSnap) => {
   return {
     ...data,
     id: docSnap.id,
-    slug: data.slug || docSnap.id,
+    slug: slugify(data.slug || docSnap.id) || docSnap.id,
     ...LOCALIZED_ARTICLE_FIELDS.reduce((clean, field) => {
       clean[field] = stripPlaceholderLocalized(data[field]);
       return clean;
@@ -136,7 +134,10 @@ export const getArticles = async (
       ? itemsPerPage
       : PAGE_SIZE_DEFAULT;
 
-  const snapshot = await getDocs(query(articlesCollection, limit(ARTICLE_FETCH_LIMIT)));
+  const source = includeNonPublished
+    ? articlesCollection
+    : query(articlesCollection, where('status', '==', 'published'));
+  const snapshot = await getDocs(query(source, limit(ARTICLE_FETCH_LIMIT)));
   let all = snapshot.docs
     .map(normalizeArticle)
     .filter((a) => (includeNonPublished ? true : isPublished(a)))
@@ -165,15 +166,35 @@ export const getArticleById = async (id) => {
 
 export const getArticleBySlug = async (slug) => {
   if (!slug) return null;
-  try {
-    const q = query(articlesCollection, where('slug', '==', slug), limit(1));
-    const snapshot = await getDocs(q);
-    if (!snapshot.empty) return normalizeArticle(snapshot.docs[0]);
-  } catch (err) {
-    console.warn('Slug query failed:', err?.message);
+  const rawSlug = String(slug);
+  const normalizedSlug = slugify(rawSlug) || rawSlug;
+  const candidates = [...new Set([rawSlug, normalizedSlug])];
+
+  for (const candidate of candidates) {
+    try {
+      const q = query(
+        articlesCollection,
+        where('slug', '==', candidate),
+        where('status', '==', 'published'),
+        limit(1)
+      );
+      const snapshot = await getDocs(q);
+      if (!snapshot.empty) return normalizeArticle(snapshot.docs[0]);
+    } catch (err) {
+      console.warn('Slug query failed:', err?.message);
+    }
   }
-  // Legacy articles may not have a slug yet — fall back to the document id.
-  return getArticleById(slug);
+
+  const byId = await getArticleById(rawSlug);
+  if (byId) return byId;
+
+  try {
+    const all = await getAllPublishedArticles();
+    return all.find((article) => article.slug === normalizedSlug) || null;
+  } catch (err) {
+    console.warn('Normalized slug lookup failed:', err?.message);
+    return null;
+  }
 };
 
 /** Accepts a slug or a document id. */
@@ -207,7 +228,7 @@ export const searchArticles = async (searchTerm, lang = 'rw', maxResults = 60) =
   const term = String(searchTerm || '').trim().toLowerCase();
   if (!term) return [];
 
-  let articles = [];
+  let articles;
   try {
     articles = await getAllPublishedArticles();
   } catch (err) {
@@ -262,13 +283,13 @@ export const addArticle = async (articleData) => {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     views: 0,
+    viewsByDay: {},
     likes: 0,
     shares: 0,
   });
-  const slug = await ensureUniqueSlugAndSave(
-    docRef.id,
-    articleData.title?.rw || articleData.title?.en || docRef.id
-  );
+  const titleSource =
+    Object.values(articleData.title || {}).find((value) => String(value || '').trim()) || docRef.id;
+  const slug = await ensureUniqueSlugAndSave(docRef.id, titleSource);
   return { id: docRef.id, slug };
 };
 
@@ -279,18 +300,51 @@ export const updateArticle = async (id, updates) => {
   });
 };
 
+const articleViewWrites = new Map();
+const countedArticleViews = new Set();
+
 export const incrementArticleViews = async (id) => {
-  if (!id) return;
-  const todayKey = new Date().toISOString().split('T')[0];
+  if (!id) return false;
+  if (countedArticleViews.has(id)) return true;
+
+  const storageKey = `viewed:${id}`;
   try {
-    await updateDoc(doc(db, 'articles', id), {
-      views: increment(1),
-      [`viewsByDay.${todayKey}`]: increment(1),
-      lastViewedAt: serverTimestamp(),
-    });
-  } catch (err) {
-    console.warn('View increment failed:', err?.message);
+    if (window.sessionStorage.getItem(storageKey)) {
+      countedArticleViews.add(id);
+      return true;
+    }
+  } catch {
+    // The in-memory guard still prevents duplicate writes when storage is blocked.
   }
+
+  const pending = articleViewWrites.get(id);
+  if (pending) return pending;
+
+  const write = (async () => {
+    const todayKey = new Date().toISOString().split('T')[0];
+    try {
+      await updateDoc(doc(db, 'articles', id), {
+        views: increment(1),
+        [`viewsByDay.${todayKey}`]: increment(1),
+        lastViewedAt: serverTimestamp(),
+      });
+      countedArticleViews.add(id);
+      try {
+        window.sessionStorage.setItem(storageKey, '1');
+      } catch {
+        // A confirmed write still counts for the lifetime of this page.
+      }
+      return true;
+    } catch (err) {
+      console.warn('View increment failed:', err?.message);
+      return false;
+    } finally {
+      articleViewWrites.delete(id);
+    }
+  })();
+
+  articleViewWrites.set(id, write);
+  return write;
 };
 
 /* ------------------------------ Comments ------------------------------ */
@@ -319,26 +373,27 @@ export const getCommentsByArticle = async (articleId) => {
     const q = query(
       commentsCollection,
       where('articleId', '==', articleId),
-      orderBy('createdAt', 'desc'),
-      limit(100)
+      limit(500)
     );
     const snapshot = await getDocs(q);
     return snapshot.docs
       .map((d) => ({ id: d.id, ...d.data() }))
-      .filter((c) => !c.status || ['approved', 'visible'].includes(c.status));
+      .filter((comment) =>
+        !comment.status || comment.status === 'approved' || comment.status === 'visible'
+      )
+      .sort((a, b) => {
+        const aTime = typeof a.createdAt?.toMillis === 'function'
+          ? a.createdAt.toMillis()
+          : new Date(a.createdAt || a.date || 0).getTime();
+        const bTime = typeof b.createdAt?.toMillis === 'function'
+          ? b.createdAt.toMillis()
+          : new Date(b.createdAt || b.date || 0).getTime();
+        return bTime - aTime;
+      })
+      .slice(0, 100);
   } catch (err) {
-    try {
-      const snapshot = await getDocs(
-        query(commentsCollection, where('articleId', '==', articleId), limit(100))
-      );
-      return snapshot.docs
-        .map((d) => ({ id: d.id, ...d.data() }))
-        .filter((c) => !c.status || ['approved', 'visible'].includes(c.status))
-        .sort((a, b) => articleSortTime(b) - articleSortTime(a));
-    } catch (fallbackErr) {
-      console.warn('Comments load failed:', fallbackErr?.message);
-      return [];
-    }
+    console.warn('Comments load failed:', err?.message);
+    return [];
   }
 };
 
@@ -359,7 +414,6 @@ export const deleteArticle = async (id) => deleteDoc(doc(db, 'articles', id));
 /* ------------------------------ Bible Quiz ----------------------------- */
 
 export const quizQuestionsCollection = collection(db, 'quizQuestions');
-export const quizAnswersCollection = collection(db, 'quizAnswers');
 
 const isActiveQuestion = (question) =>
   question.active !== false &&
@@ -390,10 +444,26 @@ const loadQuizWithRetry = async (load, attempts = 2) => {
 
 export const getQuizQuestions = async (max = 120) => {
   try {
-    const snapshot = await loadQuizWithRetry(() =>
-      getDocs(query(quizQuestionsCollection, limit(max)))
-    );
-    return snapshot.docs
+    const [published, legacyActive] = await Promise.all([
+      loadQuizWithRetry(() =>
+        getDocs(
+          query(
+            quizQuestionsCollection,
+            where('status', 'in', ['active', 'published']),
+            limit(max)
+          )
+        )
+      ),
+      loadQuizWithRetry(() =>
+        getDocs(query(quizQuestionsCollection, where('active', '==', true), limit(max)))
+      ).catch(() => null),
+    ]);
+    const questions = new Map();
+    for (const item of [...published.docs, ...(legacyActive?.docs || [])]) {
+      questions.set(item.id, item);
+    }
+    return [...questions.values()]
+      .slice(0, max)
       .map((d) => {
         const data = d.data();
         return {
@@ -408,20 +478,6 @@ export const getQuizQuestions = async (max = 120) => {
       .sort((a, b) => articleSortTime(a) - articleSortTime(b));
   } catch (err) {
     console.warn('Quiz questions load failed:', err?.message);
-    return [];
-  }
-};
-
-export const getQuizAnswers = async (max = 500) => {
-  try {
-    const snapshot = await loadQuizWithRetry(() =>
-      getDocs(query(quizAnswersCollection, limit(max)))
-    );
-    return snapshot.docs
-      .map((d) => ({ id: d.id, ...d.data() }))
-      .sort((a, b) => articleSortTime(b) - articleSortTime(a));
-  } catch (err) {
-    console.warn('Quiz answers load failed:', err?.message);
     return [];
   }
 };
@@ -453,6 +509,11 @@ export const submitQuizAnswer = async ({
 
 /* ---------------------------- Subscriptions --------------------------- */
 
+const subscriptionDocumentId = async (email) => {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(email));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+};
+
 export const addSubscription = async (email, name = '') => {
   const cleanEmail = String(email || '').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
@@ -460,18 +521,21 @@ export const addSubscription = async (email, name = '') => {
   }
   if (cleanEmail.length > 254) throw new Error('Email address is too long');
 
-  const existing = await getDocs(
-    query(subscriptionsCollection, where('email', '==', cleanEmail), limit(1))
-  );
-  if (!existing.empty) throw new Error('This email is already subscribed');
-
-  return addDoc(subscriptionsCollection, {
-    email: cleanEmail,
-    name: String(name || '').trim().slice(0, 120),
-    subscribedAt: serverTimestamp(),
-    status: 'active',
-    type: 'free',
-  });
+  const id = await subscriptionDocumentId(cleanEmail);
+  try {
+    await setDoc(doc(db, 'subscriptions', id), {
+      email: cleanEmail,
+      name: String(name || '').trim().slice(0, 120),
+      subscribedAt: serverTimestamp(),
+      status: 'active',
+      type: 'free',
+    });
+  } catch (error) {
+    if (error?.code === 'already-exists' || error?.code === 'permission-denied') {
+      throw new Error('This email is already subscribed', { cause: error });
+    }
+    throw error;
+  }
 };
 
 export const getSubscriptions = async () => {
@@ -654,10 +718,13 @@ export const removeSavedVerse = async (uid, verseKey) => {
 
 export const getMediaItems = async (includeNonPublished = false) => {
   try {
-    const snap = await getDocs(query(mediaCollection, limit(500)));
+    const source = includeNonPublished
+      ? mediaCollection
+      : query(mediaCollection, where('status', '==', 'published'));
+    const snap = await getDocs(query(source, limit(500)));
     return snap.docs
       .map((d) => ({ id: d.id, ...d.data() }))
-      .filter((m) => includeNonPublished || !m.status || m.status === 'published')
+      .filter((m) => includeNonPublished || m.status === 'published')
       .sort((a, b) => articleSortTime(b) - articleSortTime(a));
   } catch (err) {
     console.warn('Media load failed:', err?.message);
@@ -747,10 +814,11 @@ const normalizeDailyVerse = (docSnap) => {
 /** Published daily verses, newest first. Bounded scan avoids index requirements. */
 export const getDailyVerses = async (max = 60) => {
   try {
-    const snap = await getDocs(query(dailyVersesCollection, limit(max)));
+    const snap = await getDocs(
+      query(dailyVersesCollection, where('status', '==', 'published'), limit(max))
+    );
     return snap.docs
       .map(normalizeDailyVerse)
-      .filter((v) => !v.status || v.status === 'published')
       .sort(
         (a, b) =>
           String(b.date || '').localeCompare(String(a.date || '')) ||

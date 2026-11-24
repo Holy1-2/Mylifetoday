@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Article } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
-import { readingMinutes, truncate } from '../utils/text';
+import { readingMinutes, readingTimeLabel, truncate } from '../utils/text';
 
 interface ArticleCardProps {
   article: Article;
@@ -15,6 +15,7 @@ const ArticleCard = ({ article, variant = 'default', showCategory = true }: Arti
   const situation = article.situation?.[lang] || article.situation?.en || article.situation?.rw || '';
   const href = `/${lang}/articles/${article.slug || article.id}`;
   const minutes = readingMinutes(article.situation?.[lang], article.teaching?.[lang]);
+  const readTime = readingTimeLabel(minutes, t);
   const date = dateLabel(article.publishDate || article.createdAt || article.date);
 
   if (variant === 'featured') {
@@ -46,7 +47,7 @@ const ArticleCard = ({ article, variant = 'default', showCategory = true }: Arti
           <span>{date}</span>
           <span>•</span>
           <span>
-            {minutes} {t('minRead')}
+            {readTime}
           </span>
         </div>
       </Link>
@@ -109,7 +110,7 @@ const ArticleCard = ({ article, variant = 'default', showCategory = true }: Arti
       <div className="flex items-center justify-between text-[10px] text-gray-500">
         <span>{date}</span>
         <span>
-          {minutes} {t('minRead')}
+          {readTime}
         </span>
       </div>
     </Link>

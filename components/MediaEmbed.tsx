@@ -1,28 +1,45 @@
 import { useMemo } from 'react';
 
-const youtubeId = (url: string): string | null => {
+const httpsUrl = (value: string): URL | null => {
   try {
-    const u = new URL(url);
-    const host = u.hostname.replace(/^www\./, '');
-    if (host === 'youtu.be') return u.pathname.split('/').filter(Boolean)[0] || null;
-    if (host.endsWith('youtube.com') || host === 'youtube-nocookie.com') {
-      if (u.pathname === '/watch') return u.searchParams.get('v');
-      const parts = u.pathname.split('/').filter(Boolean);
-      if (['embed', 'shorts', 'live', 'v'].includes(parts[0])) return parts[1] || null;
-    }
-    return null;
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:' ? parsed : null;
   } catch {
     return null;
   }
 };
 
+const youtubeId = (url: string): string | null => {
+  const parsed = httpsUrl(url);
+  if (!parsed) return null;
+  const host = parsed.hostname.replace(/^www\./, '');
+  if (host === 'youtu.be') return parsed.pathname.split('/').filter(Boolean)[0] || null;
+  if (host === 'youtube.com' || host.endsWith('.youtube.com') || host === 'youtube-nocookie.com') {
+    if (parsed.pathname === '/watch') return parsed.searchParams.get('v');
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    if (['embed', 'shorts', 'live', 'v'].includes(parts[0])) return parts[1] || null;
+  }
+  return null;
+};
+
 const vimeoId = (url: string): string | null => {
-  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+  const parsed = httpsUrl(url);
+  if (!parsed || (parsed.hostname !== 'vimeo.com' && !parsed.hostname.endsWith('.vimeo.com'))) return null;
+  const match = parsed.pathname.match(/(?:video\/)?(\d+)/i);
   return match ? match[1] : null;
 };
 
-const isDirectVideo = (url: string) => /\.(mp4|webm|ogv|mov)(\?.*)?$/i.test(url);
-const isDirectAudio = (url: string) => /\.(mp3|m4a|aac|wav|ogg|opus)(\?.*)?$/i.test(url);
+const spotifyEmbed = (url: string): string => {
+  const parsed = httpsUrl(url);
+  if (!parsed || parsed.hostname !== 'open.spotify.com') return '';
+  const path = parsed.pathname.startsWith('/embed/') ? parsed.pathname : `/embed${parsed.pathname}`;
+  return `https://open.spotify.com${path}`;
+};
+
+const isDirectVideo = (url: string) =>
+  !!httpsUrl(url) && /\.(mp4|webm|ogv|mov)(?:[?#].*)?$/i.test(url);
+const isDirectAudio = (url: string) =>
+  !!httpsUrl(url) && /\.(mp3|m4a|aac|wav|ogg|opus)(?:[?#].*)?$/i.test(url);
 
 interface MediaEmbedProps {
   url: string;
@@ -35,10 +52,14 @@ const shell = () => 'w-full overflow-hidden rounded-none bg-black border border-
 
 export const MediaEmbed = ({ url, title = 'Media', poster }: MediaEmbedProps) => {
   const clean = String(url || '').trim();
+  const parsed = useMemo(() => httpsUrl(clean), [clean]);
   const yt = useMemo(() => youtubeId(clean), [clean]);
   const vimeo = useMemo(() => vimeoId(clean), [clean]);
+  const spotify = useMemo(() => spotifyEmbed(clean), [clean]);
+  const soundcloud =
+    parsed && (parsed.hostname === 'soundcloud.com' || parsed.hostname.endsWith('.soundcloud.com'));
 
-  if (!clean) return null;
+  if (!parsed) return null;
 
   if (yt) {
     return (
@@ -48,7 +69,7 @@ export const MediaEmbed = ({ url, title = 'Media', poster }: MediaEmbedProps) =>
           title={title}
           className="aspect-video w-full"
           loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
         />
@@ -71,9 +92,9 @@ export const MediaEmbed = ({ url, title = 'Media', poster }: MediaEmbedProps) =>
     );
   }
 
-  if (/spotify\.com|soundcloud\.com/i.test(clean)) {
-    const src = /spotify\.com/i.test(clean)
-      ? clean.replace('open.spotify.com/', 'open.spotify.com/embed/')
+  if (spotify || soundcloud) {
+    const src = spotify
+      ? spotify
       : `https://w.soundcloud.com/player/?url=${encodeURIComponent(clean)}&color=%23dc2626`;
     return (
       <div className={shell()}>
@@ -83,6 +104,7 @@ export const MediaEmbed = ({ url, title = 'Media', poster }: MediaEmbedProps) =>
           className="h-[166px] w-full"
           loading="lazy"
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          referrerPolicy="strict-origin-when-cross-origin"
         />
       </div>
     );
@@ -96,7 +118,7 @@ export const MediaEmbed = ({ url, title = 'Media', poster }: MediaEmbedProps) =>
           controls
           playsInline
           preload="metadata"
-          poster={poster || undefined}
+          poster={poster && httpsUrl(poster) ? poster : undefined}
           className="mx-auto max-h-[70vh] w-full bg-black object-contain"
         >
           <track kind="captions" />
@@ -115,15 +137,15 @@ export const MediaEmbed = ({ url, title = 'Media', poster }: MediaEmbedProps) =>
   }
 
   return (
-    <div className={shell()}>
-      <iframe
-        src={clean}
-        title={title}
-        className="aspect-video w-full"
-        loading="lazy"
-        allowFullScreen
-        referrerPolicy="strict-origin-when-cross-origin"
-      />
+    <div className={`${shell()} flex items-center justify-center p-6 text-center`}>
+      <a
+        href={clean}
+        target="_blank"
+        rel="noreferrer"
+        className="text-sm font-semibold text-white underline underline-offset-4"
+      >
+        {title}
+      </a>
     </div>
   );
 };

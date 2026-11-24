@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, Lock, Mail, UserRound } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { BRAND } from '../constants';
@@ -33,22 +32,24 @@ const AuthPage = ({ mode }: AuthPageProps) => {
   const [confirm, setConfirm] = useState('');
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
 
   const isSignup = mode === 'signup';
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setFeedback(null);
     const clean = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean)) {
-      toast.error(t('emailInvalid'));
+      setFeedback({ type: 'error', message: t('emailInvalid') });
       return;
     }
     if (password.length < 6) {
-      toast.error(t('passwordMin'));
+      setFeedback({ type: 'error', message: t('passwordMin') });
       return;
     }
     if (isSignup && password !== confirm) {
-      toast.error(t('passwordMismatch'));
+      setFeedback({ type: 'error', message: t('passwordMismatch') });
       return;
     }
 
@@ -59,24 +60,25 @@ const AuthPage = ({ mode }: AuthPageProps) => {
       navigate(from || `/${lang}/journal`, { replace: true });
     } catch (error) {
       const code = (error as { code?: string })?.code || '';
-      toast.error(t(errorCopy(code)));
+      setFeedback({ type: 'error', message: t(errorCopy(code)) });
     } finally {
       setBusy(false);
     }
   };
 
   const forgot = async () => {
+    setFeedback(null);
     const clean = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean)) {
-      toast.error(t('emailInvalid'));
+      setFeedback({ type: 'error', message: t('emailInvalid') });
       return;
     }
     try {
       await resetPassword(clean);
-      toast.success(t('resetSent'));
+      setFeedback({ type: 'success', message: t('resetSent') });
     } catch (error) {
       const code = (error as { code?: string })?.code || '';
-      toast.error(t(errorCopy(code)));
+      setFeedback({ type: 'error', message: t(errorCopy(code)) });
     }
   };
 
@@ -133,7 +135,20 @@ const AuthPage = ({ mode }: AuthPageProps) => {
           {isSignup ? t('signUpSubtitle') : t('signInSubtitle')}
         </p>
 
-        <form onSubmit={submit} className="mt-6 space-y-3">
+        {feedback && (
+          <p
+            role="alert"
+            className={`mt-4 border px-3 py-2 text-sm ${
+              feedback.type === 'success'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                : 'border-red-200 bg-red-50 text-red-700'
+            }`}
+          >
+            {feedback.message}
+          </p>
+        )}
+
+        <form onSubmit={submit} className="mt-6 space-y-3" noValidate>
           {isSignup && (
             <div className="relative">
               <UserRound className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
@@ -207,7 +222,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
             disabled={busy}
             className="flex w-full items-center justify-center gap-2 bg-[#1a1a1a] px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-black disabled:opacity-60"
           >
-            {busy && <Loader2 size={14} className="animate-spin" />}
+            <Loader2 size={14} className={busy ? 'animate-spin' : 'hidden'} />
             {isSignup ? t('signUp') : t('signIn')}
           </button>
         </form>

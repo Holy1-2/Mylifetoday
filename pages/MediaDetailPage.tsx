@@ -14,7 +14,7 @@ import MediaEmbed from '../components/MediaEmbed';
 import MediaLikeButton from '../components/MediaLikeButton';
 import SEOHead from '../components/SEOHead';
 import { BRAND } from '../constants';
-import { mediaCategoryLabel, mediaPreviewImage } from '../utils/media';
+import { isHttpsUrl, mediaCategoryLabel, mediaPreviewImage } from '../utils/media';
 
 const MediaDetailPage = () => {
   const { id = '' } = useParams();
@@ -45,7 +45,7 @@ const MediaDetailPage = () => {
 
   const share = async () => {
     if (!item) return;
-    const url = window.location.href;
+    const url = `${BRAND.siteUrl}/rw/media/${encodeURIComponent(item.id)}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: item.title, url });
@@ -78,6 +78,7 @@ const MediaDetailPage = () => {
       );
     }
     if (item.type === 'image') {
+      if (!isHttpsUrl(item.url)) return <div className="aspect-video w-full bg-black" />;
       return (
         <img
           src={item.url}
@@ -101,12 +102,12 @@ const MediaDetailPage = () => {
       <SEOHead
         lang={lang}
         title={item ? `${item.title} | ${BRAND.name}` : `${t('mediaTitle')} | ${BRAND.name}`}
-        description={
-          item?.type === 'quote' && item.text ? item.text.slice(0, 220) : t('mediaSubtitle')
-        }
-        url={`${BRAND.siteUrl}/${lang}/media/${id}`}
+        description={item?.text ? item.text.slice(0, 220) : t('mediaSubtitle')}
+        url={`${BRAND.siteUrl}/rw/media/${encodeURIComponent(item?.id || id)}`}
         image={item ? mediaPreviewImage(item) : ''}
-        robots={item ? 'index, follow' : 'noindex, follow'}
+        media={item}
+        hreflangs={[]}
+        robots={item && lang === 'rw' ? 'index, follow' : 'noindex, follow'}
       />
 
       <section className="mx-auto max-w-5xl px-4 pb-20 pt-8">

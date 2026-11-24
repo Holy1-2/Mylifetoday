@@ -17,6 +17,9 @@ export const readingMinutes = (...parts: unknown[]): number => {
   return Math.max(1, Math.round(words / 200));
 };
 
+export const readingTimeLabel = (minutes: number, t: (key: string) => string): string =>
+  t(minutes === 1 ? 'minReadOne' : 'minRead').replace('{minutes}', String(minutes));
+
 export const truncate = (value: unknown, max = 180): string => {
   const text = stripHtml(value);
   if (text.length <= max) return text;

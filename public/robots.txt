@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kubananimanaburimunsi.vercel.app/sitemap.xml
+Sitemap: https://kubananimana.rw/sitemap.xml

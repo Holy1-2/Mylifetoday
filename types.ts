@@ -26,7 +26,7 @@ export interface Article {
   category: Category;
   title: Record<Language, string>;
   situation: Record<Language, string>;
-  verse: Record<Language, string>;
+  verse?: Record<Language, string>;
   teaching: Record<Language, string>;
   practice: Record<Language, string>;
   prayer: Record<Language, string>;

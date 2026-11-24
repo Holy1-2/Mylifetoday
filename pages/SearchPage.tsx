@@ -72,7 +72,6 @@ const SearchPage = () => {
       setParams(next, { replace: true });
     }, 220);
     return () => clearTimeout(handle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [term]);
 
   const results = useMemo(() => {

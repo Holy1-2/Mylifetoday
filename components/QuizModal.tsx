@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowRight, Check, HelpCircle, X } from 'lucide-react';
-import { getQuizAnswers, getQuizQuestions, submitQuizAnswer } from '../services/firebaseService';
-import type { QuizAnswer, QuizQuestion } from '../types';
+import { getQuizQuestions, submitQuizAnswer } from '../services/firebaseService';
+import type { QuizQuestion } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import QuizQuestionCard, { type QuizSubmitPayload } from './QuizQuestion';
@@ -52,7 +52,6 @@ const QuizModal = () => {
   const [finished, setFinished] = useState(false);
   const [queue, setQueue] = useState<QuizQuestion[]>([]);
   const [position, setPosition] = useState(0);
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [results, setResults] = useState<Record<string, RunResult>>({});
 
   const current = queue[position] || null;
@@ -61,7 +60,7 @@ const QuizModal = () => {
 
   useEffect(() => {
     const initialPath = window.location.pathname;
-    if (initialPath.includes('/articles/') || initialPath.includes('/quiz')) return undefined;
+    if (/\/(articles|quiz|signin|signup)(\/|$)/.test(initialPath)) return undefined;
 
     const forceOpen = new URLSearchParams(window.location.search).get('quiz') === '1';
     if (!forceOpen && Math.random() > 0.6) return undefined;
@@ -69,13 +68,9 @@ const QuizModal = () => {
     const delay = forceOpen ? 500 : 5000 + Math.random() * 8000;
     const timer = window.setTimeout(async () => {
       const path = window.location.pathname;
-      if (path.includes('/articles/') || path.includes('/quiz')) return;
+      if (/\/(articles|quiz|signin|signup)(\/|$)/.test(path)) return;
       try {
-        const [questionList, answerList] = await Promise.all([
-          getQuizQuestions(),
-          getQuizAnswers(),
-        ]);
-        const allQuestions = questionList as QuizQuestion[];
+        const allQuestions = (await getQuizQuestions()) as QuizQuestion[];
         if (!allQuestions.length) return;
 
         const seenIds = readSeenIds();
@@ -84,7 +79,6 @@ const QuizModal = () => {
         if (!pool.length) return;
 
         setQueue(pickSet(pool));
-        setAnswers(answerList as QuizAnswer[]);
         setPosition(0);
         setFinished(false);
         setResults({});
@@ -114,7 +108,7 @@ const QuizModal = () => {
 
   useEffect(() => {
     if (!open) return;
-    if (location.pathname.includes('/articles/') || location.pathname.includes('/quiz')) {
+    if (/\/(articles|quiz|signin|signup)(\/|$)/.test(location.pathname)) {
       setOpen(false);
     }
   }, [location.pathname, open]);
@@ -123,16 +117,6 @@ const QuizModal = () => {
 
   const handleSubmit = async (payload: QuizSubmitPayload) => {
     if (!current) return;
-    const optimistic: QuizAnswer = {
-      id: `local-${Date.now()}`,
-      questionId: current.id,
-      userName: payload.userName,
-      userId: user?.uid || null,
-      answerIndex: payload.answerIndex,
-      isCorrect: payload.isCorrect,
-      createdAt: Date.now(),
-    };
-    setAnswers((previous) => [optimistic, ...previous]);
     try {
       await submitQuizAnswer({
         questionId: current.id,
@@ -143,7 +127,7 @@ const QuizModal = () => {
         isCorrect: payload.isCorrect,
       });
     } catch {
-      // The local entry above keeps the experience intact offline.
+      // Quiz results remain available locally when the network is unavailable.
     }
   };
 
@@ -351,7 +335,6 @@ const QuizModal = () => {
                 <QuizQuestionCard
                   key={current.id}
                   question={current}
-                  answers={answers}
                   onSubmit={handleSubmit}
                   onAnswered={handleAnswered}
                   deferResult

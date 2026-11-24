@@ -19,32 +19,32 @@ export const BRAND = {
    short: "Kubanan'Imana",
    tagline: {
       rw: 'Muri Kristo Honyine',
-      en: 'Muri Kristo Honyine',
-      sw: 'Muri Kristo Honyine',
-      fr: 'Muri Kristo Honyine',
+      en: 'In christ alone',
+      sw: 'Katika Kristo pekee',
+      fr: 'En Jésus seul',
    } as Record<Language, string>,
-   siteUrl: 'https://kubananimanaburimunsi.vercel.app',
+   siteUrl: 'https://kubananimana.rw',
    email: 'amanitoprayhirwa@gmail.com',
 };
 
 export const TRANSLATIONS: Translations = {
    siteName: {
       rw: "Kubanan'Imana",
-      en: "Kubanan'Imana",
-      sw: "Kubanan'Imana",
-      fr: "Kubanan'Imana",
+      en: "With God",
+      sw: "Na mungu",
+      fr: "Avec dieu",
    },
    tagline: {
       rw: 'Muri Kristo Honyine',
-      en: 'Muri Kristo Honyine',
-      sw: 'Muri Kristo Honyine',
-      fr: 'Muri Kristo Honyine',
+      en: 'In christ alone',
+      sw: 'Katika Kristo pekee',
+      fr: 'En Jésus seul',
    },
    categories: {
       [Category.DAILY_LIFE]: { rw: 'Ubuzima bwa buri munsi', en: 'Daily Life', sw: 'Maisha ya Kila Siku', fr: 'Vie Quotidienne' },
       [Category.MONEY_WORK]: { rw: 'Ubusonga n\'Akazi', en: 'Money & Work', sw: 'Fedha na Kazi', fr: 'Argent et Travail' },
       [Category.RELATIONSHIPS]: { rw: 'Imibanire', en: 'Relationships', sw: 'Mahusiano', fr: 'Relations' },
-      [Category.MENTAL_HEALTH]: { rw: 'Ubuzima bwo mu mutwe', en: 'Mental Health', sw: 'Afya ya Akili', fr: 'Santé Mentale' },
+      [Category.MENTAL_HEALTH]: { rw: 'Intekerezo', en: 'Mental Health', sw: 'Afya ya Akili', fr: 'Santé Mentale' },
       [Category.TECH]: { rw: 'Ikoranabuhanga', en: 'Technology', sw: 'Teknolojia', fr: 'Technologie' },
       [Category.SOCIETY]: { rw: 'Umuryango', en: 'Society', sw: 'Jamii', fr: 'Société' },
       [Category.HOPE]: { rw: 'Ibyiringiro', en: 'Hope', sw: 'Tumaini', fr: 'Espoir' },
@@ -118,7 +118,7 @@ quizReadyTitle: {
 },
 
 quizReadyBody: {
-  rw: 'Gerageza gusubiza ibibazo bigoye bishingiye ku byo abantu bavuze, ibyabaye n’inyigisho zo muri Bibiliya.',
+  rw: 'Gerageza gusubiza ibibazo , bishingiye ku byo abantu bavuze, ibyabaye n’inyigisho zo muri Bibiliya.',
   en: 'You may have read the Bible many times, but how much do you actually remember? Test yourself with challenging questions about who said what, surprising events and hidden details. Can you get them all right?',
   sw: 'Huenda umesoma Biblia mara nyingi, lakini unakumbuka kiasi gani? Jipime kwa maswali magumu kuhusu nani alisema nini, matukio ya kushangaza na mambo ambayo wengi huyapuuza.',
   fr: 'Vous avez peut-être lu la Bible plusieurs fois, mais que retenez-vous vraiment ? Relevez le défi avec des questions difficiles sur les paroles, les événements surprenants et les détails souvent oubliés.'
@@ -333,7 +333,8 @@ quizWrongShort: {
       trending: { rw: 'Ibyasomwe cyane', en: 'Trending', sw: 'Maarufu', fr: 'Tendances' },
       browseCategories: { rw: 'Shakisha mu byiciro', en: 'Browse by category', sw: 'Vinjari kwa kategoria', fr: 'Parcourir par catégorie' },
       allCategories: { rw: 'Ibyiciro byose', en: 'All categories', sw: 'Kategoria zote', fr: 'Toutes les catégories' },
-      minRead: { rw: 'iminota yo gusoma', en: 'min read', sw: 'dakika za kusoma', fr: 'min de lecture' },
+      minRead: { rw: 'iminota {minutes} yo gusoma', en: 'min read', sw: 'dakika za kusoma', fr: 'min de lecture' },
+      minReadOne: { rw: 'umunota 1 wo gusoma', en: 'min read', sw: 'dakika ya kusoma', fr: 'min de lecture' },
       byLabel: { rw: 'Na', en: 'By', sw: 'Na', fr: 'Par' },
       editorialDesk: { rw: 'Ibiro by\'ubwanditsi', en: 'Editorial Desk', sw: 'Ofisi ya Uhariri', fr: 'Rédaction' },
       newsletterTitle: { rw: 'Akira imirongo ya bibiliya buri cyumweru', en: 'Get a word every week', sw: 'Pokea neno kila wiki', fr: 'Recevez une parole chaque semaine' },
@@ -359,11 +360,13 @@ quizWrongShort: {
       publishedOn: { rw: 'Byasohotse', en: 'Published', sw: 'Ilichapishwa', fr: 'Publié' },
       situation: { rw: 'Uko ibintu biri', en: 'The situation', sw: 'Hali halisi', fr: 'La situation' },
       teaching: { rw: 'Icyigisho', en: 'The teaching', sw: 'Mafundisho', fr: "L'enseignement" },
+      keyVerse: { rw: 'Isomo', en: 'Key Bible verse', sw: 'Mstari muhimu wa Biblia', fr: 'Verset biblique clé' },
+      closingThought: { rw: 'Icyagufasha', en: 'Closing thought and prayer', sw: 'Wazo la mwisho na maombi', fr: 'Réflexion finale et prière' },
       practice: { rw: 'Intambwe ifatika', en: 'Practical step', sw: 'Hatua ya vitendo', fr: 'Étape pratique' },
       prayer: { rw: 'Isengesho', en: 'Prayer', sw: 'Maombi', fr: 'Prière' },
       healthSection: { rw: 'Ubuzima n\'imirire', en: 'Health & wellness', sw: 'Afya na ustawi', fr: 'Santé et bien-être' },
-      healthHacks: { rw: 'Ingobokabuzima', en: 'Health hacks', sw: 'Mbinu za afya', fr: 'Astuces santé' },
-      herbalRemedies: { rw: 'Kwivurisha ibyaremwe', en: 'Herbal remedies', sw: 'Dawa za asili', fr: 'Remèdes naturels' },
+      healthHacks: { rw: 'Ibyo wakora', en: 'Health hacks', sw: 'Mbinu za afya', fr: 'Astuces santé' },
+      herbalRemedies: { rw: 'Ibyo ukeneye', en: 'Herbal remedies', sw: 'Dawa za asili', fr: 'Remèdes naturels' },
       gallery: { rw: 'Amafoto', en: 'Gallery', sw: 'Picha', fr: 'Galerie' },
       audio: { rw: 'Amajwi', en: 'Audio', sw: 'Sauti', fr: 'Audio' },
       video: { rw: 'Video', en: 'Video', sw: 'Video', fr: 'Vidéo' },
@@ -416,7 +419,7 @@ quizWrongShort: {
       shareOnX: { rw: 'Sangiza kuri X', en: 'Share on X', sw: 'Shiriki kwa X', fr: 'Partager sur X' },
       healthDisclaimerTitle: { rw: 'Icyitonderwa ku buzima', en: 'Health disclaimer', sw: 'Kanusho la afya', fr: 'Avertissement santé' },
       healthDisclaimer: {
-         rw: 'Amakuru y\'ubuzima kuri uru rubuga ni ay\'uburezi gusa kandi ntasimbura inama y\'umuganga. Baza umuganga w\'inzobere mbere yo guhindura uburyo bwo kwivuza.',
+         rw: 'Amakuru y\'ubuzima kuri uru rubuga ni ay\'uburezi gusa kandi ntasimbura inama y\'umuganga.',
          en: 'Health information on this site is for education only and does not replace medical advice. Consult a qualified professional before changing any treatment.',
          sw: 'Taarifa za afya kwenye tovuti hii ni za kielimu tu na hazibadilishi ushauri wa daktari. Shauri mtaalamu kabla ya kubadilisha matibabu.',
          fr: "Les informations de santé de ce site sont éducatives et ne remplacent pas un avis médical. Consultez un professionnel avant de modifier un traitement.",
@@ -583,7 +586,7 @@ quizWrongShort: {
       /* ---------- Donate & footer ---------- */
       donationHeader: { rw: 'Shyigikira {site}', en: 'Support {site}', sw: 'Saidia {site}', fr: 'Soutenir {site}' },
       donationDescription: {
-         rw: 'Inkunga yawe ifasha kwishyura hosting, domain no kugeza ubu butumwa kuri benshi.',
+         rw: 'Inkunga yawe ifasha gukodesha sever, kwishyura indangarubuga no kwagura ubukorwa kugira ngo  ubu butumwa bugere kuri benshi.',
          en: 'Your gift covers hosting, the domain and helps this message reach more people.',
          sw: 'Mchango wako hulipia hosting, domain na kufikisha ujumbe kwa watu wengi.',
          fr: "Votre don couvre l'hébergement, le domaine et aide ce message à atteindre plus de personnes.",

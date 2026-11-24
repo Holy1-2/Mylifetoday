@@ -39,7 +39,7 @@ const loadLogo = (): Promise<HTMLImageElement | null> =>
 
 export const renderVerseImage = async (input: VerseImageInput): Promise<Blob> => {
   const brand = input.brand || "Kubanan'Imana";
-  const siteUrl = input.siteUrl || 'kubananimanuburimunsi.vercel.app';
+  const siteUrl = input.siteUrl || 'kubananimana.rw';
 
   if (document.fonts?.ready) {
     try {
