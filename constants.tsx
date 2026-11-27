@@ -419,7 +419,7 @@ quizWrongShort: {
       shareOnX: { rw: 'Sangiza kuri X', en: 'Share on X', sw: 'Shiriki kwa X', fr: 'Partager sur X' },
       healthDisclaimerTitle: { rw: 'Icyitonderwa ku buzima', en: 'Health disclaimer', sw: 'Kanusho la afya', fr: 'Avertissement santé' },
       healthDisclaimer: {
-         rw: 'Amakuru y\'ubuzima kuri uru rubuga ni ay\'uburezi gusa kandi ntasimbura inama y\'umuganga.',
+         rw: 'Amakuru y\'ubuzima kuri uru rubuga  ntasimbura inama y\'umuganga.',
          en: 'Health information on this site is for education only and does not replace medical advice. Consult a qualified professional before changing any treatment.',
          sw: 'Taarifa za afya kwenye tovuti hii ni za kielimu tu na hazibadilishi ushauri wa daktari. Shauri mtaalamu kabla ya kubadilisha matibabu.',
          fr: "Les informations de santé de ce site sont éducatives et ne remplacent pas un avis médical. Consultez un professionnel avant de modifier un traitement.",
